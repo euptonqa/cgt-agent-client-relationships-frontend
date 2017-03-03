@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.cgtagentclientrelationshipsfrontend
+package config
 
 import uk.gov.hmrc.play.audit.http.config.LoadAuditingConfig
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector => Auditing}
@@ -31,6 +31,6 @@ object WSHttp extends WSGet with WSPut with WSPost with WSDelete with AppName wi
 }
 
 object FrontendAuthConnector extends AuthConnector with ServicesConfig {
-  val serviceUrl = baseUrl("auth")
+  val serviceUrl: String = baseUrl("auth")
   lazy val http = WSHttp
 }
