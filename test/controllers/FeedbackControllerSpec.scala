@@ -38,7 +38,7 @@ class FeedbackControllerSpec extends ControllerSpecHelper {
   val mockHttp = mock[WSHttp]
 
   def setupController(): FeedbackController = {
-    lazy val controller = new FeedbackController()(mockConfig, mockHttp, messagesApi) {
+    lazy val controller = new FeedbackController()(mockConfig, messagesApi) {
       override implicit val cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
         override def httpGet: HttpGet = ???
 
@@ -59,43 +59,43 @@ class FeedbackControllerSpec extends ControllerSpecHelper {
   }
 
   "GET /feedback" should {
-    val target = setupController()
-    val fakeRequest = FakeRequest("GET", "/")
+    lazy val target = setupController()
+    lazy val fakeRequest = FakeRequest("GET", "/")
 
     "return feedback page" in {
-      val result = target.show(fakeRequest)
+      lazy val result = target.show(fakeRequest)
       status(result) shouldBe Status.OK
     }
 
     "capture the referrer in the session on initial session on the feedback load" in {
-      val result = target.show(fakeRequest.withHeaders("Referer" -> "Blah"))
+      lazy val result = target.show(fakeRequest.withHeaders("Referer" -> "Blah"))
       status(result) shouldBe Status.OK
     }
   }
 
   "POST /feedback" should {
-    val target = setupController()
-    val fakeRequest = FakeRequest("GET", "/")
-    val fakePostRequest = FakeRequest("POST", "/calculate-your-capital-gains/feedback").withFormUrlEncodedBody("test" -> "test")
+    lazy val target = setupController()
+    lazy val fakeRequest = FakeRequest("GET", "/")
+    lazy val fakePostRequest = FakeRequest("POST", "/calculate-your-capital-gains/feedback").withFormUrlEncodedBody("test" -> "test")
     "return form with thank you for valid selections" in {
       when(mockHttp.POSTForm[HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(
         Future.successful(HttpResponse(Status.OK, responseString = Some("1234"))))
 
-      val result = target.submit(fakePostRequest)
+      lazy val result = target.submit(fakePostRequest)
       redirectLocation(result) shouldBe Some(routes.FeedbackController.thankyou().url)
     }
 
     "return form with errors for invalid selections" in {
       when(mockHttp.POSTForm[HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(
         Future.successful(HttpResponse(Status.BAD_REQUEST, responseString = Some("<p>:^(</p>"))))
-      val result = target.submit(fakePostRequest)
+      lazy val result = target.submit(fakePostRequest)
       status(result) shouldBe Status.BAD_REQUEST
     }
 
     "return error for other http code back from contact-frontend" in {
       when(mockHttp.POSTForm[HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(
         Future.successful(HttpResponse(418))) // 418 - I'm a teapot
-      val result = target.submit(fakePostRequest)
+      lazy val result = target.submit(fakePostRequest)
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
@@ -103,16 +103,16 @@ class FeedbackControllerSpec extends ControllerSpecHelper {
       when(mockHttp.POSTForm[HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(
         Future.successful(HttpResponse(Status.OK, responseString = Some("1234"))))
 
-      val result = target.submit(fakeRequest)
+      lazy val result = target.submit(fakeRequest)
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
   }
 
   "GET /feedback/thankyou" should {
     "should return the thank you page" in {
-      val target = setupController()
-      val fakeRequest = FakeRequest("GET", "/")
-      val result = target.thankyou(fakeRequest)
+      lazy val target = setupController()
+      lazy val fakeRequest = FakeRequest("GET", "/")
+      lazy val result = target.thankyou(fakeRequest)
       status(result) shouldBe Status.OK
     }
   }

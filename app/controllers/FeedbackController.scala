@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import java.net.URLEncoder
 
-import config.AppConfig
+import config.{AppConfig, WSHttp}
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,16 +35,16 @@ import scala.concurrent.Future
 
 @Singleton
 class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
-                                   val wsHttp: WSHttp, val messagesApi: MessagesApi)
+                                   val messagesApi: MessagesApi)
   extends FrontendController with PartialRetriever with I18nSupport {
 
-  override val httpGet = wsHttp
-  val httpPost = wsHttp
+  override val httpGet = WSHttp
+  val httpPost = WSHttp
 
   private val TICKET_ID = "ticketId"
 
   implicit def cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
-    override def httpGet: HttpGet = wsHttp
+    override def httpGet: HttpGet = WSHttp
   }
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
@@ -69,7 +69,7 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   protected def loadPartial(url: String)(implicit request: RequestHeader): HtmlPartial = ???
 
   implicit def formPartialRetriever: FormPartialRetriever = new FormPartialRetriever {
-    override def httpGet: HttpGet = wsHttp
+    override def httpGet: HttpGet = WSHttp
     override def crypto: (String) => String = cookie => SessionCookieCryptoFilter.encrypt(cookie)
   }
 
@@ -89,22 +89,11 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
     s"${applicationConfig.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
 
 
-  def show: Action[AnyContent] = UnauthorisedAction.async {
+  def show: Action[AnyContent] = UnauthorisedAction {
     implicit request =>
-      request.body.asFormUrlEncoded.map { formData =>
-        httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(rds = readPartialsForm, hc = partialsReadyHeaderCarrier).map {
-          resp =>
-            resp.status match {
-              case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
-                //TODO: Update routes
-              case HttpStatus.BAD_REQUEST => BadRequest(views.html.feedback.feedback(feedbackFormPartialUrl, Some(Html(resp.body))))
-                //TODO: Update routes and views...
-              case status => Logger.error(s"Unexpected status code from feedback form: $status"); InternalServerError
-            }
-        }
-      }.getOrElse {
-        Logger.error("Trying to submit an empty feedback form")
-        Future.successful(InternalServerError)
+      (request.session.get(REFERER), request.headers.get(REFERER)) match {
+        case (None, Some(ref)) => Ok(views.html.feedback.feedback(feedbackFormPartialUrl, None)).withSession(request.session + (REFERER -> ref))
+        case _ => Ok(views.html.feedback.feedback(feedbackFormPartialUrl, None))
       }
   }
 

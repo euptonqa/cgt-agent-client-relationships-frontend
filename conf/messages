@@ -1,6 +1,6 @@
 ##Common##
-common.back "Back"
+common.back = Back
 
 ##Feedback##
-feedback.send = "Send your feedback"
-feedback.thankyou = "Your feedback"
+feedback.send = Send your feedback
+feedback.thankyou = Your feedback
