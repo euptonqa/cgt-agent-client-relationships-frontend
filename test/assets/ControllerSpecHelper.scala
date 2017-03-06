@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package assets
 
-import javax.inject.{Inject, Singleton}
-
+import akka.stream.Materializer
 import config.AppConfig
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc._
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import org.scalatest.mock.MockitoSugar
+import org.scalatestplus.play.OneAppPerSuite
+import play.api.i18n.MessagesApi
+import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
+trait ControllerSpecHelper extends UnitSpec with MockitoSugar with OneAppPerSuite {
 
-@Singleton
-class HelloWorld @Inject()(appConfig: AppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.helloworld.hello_world(appConfig)))
-  }
+  val mockConfig: AppConfig = app.injector.instanceOf[AppConfig]
+  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+
+  implicit val mat: Materializer = app.injector.instanceOf[Materializer]
+
 }
