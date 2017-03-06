@@ -25,7 +25,7 @@ import scala.concurrent.Future
 
 class EnrolmentCheck @Inject()() {
   def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.cgtAgentEnrolmentKey))
+    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
     case None => Future.successful(false)
   }
 }
