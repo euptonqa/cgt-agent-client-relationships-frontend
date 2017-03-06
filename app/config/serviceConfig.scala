@@ -26,6 +26,7 @@ trait AppConfig {
   val reportAProblemNonJSUrl: String
   val contactFormServiceIdentifier: String
   val contactFrontendPartialBaseUrl: String
+  val contactHost: String
 }
 
 @Singleton
@@ -33,7 +34,7 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  private val contactHost = configuration.getString(s"contact-frontend.host").getOrElse("")
+  override lazy val contactHost = configuration.getString(s"contact-frontend.host").getOrElse("")
   override lazy val contactFormServiceIdentifier = "CGT-Agent-Subscription"
 
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")

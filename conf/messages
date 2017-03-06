@@ -1,3 +1,6 @@
+##Common##
+common.back "Back"
+
 ##Feedback##
 feedback.send = "Send your feedback"
 feedback.thankyou = "Your feedback"

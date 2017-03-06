@@ -16,7 +16,7 @@
 
 package controllers
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import java.net.URLEncoder
 
 import config.AppConfig
@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.partials._
 
 import scala.concurrent.Future
 
+@Singleton
 class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
                                    val wsHttp: WSHttp, val messagesApi: MessagesApi)
   extends FrontendController with PartialRetriever with I18nSupport {
@@ -42,13 +43,13 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
 
   private val TICKET_ID = "ticketId"
 
-  implicit val cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
+  implicit def cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
     override def httpGet: HttpGet = wsHttp
   }
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
 
-  implicit val readPartialsForm: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
+  implicit lazy val readPartialsForm: HttpReads[HttpResponse] = new HttpReads[HttpResponse] {
     def read(method: String, url: String, response: HttpResponse): HttpResponse = response
   }
 
@@ -67,7 +68,7 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
 
   protected def loadPartial(url: String)(implicit request: RequestHeader): HtmlPartial = ???
 
-  implicit val formPartialRetriever: FormPartialRetriever = new FormPartialRetriever {
+  implicit def formPartialRetriever: FormPartialRetriever = new FormPartialRetriever {
     override def httpGet: HttpGet = wsHttp
     override def crypto: (String) => String = cookie => SessionCookieCryptoFilter.encrypt(cookie)
   }
