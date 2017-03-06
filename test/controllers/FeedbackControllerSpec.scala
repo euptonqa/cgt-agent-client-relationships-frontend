@@ -27,7 +27,6 @@ import play.api.mvc.RequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.http.{HttpGet, HttpResponse}
 import uk.gov.hmrc.play.partials.{CachedStaticHtmlPartialRetriever, FormPartialRetriever}
 
@@ -38,9 +37,9 @@ class FeedbackControllerSpec extends ControllerSpecHelper {
   val mockHttp = mock[WSHttp]
 
   def setupController(): FeedbackController = {
-    lazy val controller = new FeedbackController()(mockConfig, messagesApi) {
+    lazy val controller = new FeedbackController()(mockConfig, mockHttp, messagesApi) {
       override implicit val cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
-        override def httpGet: HttpGet = ???
+        override def httpGet: HttpGet = mockHttp
 
         override def getPartialContent(url: String, templateParameters: Map[String, String], errorMessage: Html)(implicit request: RequestHeader): Html =
           Html("")

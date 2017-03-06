@@ -28,23 +28,24 @@ import play.twirl.api.Html
 import uk.gov.hmrc.play.frontend.controller.{FrontendController, UnauthorisedAction}
 import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
 import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.ws.WSHttp
+import config.WSHttp
 import uk.gov.hmrc.play.partials._
 
 import scala.concurrent.Future
 
 @Singleton
 class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
+                                   wsHttp: WSHttp,
                                    val messagesApi: MessagesApi)
   extends FrontendController with PartialRetriever with I18nSupport {
 
-  override val httpGet = WSHttp
-  val httpPost = WSHttp
+  override val httpGet = wsHttp
+  val httpPost = wsHttp
 
   private val TICKET_ID = "ticketId"
 
   implicit def cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
-    override def httpGet: HttpGet = WSHttp
+    override def httpGet: HttpGet = wsHttp
   }
 
   private def urlEncode(value: String) = URLEncoder.encode(value, "UTF-8")
@@ -69,7 +70,7 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   protected def loadPartial(url: String)(implicit request: RequestHeader): HtmlPartial = ???
 
   implicit def formPartialRetriever: FormPartialRetriever = new FormPartialRetriever {
-    override def httpGet: HttpGet = WSHttp
+    override def httpGet: HttpGet = wsHttp
     override def crypto: (String) => String = cookie => SessionCookieCryptoFilter.encrypt(cookie)
   }
 
