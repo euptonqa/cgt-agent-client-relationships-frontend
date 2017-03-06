@@ -119,6 +119,5 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
       val ticketId = request.session.get(TICKET_ID).getOrElse("N/A")
       val referer = request.session.get(REFERER).getOrElse("/")
       Ok(views.html.feedback.feedback_thankyou(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
-      //TODO: Create feedback thank you view
   }
 }

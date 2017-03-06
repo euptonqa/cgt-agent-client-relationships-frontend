@@ -76,7 +76,7 @@ class FeedbackControllerSpec extends ControllerSpecHelper {
   "POST /feedback" should {
     lazy val target = setupController()
     lazy val fakeRequest = FakeRequest("GET", "/")
-    lazy val fakePostRequest = FakeRequest("POST", "/calculate-your-capital-gains/feedback").withFormUrlEncodedBody("test" -> "test")
+    lazy val fakePostRequest = FakeRequest("POST", "/capital-gains-tax/subscription/agent/feedback").withFormUrlEncodedBody("test" -> "test")
     "return form with thank you for valid selections" in {
       when(mockHttp.POSTForm[HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(
         Future.successful(HttpResponse(Status.OK, responseString = Some("1234"))))
