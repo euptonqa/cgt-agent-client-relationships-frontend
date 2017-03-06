@@ -4,8 +4,8 @@
 @import config.AppConfig
 
 @(partialUrl: String, formBody: Option[Html])(implicit request: Request[_], formPartialRetriever: FormPartialRetriever,
-partialRetriever: CachedStaticHtmlPartialRetriever, messages: Messages)
+partialRetriever: CachedStaticHtmlPartialRetriever, messages: Messages, appConfig: AppConfig)
 
-@main_template(title = messages("feedback.send"), bodyClasses = None) {
+@main_template(title = messages("feedback.send"), bodyClasses = None, appConfig = appConfig) {
     @formBody.getOrElse(formPartialRetriever.getPartialContent(partialUrl))
 }

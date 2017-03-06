@@ -19,7 +19,7 @@ package controllers
 import javax.inject.Inject
 import java.net.URLEncoder
 
-import config.FrontendAppConfig
+import config.AppConfig
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -27,14 +27,15 @@ import play.api.mvc.{Action, AnyContent, Request, RequestHeader}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.frontend.controller.{FrontendController, UnauthorisedAction}
 import uk.gov.hmrc.play.frontend.filters.SessionCookieCryptoFilter
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpGet, HttpReads, HttpResponse}
+import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.partials._
 
 import scala.concurrent.Future
 
-class FeedbackController @Inject()(val wsHttp: WSHttp, val messagesApi: MessagesApi)
-  extends FrontendController with PartialRetriever with I18nSupport{
+class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
+                                   val wsHttp: WSHttp, val messagesApi: MessagesApi)
+  extends FrontendController with PartialRetriever with I18nSupport {
 
   override val httpGet = wsHttp
   val httpPost = wsHttp
@@ -66,7 +67,7 @@ class FeedbackController @Inject()(val wsHttp: WSHttp, val messagesApi: Messages
 
   protected def loadPartial(url: String)(implicit request: RequestHeader): HtmlPartial = ???
 
-  private def formPartialRetriever(implicit request: Request[AnyContent]): FormPartialRetriever = new FormPartialRetriever {
+  implicit val formPartialRetriever: FormPartialRetriever = new FormPartialRetriever {
     override def httpGet: HttpGet = wsHttp
     override def crypto: (String) => String = cookie => SessionCookieCryptoFilter.encrypt(cookie)
   }
@@ -76,15 +77,15 @@ class FeedbackController @Inject()(val wsHttp: WSHttp, val messagesApi: Messages
   def localSubmitUrl(implicit request: Request[AnyContent]): String = routes.FeedbackController.submit().url
   //TODO: Update!
 
-  private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =  s"${FrontendAppConfig.contactFrontendPartialBaseUrl}" +
+  private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =  s"${applicationConfig.contactFrontendPartialBaseUrl}" +
     s"/contact/beta-feedback/form/?submitUrl=${urlEncode(localSubmitUrl)}" +
-    s"&service=${urlEncode(FrontendAppConfig.contactFormServiceIdentifier)}&referer=${urlEncode(contactFormReferrer)}"
+    s"&service=${urlEncode(applicationConfig.contactFormServiceIdentifier)}&referer=${urlEncode(contactFormReferrer)}"
 
-  private def feedbackHmrcSubmitPartialUrl(implicit request: Request[AnyContent]) =  s"${FrontendAppConfig.contactFrontendPartialBaseUrl}" +
+  private def feedbackHmrcSubmitPartialUrl(implicit request: Request[AnyContent]) =  s"${applicationConfig.contactFrontendPartialBaseUrl}" +
     s"/contact/beta-feedback/form?resubmitUrl=${urlEncode(localSubmitUrl)}"
 
   private def feedbackThankYouPartialUrl(ticketId: String)(implicit request: Request[AnyContent]) =
-    s"${FrontendAppConfig.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
+    s"${applicationConfig.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
 
 
   def show: Action[AnyContent] = UnauthorisedAction.async {
@@ -106,11 +107,28 @@ class FeedbackController @Inject()(val wsHttp: WSHttp, val messagesApi: Messages
       }
   }
 
+  def submit: Action[AnyContent] = UnauthorisedAction.async {
+    implicit request =>
+      request.body.asFormUrlEncoded.map { formData =>
+        httpPost.POSTForm[HttpResponse](feedbackHmrcSubmitPartialUrl, formData)(rds = readPartialsForm, hc = partialsReadyHeaderCarrier).map {
+          resp =>
+            resp.status match {
+              case HttpStatus.OK => Redirect(routes.FeedbackController.thankyou()).withSession(request.session + (TICKET_ID -> resp.body))
+              case HttpStatus.BAD_REQUEST => BadRequest(views.html.feedback.feedback(feedbackFormPartialUrl, Some(Html(resp.body))))
+              case status => Logger.error(s"Unexpected status code from feedback form: $status"); InternalServerError
+            }
+        }
+      }.getOrElse {
+        Logger.error("Trying to submit an empty feedback form")
+        Future.successful(InternalServerError)
+      }
+  }
+
   def thankyou: Action[AnyContent] = UnauthorisedAction {
     implicit request =>
       val ticketId = request.session.get(TICKET_ID).getOrElse("N/A")
       val referer = request.session.get(REFERER).getOrElse("/")
-      Ok(feedback_thankyou(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
+      Ok(views.html.feedback.feedback_thankyou(feedbackThankYouPartialUrl(ticketId), referer)).withSession(request.session - REFERER)
       //TODO: Create feedback thank you view
   }
 }
