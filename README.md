@@ -1,6 +1,6 @@
 # Frontend for the Capital Gains Tax Agent-Client Relationship service
 
-[![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/hmrc/capital-gains-subscription-frontend.svg)](cgt-agent-client-relationships-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/cgt-agent-client-relationships-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/cgt-agent-client-relationships-frontend/_latestVersion)
+[![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/hmrc/cgt-agent-client-relationships-frontend.svg)](cgt-agent-client-relationships-frontend) [ ![Download](https://api.bintray.com/packages/hmrc/releases/cgt-agent-client-relationships-frontend/images/download.svg) ](https://bintray.com/hmrc/releases/cgt-agent-client-relationships-frontend/_latestVersion)
 
 ### Summary
 
