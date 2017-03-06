@@ -1,3 +1,16 @@
 # microservice specific routes
 
-GET        /hello-world             controllers.HelloWorld.helloWorld
+GET        /hello-world                         controllers.HelloWorld.helloWorld
+
+GET        /client                              controllers.AgentController.showClientList
+POST       /client                              controllers.AgentController.selectClient
+
+GET        /declaration                         controllers.AgentController.makeDeclaration
+
+GET        /client-type                         controllers.ClientController.clientType
+POST       /client-type                         controllers.ClientController.submitClientType
+
+GET        /individual/correspondence-details   controllers.ClientController.enterIndividualCorrespondenceDetails
+POST       /individual/correspondence-details   controllers.ClientController.submitIndividualCorrespondenceDetails
+
+GET        /confirmation                        controllers.ClientController.confirmation
