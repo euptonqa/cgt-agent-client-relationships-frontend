@@ -16,8 +16,8 @@
 
 package config
 
-import play.api.Play.{configuration, current}
-import uk.gov.hmrc.play.config.ServicesConfig
+import play.api.Configuration
+import javax.inject.{Inject, Singleton}
 
 trait AppConfig {
   val analyticsToken: String
@@ -26,7 +26,8 @@ trait AppConfig {
   val reportAProblemNonJSUrl: String
 }
 
-object FrontendAppConfig extends AppConfig with ServicesConfig {
+@Singleton
+class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfig {
 
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 

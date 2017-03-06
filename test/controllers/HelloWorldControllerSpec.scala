@@ -16,25 +16,25 @@
 
 package controllers
 
+import assets.ControllerSpecHelper
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-
-class HelloWorldControllerSpec extends UnitSpec with WithFakeApplication {
+class HelloWorldControllerSpec extends ControllerSpecHelper {
 
   val fakeRequest = FakeRequest("GET", "/")
 
+  val target: HelloWorld= app.injector.instanceOf[HelloWorld]
 
   "GET /" should {
     "return 200" in {
-      val result = HelloWorld.helloWorld(fakeRequest)
+      val result = target.helloWorld(fakeRequest)
       status(result) shouldBe Status.OK
     }
 
     "return HTML" in {
-      val result = HelloWorld.helloWorld(fakeRequest)
+      val result = target.helloWorld(fakeRequest)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
