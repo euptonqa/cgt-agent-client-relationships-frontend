@@ -1,0 +1,5 @@
+## Client List messages ##
+clientList.title = Client overview
+clientList.clientName = Client name
+clientList.addClient = Add a new client
+clientList.report = Report
