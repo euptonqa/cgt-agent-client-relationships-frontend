@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import java.net.URLEncoder
 
-import config.{AppConfig, WSHttp}
+import config.AppConfig
 import play.api.Logger
 import play.api.http.{Status => HttpStatus}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -77,7 +77,6 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
   def contactFormReferrer(implicit request: Request[AnyContent]): String = request.headers.get(REFERER).getOrElse("")
 
   def localSubmitUrl(implicit request: Request[AnyContent]): String = routes.FeedbackController.submit().url
-  //TODO: Update!
 
   private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =  s"${applicationConfig.contactFrontendPartialBaseUrl}" +
     s"/contact/beta-feedback/form/?submitUrl=${urlEncode(localSubmitUrl)}" +
