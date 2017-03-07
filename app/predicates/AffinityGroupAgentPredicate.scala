@@ -24,6 +24,7 @@ import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext, PageBlocked, PageIsVisible, PageVisibilityResult, _}
 import uk.gov.hmrc.play.http.HeaderCarrier
+import services.AuthorisationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
