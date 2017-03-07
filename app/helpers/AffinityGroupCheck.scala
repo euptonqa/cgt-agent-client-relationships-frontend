@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package common
+package helpers
 
-object Constants {
+import scala.concurrent.Future
+import common.Constants.AffinityGroup._
 
+object AffinityGroupCheck extends AffinityGroupCheck
 
-  object AffinityGroup {
-    val Agent = "Agent"
-    val Individual = "Individual"
-    val Organisation = "Organisation"
-  }
+trait AffinityGroupCheck {
+
+  def affinityGroupCheckAgent(affinityGroup: String): Future[Boolean] = Future.successful(affinityGroup == Agent)
+
 }
