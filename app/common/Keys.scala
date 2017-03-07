@@ -18,10 +18,6 @@ package common
 
 object Keys {
 
-  object KeystoreKeys {
-
-  }
-
   object EnrolmentKeys {
     val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
   }
