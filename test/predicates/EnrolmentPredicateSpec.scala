@@ -16,9 +16,9 @@
 
 package predicates
 
-import assets.TestUsers
 import checks.EnrolmentCheck
 import common.Keys
+import data.TestUsers
 import models.{Enrolment, Identifier}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

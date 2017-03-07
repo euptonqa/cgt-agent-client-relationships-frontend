@@ -44,5 +44,5 @@ class EnrolmentPredicate @Inject()(enrolmentCheck: EnrolmentCheck, authService: 
     }
   }
 
-  private val needsEnrolment = Future.successful(Redirect(enrolmentURI.toString))
+  private val needsEnrolment = Future.successful(Redirect(enrolmentURI))
 }

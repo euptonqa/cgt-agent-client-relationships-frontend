@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package assets
+package data
 
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
