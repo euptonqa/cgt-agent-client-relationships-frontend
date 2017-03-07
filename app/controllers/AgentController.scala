@@ -29,7 +29,7 @@ import scala.concurrent.Future
 class AgentController @Inject()(appConfig: AppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   val showClientList: Action[AnyContent] = Action.async { implicit request =>
-    //TODO remove this dummy code to view the page in browser
+    //TODO remove this dummy code - for test purposes only
     val clients: Seq[String] = Seq("Client Company 1", "Client Company 2", "Client Individual 3")
     Future.successful(Ok(views.html.clientList(appConfig, clients)))
   }
