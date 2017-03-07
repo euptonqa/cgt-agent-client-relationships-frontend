@@ -78,15 +78,15 @@ class FeedbackController @Inject()(implicit val applicationConfig: AppConfig,
 
   def localSubmitUrl(implicit request: Request[AnyContent]): String = routes.FeedbackController.submit().url
 
-  private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =  s"${applicationConfig.contactFrontendPartialBaseUrl}" +
+  private def feedbackFormPartialUrl(implicit request: Request[AnyContent]) =  s"${applicationConfig.contactFrontendService}" +
     s"/contact/beta-feedback/form/?submitUrl=${urlEncode(localSubmitUrl)}" +
     s"&service=${urlEncode(applicationConfig.contactFormServiceIdentifier)}&referer=${urlEncode(contactFormReferrer)}"
 
-  private def feedbackHmrcSubmitPartialUrl(implicit request: Request[AnyContent]) =  s"${applicationConfig.contactFrontendPartialBaseUrl}" +
+  private def feedbackHmrcSubmitPartialUrl(implicit request: Request[AnyContent]) =  s"${applicationConfig.contactFrontendService}" +
     s"/contact/beta-feedback/form?resubmitUrl=${urlEncode(localSubmitUrl)}"
 
   private def feedbackThankYouPartialUrl(ticketId: String)(implicit request: Request[AnyContent]) =
-    s"${applicationConfig.contactFrontendPartialBaseUrl}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
+    s"${applicationConfig.contactFrontendService}/contact/beta-feedback/form/confirmation?ticketId=${urlEncode(ticketId)}"
 
 
   def show: Action[AnyContent] = UnauthorisedAction {
