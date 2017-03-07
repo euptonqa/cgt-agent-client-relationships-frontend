@@ -146,7 +146,7 @@ class ClientListViewSpec extends ViewTestSpec {
 
       lazy val button = doc.getElementById("add-client")
 
-      "has the cllass button" in {
+      "has the class button" in {
         button.hasClass("button") shouldEqual true
       }
 
