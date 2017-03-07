@@ -37,10 +37,12 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   //Contact Frontend Config
+  private lazy val contactHost = configuration.getString(s"$env.microservice.services.contact-frontend.host").getOrElse("")
   override lazy val contactFrontendService: String = baseUrl("contact-frontend")
+
   override lazy val contactFormServiceIdentifier = "CGT-Agent-Client"
-  override lazy val reportAProblemPartialUrl = s"$contactFrontendService/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemNonJSUrl = s"$contactFrontendService/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
   //GA Config
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
