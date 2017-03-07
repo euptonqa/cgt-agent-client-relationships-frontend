@@ -16,13 +16,17 @@
 
 package predicates
 
+import assets.TestUsers
 import checks.EnrolmentCheck
-import models.Enrolment
+import common.Keys
+import models.{Enrolment, Identifier}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import play.api.inject.Injector
+import play.api.test.FakeRequest
 import services.AuthorisationService
+import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 import scala.concurrent.Future
@@ -32,18 +36,36 @@ class EnrolmentPredicateSpec extends UnitSpec with WithFakeApplication with Mock
   val dummyUrl = "http://example.com"
   val injector: Injector = fakeApplication.injector
   lazy val cgtCheck = injector.instanceOf[EnrolmentCheck]
+  implicit val hc = HeaderCarrier()
 
-  def mockedPredicate(response: Option[Seq[Enrolment]], enrolmentCheck: Boolean): EnrolmentPredicate = {
+  def mockedPredicate(response: Option[Seq[Enrolment]]): EnrolmentPredicate = {
     val mockService = mock[AuthorisationService]
-
-    val mockEnrolmentCheck = mock[EnrolmentCheck]
 
     when(mockService.getEnrolments(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-    new EnrolmentPredicate(cgtCheck, mockService)
+    new EnrolmentPredicate(cgtCheck, mockService)(dummyUrl)
   }
 
-  "Calling the EnrolmentPredicate"
+  "Calling the EnrolmentPredicate" should {
+
+    "return a false for users with no agent enrolment" in {
+      val enrolments = Seq(Enrolment("Not the Agent Key", Seq(Identifier("DummyKey", "DummyValue")), ""))
+      val predicate = mockedPredicate(Some(enrolments))
+      val authContext = TestUsers.create200ConfidenceUserAuthContext
+      val result = predicate.apply(authContext, FakeRequest())
+
+      await(result).isVisible shouldBe false
+    }
+
+    "return true for users with an agent enrolment" in {
+      val enrolments = Seq(Enrolment(Keys.EnrolmentKeys.agentEnrolmentKey, Seq(Identifier("DummyKey", "DummyValue")), ""))
+      val predicate = mockedPredicate(Some(enrolments))
+      val authContext = TestUsers.create200ConfidenceUserAuthContext
+      val result = predicate.apply(authContext, FakeRequest())
+
+      await(result).isVisible shouldBe true
+    }
+  }
 
 }

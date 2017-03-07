@@ -16,18 +16,20 @@
 
 package predicates
 
-import java.net.URI
 import javax.inject.Inject
+
 import play.api.mvc.Results._
 import checks.EnrolmentCheck
 import play.api.mvc.{AnyContent, Request}
 import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.auth._
+import uk.gov.hmrc.play.http.HeaderCarrier
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
 class EnrolmentPredicate @Inject()(enrolmentCheck: EnrolmentCheck, authService: AuthorisationService)
-                                  (enrolmentURI: String) extends PageVisibilityPredicate {
+                                  (enrolmentURI: String)(implicit hc: HeaderCarrier) extends PageVisibilityPredicate {
 
   override def apply(authContext: AuthContext, request: Request[AnyContent]): Future[PageVisibilityResult] = {
     for {
