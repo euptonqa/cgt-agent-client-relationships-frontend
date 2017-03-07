@@ -39,7 +39,7 @@ class ClientListViewSpec extends ViewTestSpec {
         doc.select("h1").text() shouldEqual messages.title
       }
 
-      "should have the class visually hidden" in {
+      "should have the class heading-xlarge" in {
         doc.select("h1").hasClass("heading-xlarge") shouldEqual true
       }
     }
