@@ -22,7 +22,7 @@ import play.api.http.Status._
 import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.http.ws.WSHttp
+import config.WSHttp
 import models.{AuthorisationDataModel, Enrolment}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,15 +37,14 @@ class AuthorisationConnector @Inject()(http: WSHttp) extends ServicesConfig {
     http.GET[HttpResponse](getUrl).map {
       response =>
         response.status match {
-          case OK => {
+          case OK =>
             val confidenceLevel = (response.json \ "confidenceLevel").as[ConfidenceLevel]
             val uri = (response.json \ "uri").as[String]
             val credStrength = (response.json \ "credentialStrength").as[CredentialStrength]
             val affinityGroup = (response.json \ "affinityGroup").as[String]
             val accounts = (response.json \ "accounts").as[Accounts]
-
             Some(AuthorisationDataModel(credStrength, affinityGroup, confidenceLevel, uri, accounts))
-          }
+
           case _ => None
         }
     }

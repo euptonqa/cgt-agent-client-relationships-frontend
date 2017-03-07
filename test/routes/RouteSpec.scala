@@ -16,9 +16,9 @@
 
 package routes
 
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class RouteSpec extends UnitSpec {
+class RouteSpec extends UnitSpec with WithFakeApplication {
 
   "The URL for the AgentController .showClientList action" should {
     "be equal to /capital-gains-tax/subscription/agent/client" in {

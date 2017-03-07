@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import connectors.AuthorisationConnector
+package connectors
+
+import common.Constants.AffinityGroup
+import config.WSHttp
 import models.{AuthorisationDataModel, Enrolment, Identifier}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -24,10 +27,7 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.domain.Generator
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{ConfidenceLevel, CredentialStrength}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.http.ws.WSHttp
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import common.Constants.AffinityGroup
-import config.WSHttp
 
 import scala.concurrent.Future
 import scala.util.Random
@@ -36,7 +36,7 @@ class AuthorisationConnectorSpec extends UnitSpec with MockitoSugar with WithFak
 
   def randomNino: String = new Generator(new Random()).nextNino.nino.replaceFirst("MA", "AA")
   implicit val hc = HeaderCarrier()
-  val nino = randomNino
+  val nino: String = randomNino
 
   def affinityResponse(key: String, nino: String): JsValue = Json.parse(
     s"""{"uri":"/auth/oid/57e915480f00000f006d915b","confidenceLevel":200,"credentialStrength":"strong",
