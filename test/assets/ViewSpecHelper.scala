@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
-
-import javax.inject.{Inject, Singleton}
+package assets
 
 import config.AppConfig
+import org.scalatestplus.play.OneAppPerSuite
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
-import uk.gov.hmrc.play.frontend.controller.FrontendController
+import play.api.test.FakeRequest
+import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
+trait ViewSpecHelper extends UnitSpec with OneAppPerSuite with I18nSupport {
 
-@Singleton
-class AgentController @Inject()(appConfig: AppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+  lazy implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  lazy implicit val fakeRequest = FakeRequest()
 
-  val showClientList = TODO
-
-  val selectClient = TODO
-
-  //TODO add authorised user checks to action
-  val makeDeclaration = Action.async { implicit request =>
-    Future.successful(Ok(views.html.confirmPermission(appConfig)))
-  }
+  lazy val config: AppConfig = app.injector.instanceOf[AppConfig]
 }

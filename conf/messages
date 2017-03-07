@@ -1,0 +1,6 @@
+## Common Messages ##
+common.continue = Continue
+
+## Confirm Permission Messages ##
+confirmPermission.title = Confirm you have permission
+confirmPermission.body = By continuing, you confirm that you have permission to act on your client''s behalf.

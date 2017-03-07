@@ -16,18 +16,14 @@
 
 package assets
 
-import akka.stream.Materializer
-import config.AppConfig
-import org.scalatest.mock.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.i18n.MessagesApi
-import uk.gov.hmrc.play.test.UnitSpec
+object MessageLookup {
 
-trait ControllerSpecHelper extends UnitSpec with MockitoSugar with OneAppPerSuite {
+  object Common {
+    val continue = "Continue"
+  }
 
-  val config: AppConfig = app.injector.instanceOf[AppConfig]
-  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-
-  implicit val mat: Materializer = app.injector.instanceOf[Materializer]
-
+  object ConfirmPermission {
+    val title = "Confirm you have permission"
+    val body = "By continuing, you confirm that you have permission to act on your client's behalf."
+  }
 }
