@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package helpers
+package checks
 
-import uk.gov.hmrc.play.test.UnitSpec
 import common.Constants.AffinityGroup.{Individual, Organisation, _}
+import uk.gov.hmrc.play.test.UnitSpec
 
 class AffinityGroupCheckSpec extends UnitSpec{
 

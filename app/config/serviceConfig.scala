@@ -19,6 +19,8 @@ package config
 import play.api.Configuration
 import javax.inject.{Inject, Singleton}
 
+import uk.gov.hmrc.play.config.ServicesConfig
+
 trait AppConfig {
   val analyticsToken: String
   val analyticsHost: String
@@ -30,16 +32,19 @@ trait AppConfig {
 }
 
 @Singleton
-class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfig {
+class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfig with ServicesConfig {
 
+  //This loads only from the root of the application config file.
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  override lazy val contactHost = configuration.getString(s"contact-frontend.host").getOrElse("")
-  override lazy val contactFormServiceIdentifier = "CGT-Agent-Subscription"
-
-  override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
-  override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
+  //Contact Frontend Config
+  override lazy val contactHost: String = baseUrl("contact-frontend")
+  override lazy val contactFormServiceIdentifier = "CGT-Agent-Client-Subscription"
   override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   override lazy val contactFrontendPartialBaseUrl = s"$contactHost"
+
+  //GA Config
+  override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
+  override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
 }
