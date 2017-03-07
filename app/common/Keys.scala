@@ -17,7 +17,6 @@
 package common
 
 object Keys {
-
   object EnrolmentKeys {
     val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
   }

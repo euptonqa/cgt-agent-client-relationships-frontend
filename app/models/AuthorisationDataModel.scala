@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object Constants {
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength}
 
-
-  object AffinityGroup {
-    val Agent = "Agent"
-    val Individual = "Individual"
-    val Organisation = "Organisation"
-  }
-}
+case class AuthorisationDataModel(credentialStrength: CredentialStrength,
+                             affinityGroup: String,
+                             confidenceLevel: ConfidenceLevel,
+                             uri: String,
+                             accounts: Accounts)
