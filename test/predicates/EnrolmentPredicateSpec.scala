@@ -16,7 +16,7 @@
 
 package predicates
 
-import assets.TestUsers
+import data.TestUsers
 import checks.EnrolmentCheck
 import common.Keys
 import models.{Enrolment, Identifier}

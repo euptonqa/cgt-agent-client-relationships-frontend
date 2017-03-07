@@ -14,14 +14,63 @@
  * limitations under the License.
  */
 
-package assets
+package data
 
+import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain._
+
+import scala.util.Random
 
 object TestUsers {
+
+  def createRandomNino: String = new Generator(new Random()).nextNino.nino.replaceFirst("MA", "AA")
+
+  val testNINO = createRandomNino
+
+  val weakUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Weak, ConfidenceLevel.L50, None, Some("testEnrolmentUri"), None, ""))
+  }
+
+  val strongUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong, ConfidenceLevel.L50, None, Some("testEnrolmentUri"), None, ""))
+  }
+
+  val create100ConfidenceUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong,
+      ConfidenceLevel.L100, None, Some("testEnrolmentUri"), None, ""))
+  }
+
   val create200ConfidenceUserAuthContext: AuthContext = {
     AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong,
       ConfidenceLevel.L200, None, Some("testEnrolmentUri"), None, ""))
+  }
+
+  val create300ConfidenceUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong,
+      ConfidenceLevel.L300, None, Some("testEnrolmentUri"), None, ""))
+  }
+
+  val create500ConfidenceUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong,
+      ConfidenceLevel.L500, None, Some("testEnrolmentUri"), None, ""))
+  }
+  val noCredUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.None, ConfidenceLevel.L50, None, Some("testEnrolmentUri"), None, ""))
+  }
+
+  val userWithNINO: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(paye = Some(PayeAccount(s"/paye/$testNINO", Nino(testNINO)))), None, None,
+      CredentialStrength.None, ConfidenceLevel.L50, None, None, None, ""))
+  }
+
+  val visibilityPredicateUserPass: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(paye= Some(PayeAccount(s"/paye/$testNINO", Nino(testNINO)))), None, None,
+      CredentialStrength.Strong, ConfidenceLevel.L500, None, Some("testEnrolmentUri"), None, ""))
+  }
+
+  val visibilityPredicateUserFail: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None,
+      CredentialStrength.Weak, ConfidenceLevel.L50, None, None, None, ""))
   }
 }
