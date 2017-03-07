@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package common
+package assets
 
-object Keys {
-  object EnrolmentKeys {
-    val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
+import uk.gov.hmrc.play.frontend.auth.AuthContext
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
+
+object TestUsers {
+  val create200ConfidenceUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong,
+      ConfidenceLevel.L200, None, Some("testEnrolmentUri"), None, ""))
   }
 }

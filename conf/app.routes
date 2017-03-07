@@ -14,3 +14,7 @@ GET        /individual/correspondence-details   controllers.ClientController.ent
 POST       /individual/correspondence-details   controllers.ClientController.submitIndividualCorrespondenceDetails
 
 GET        /confirmation                        controllers.ClientController.confirmation
+
+GET        /feedback                            controllers.FeedbackController.show
+POST       /feedback                            controllers.FeedbackController.submit
+GET        /thankyou                            controllers.FeedbackController.thankyou

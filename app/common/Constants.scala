@@ -16,8 +16,12 @@
 
 package common
 
-object Keys {
-  object EnrolmentKeys {
-    val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
+object Constants {
+
+
+  object AffinityGroup {
+    val Agent = "Agent"
+    val Individual = "Individual"
+    val Organisation = "Organisation"
   }
 }

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object Keys {
-  object EnrolmentKeys {
-    val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
-  }
-}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength}
+
+case class AuthorisationDataModel(credentialStrength: CredentialStrength,
+                             affinityGroup: String,
+                             confidenceLevel: ConfidenceLevel,
+                             uri: String,
+                             accounts: Accounts)

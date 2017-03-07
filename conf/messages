@@ -3,3 +3,10 @@ clientList.title = Client overview
 clientList.clientName = Client name
 clientList.addClient = Add a new client
 clientList.report = Report
+
+## Common ##
+common.back = Back
+
+## Feedback ##
+feedback.send = Send your feedback
+feedback.thankyou = Your feedback
