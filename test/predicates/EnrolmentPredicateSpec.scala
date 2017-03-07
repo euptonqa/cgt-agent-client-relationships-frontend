@@ -16,16 +16,34 @@
 
 package predicates
 
-import uk.gov.hmrc.play.test.UnitSpec
+import checks.EnrolmentCheck
+import models.Enrolment
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito._
+import org.scalatest.mock.MockitoSugar
+import play.api.inject.Injector
+import services.AuthorisationService
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class EnrolmentPredicateSpec extends UnitSpec {
+import scala.concurrent.Future
+
+class EnrolmentPredicateSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
 
   val dummyUrl = "http://example.com"
+  val injector: Injector = fakeApplication.injector
+  lazy val cgtCheck = injector.instanceOf[EnrolmentCheck]
 
-  "Calling the EnrolmentPredicate" should {
-    "return a false for users who are unenrolled" in {
+  def mockedPredicate(response: Option[Seq[Enrolment]], enrolmentCheck: Boolean): EnrolmentPredicate = {
+    val mockService = mock[AuthorisationService]
 
-    }
+    val mockEnrolmentCheck = mock[EnrolmentCheck]
+
+    when(mockService.getEnrolments(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(response))
+
+    new EnrolmentPredicate(cgtCheck, mockService)
   }
+
+  "Calling the EnrolmentPredicate"
 
 }

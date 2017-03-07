@@ -17,7 +17,6 @@
 package checks
 
 import common.Constants.AffinityGroup.{Individual, Organisation, _}
-import helpers.AffinityGroupCheck
 import uk.gov.hmrc.play.test.UnitSpec
 
 class AffinityGroupCheckSpec extends UnitSpec{

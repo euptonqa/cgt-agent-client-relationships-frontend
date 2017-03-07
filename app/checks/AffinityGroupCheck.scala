@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package helpers
+package checks
+
+import common.Constants.AffinityGroup._
 
 import scala.concurrent.Future
-import common.Constants.AffinityGroup._
 
 object AffinityGroupCheck extends AffinityGroupCheck
 
