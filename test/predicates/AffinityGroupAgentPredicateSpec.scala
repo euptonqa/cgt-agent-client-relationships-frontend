@@ -20,7 +20,7 @@ import java.net.URI
 
 import common.Constants.AffinityGroup._
 import connectors.AuthorisationConnector
-import data.TestUserBuilder
+import data.TestUsers
 import models.AuthorisationDataModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -56,7 +56,7 @@ class AffinityGroupAgentPredicateSpec extends UnitSpec with WithFakeApplication 
       val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, Agent, ConfidenceLevel.L200, "", Accounts())), None)
 
       val predicate = new AffinityGroupAgentPredicate(service)(dummyUri)
-      val authContext = TestUserBuilder.weakUserAuthContext
+      val authContext = TestUsers.weakUserAuthContext
 
       val result = predicate(authContext, FakeRequest())
       val pageVisibility = await(result)
@@ -69,7 +69,7 @@ class AffinityGroupAgentPredicateSpec extends UnitSpec with WithFakeApplication 
       val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, Organisation, ConfidenceLevel.L200, "", Accounts())), None)
 
       val predicate = new AffinityGroupAgentPredicate(service)(dummyUri)
-      val authContext = TestUserBuilder.weakUserAuthContext
+      val authContext = TestUsers.weakUserAuthContext
 
       val result = predicate(authContext, FakeRequest())
       val pageVisibility = await(result)
@@ -82,7 +82,7 @@ class AffinityGroupAgentPredicateSpec extends UnitSpec with WithFakeApplication 
       val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, Individual, ConfidenceLevel.L200, "", Accounts())), None)
 
       val predicate = new AffinityGroupAgentPredicate(service)(dummyUri)
-      val authContext = TestUserBuilder.noCredUserAuthContext
+      val authContext = TestUsers.noCredUserAuthContext
 
       val result = predicate(authContext, FakeRequest())
       val pageVisibility = await(result)
