@@ -1,20 +1,3 @@
-import config.WSHttp
-import connectors.AuthorisationConnector
-import models.AuthorisationDataModel
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
-import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.domain.Generator
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{ConfidenceLevel, CredentialStrength}
-import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.http.ws.WSHttp
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-
-import scala.concurrent.Future
-import scala.util.Random
-
 /*
  * Copyright 2017 HM Revenue & Customs
  *
@@ -31,10 +14,29 @@ import scala.util.Random
  * limitations under the License.
  */
 
+import connectors.AuthorisationConnector
+import models.{AuthorisationDataModel, Enrolment, Identifier}
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito._
+import org.scalatest.mock.MockitoSugar
+import play.api.http.Status._
+import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.domain.Generator
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{ConfidenceLevel, CredentialStrength}
+import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.play.http.ws.WSHttp
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import common.Constants.AffinityGroup
+import config.WSHttp
+
+import scala.concurrent.Future
+import scala.util.Random
+
 class AuthorisationConnectorSpec extends UnitSpec with MockitoSugar with WithFakeApplication {
 
   def randomNino: String = new Generator(new Random()).nextNino.nino.replaceFirst("MA", "AA")
   implicit val hc = HeaderCarrier()
+  val nino = randomNino
 
   def affinityResponse(key: String, nino: String): JsValue = Json.parse(
     s"""{"uri":"/auth/oid/57e915480f00000f006d915b","confidenceLevel":200,"credentialStrength":"strong",
@@ -85,6 +87,49 @@ class AuthorisationConnectorSpec extends UnitSpec with MockitoSugar with WithFak
         .thenReturn(Future.successful(HttpResponse(BAD_REQUEST, Some(affinityResponse("Individual", nino)))))
       await(target.getAuthResponse()(hc)) shouldBe None
     }
+  }
+
+
+
+  def setupConnector(jsonString: String, status: Int): AuthorisationConnector = {
+
+    val mockHttp = mock[WSHttp]
+
+    when(mockHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(HttpResponse(status, Some(Json.parse(jsonString)))))
+
+    new AuthorisationConnector(mockHttp)
+  }
+
+  "Calling .getEnrolments" should {
+
+    "return a None with a failed response" in {
+      val target = setupConnector("[]", 500)
+      val result = target.getEnrolmentsResponse("")
+
+      await(result) shouldBe None
+    }
+
+    "return an empty sequence with an empty json response" in {
+      val target = setupConnector("[]", 200)
+      val result = target.getEnrolmentsResponse("")
+
+      await(result) shouldBe Some(Seq())
+    }
+
+    "return a valid sequence with an single enrolment" in {
+      val target = setupConnector("""[{"key":"key","identifiers":[],"state":"state"}]""", 200)
+      val result = target.getEnrolmentsResponse("")
+
+      await(result) shouldBe Some(Seq(new Enrolment("key", Seq(), "state")))
+    }
+
+    "return a valid sequence with multiple enrolments" in {
+      val target = setupConnector(
+        """[{"key":"key","identifiers":[],"state":"state"},{"key":"key2","identifiers":[{"key":"key","value":"value"}],"state":"state2"}]""", 200)
+      val result = target.getEnrolmentsResponse("")
+
+      await(result) shouldBe Some(Seq(new Enrolment("key", Seq(), "state"), new Enrolment("key2", Seq(new Identifier("key", "value")), "state2")))
     }
   }
 }

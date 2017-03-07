@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLev
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.http.ws.WSHttp
 import models.{AuthorisationDataModel, Enrolment}
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AuthorisationConnector @Inject()(http: WSHttp) extends ServicesConfig {
