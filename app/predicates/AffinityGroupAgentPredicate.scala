@@ -19,7 +19,7 @@ package predicates
 import java.net.URI
 import javax.inject.Inject
 
-import helpers.AffinityGroupCheck
+import checks.AffinityGroupCheck
 import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Request}
 import uk.gov.hmrc.play.frontend.auth.{AuthContext, PageBlocked, PageIsVisible, PageVisibilityResult, _}
