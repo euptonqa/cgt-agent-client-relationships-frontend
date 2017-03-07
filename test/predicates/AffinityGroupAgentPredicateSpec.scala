@@ -46,7 +46,7 @@ class AffinityGroupAgentPredicateSpec extends UnitSpec with WithFakeApplication 
     new AuthorisationService(mockConnector)
   }
 
-  val dummyUri = new URI("http://example.com")
+  val dummyUri = "http://example.com"
   implicit val hc = mock[HeaderCarrier]
 
   "Instantiating AffinityGroupIndividualPredicate" when {

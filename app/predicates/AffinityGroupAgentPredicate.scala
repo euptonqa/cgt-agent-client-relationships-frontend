@@ -29,10 +29,10 @@ import services.AuthorisationService
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AffinityGroupAgentPredicate @Inject()(authorisationService: AuthorisationService)(errorPageUri: URI)
+class AffinityGroupAgentPredicate @Inject()(authorisationService: AuthorisationService)(errorPageUri: String)
   extends PageVisibilityPredicate {
 
-  private val errorPage = Future.successful(Redirect(errorPageUri.toString))
+  private val errorPage = Future.successful(Redirect(errorPageUri))
 
   private def pageVisibility(check: Boolean): PageVisibilityResult = {
     if (check) PageIsVisible
