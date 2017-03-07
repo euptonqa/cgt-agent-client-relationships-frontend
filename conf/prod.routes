@@ -1,5 +1,5 @@
 # Add all the application routes to the app.routes file
-->         /capital-gains-tax/subscription/agent                app.Routes
+->         /capital-gains-tax/agent                             app.Routes
 ->         /                                                    health.Routes
 ->     	   /template                                            template.Routes
 
