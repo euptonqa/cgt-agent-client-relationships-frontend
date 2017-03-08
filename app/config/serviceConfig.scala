@@ -49,5 +49,5 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
 
-  override lazy val governmentGatewayContextUrl: String = loadConfig("microservice.services.government-gateway.context")
+  override val governmentGatewayContextUrl: String = loadConfig("microservice.services.government-gateway.context")
 }

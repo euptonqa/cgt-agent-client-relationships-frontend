@@ -18,10 +18,15 @@ package common
 
 object Constants {
 
-
   object AffinityGroup {
     val Agent = "Agent"
     val Individual = "Individual"
     val Organisation = "Organisation"
+  }
+
+  object Audit {
+    val splunk: String = "SPLUNK AUDIT:\n"
+    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
+    val eventTypeFailure: String = "CGTFailure"
   }
 }

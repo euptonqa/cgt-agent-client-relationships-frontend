@@ -16,97 +16,86 @@
 
 package connectors
 
+import java.util.UUID
+
 import audit.Logging
 import config.ApplicationConfig
+import models.{Client, IdentifierForDisplay}
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
+import org.scalatest.mock.MockitoSugar
+import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status._
-import traits.ControllerSpecHelper
+import play.api.libs.json.Json
 import uk.gov.hmrc.play.http._
+import uk.gov.hmrc.play.http.logging.SessionId
 import uk.gov.hmrc.play.http.ws.WSHttp
+import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class GovernmentGatewayConnectorSpec extends ControllerSpecHelper with BeforeAndAfter {
+class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with MockitoSugar with BeforeAndAfter {
 
   val mockWSHttp: WSHttp = mock[WSHttp]
   val mockLoggingUtils: Logging = mock[Logging]
-  val mockAppConfig: ApplicationConfig = mock[ApplicationConfig]
-  implicit val hc = mock[HeaderCarrier]
+  lazy val mockAppConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
   implicit val ec = mock[ExecutionContext]
 
-  object GovernmentGatewayConnector extends GovernmentGatewayConnector(mockAppConfig, mockLoggingUtils) {
+  object TestGovernmentGatewayConnector extends GovernmentGatewayConnector(mockAppConfig, mockLoggingUtils) {
     override val http: HttpPut with HttpGet with HttpPost = mockWSHttp
+    override val serviceContext: String = ""
+    override lazy val serviceUrl: String = ""
   }
 
   before {
     reset(mockWSHttp)
   }
 
-  "httpRds" should {
+  "Calling .getExistingClients" when {
 
-    "return the http response when a OK status code is read from the http response" in {
-      val response = HttpResponse(OK)
-      GovernmentGatewayConnector.httpRds.read("http://", "testUrl", response) shouldBe response
-    }
+    implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
 
-    "return a not found exception when it reads a NOT_FOUND status code from the http response" in {
-      intercept[NotFoundException] {
-        GovernmentGatewayConnector.httpRds.read("http://", "testUrl", HttpResponse(NOT_FOUND))
+    "an OK response is returned" when {
+
+      "the client list is not empty" should {
+
+        val identifier = IdentifierForDisplay("CGT ref", "CGT123456")
+        val clients = List(Client("John Smith", List(identifier)))
+
+        when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+          .thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(Json.toJson(clients)))))
+
+        val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+
+        "return a SuccessGovernmentGatewayResponse with a list of clients" in {
+          result shouldEqual SuccessGovernmentGatewayResponse(clients)
+        }
+      }
+
+      "the client list is empty" should {
+
+        when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+          .thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(Json.toJson(List.empty[Client])))))
+
+        val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+
+        "return a SuccessGovernmentGatewayResponse with an empty list of clients" in {
+          result shouldEqual SuccessGovernmentGatewayResponse(List.empty[Client])
+        }
       }
     }
-  }
 
-//  "Calling .getExistingClients" should {
-//
-//    "when "
-//  }
+    "A BAD_REQUEST is returned" should {
 
-  "Calling .customGovernmentGatewayRead" should {
+      when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(HttpResponse(BAD_REQUEST, responseJson = Some(Json.obj("reason" -> "y")))))
 
-    "return the HttpResponse on a bad request" in {
-      val response = HttpResponse(BAD_REQUEST)
-      await(GovernmentGatewayConnector.customGovernmentGatewayRead("", "", response)) shouldBe response
-    }
+      val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
 
-    "throw a NotFoundException" in {
-      val response = HttpResponse(NOT_FOUND)
-      val ex = intercept[NotFoundException] {
-        await(GovernmentGatewayConnector.customGovernmentGatewayRead("", "", response))
+      "return a FailedGovernmentGatewayResponse" in {
+        result shouldEqual FailedGovernmentGatewayResponse
       }
-      ex.getMessage shouldBe "Government Gateway returned a Not Found status"
-    }
-
-    "throw an InternalServerException" in {
-      val response = HttpResponse(INTERNAL_SERVER_ERROR)
-      val ex = intercept[InternalServerException] {
-        await(GovernmentGatewayConnector.customGovernmentGatewayRead("", "", response))
-      }
-      ex.getMessage shouldBe "Government Gateway returned an internal server error"
-    }
-
-    "throw an BadGatewayException" in {
-      val response = HttpResponse(BAD_GATEWAY)
-      val ex = intercept[BadGatewayException] {
-        await(GovernmentGatewayConnector.customGovernmentGatewayRead("", "", response))
-      }
-      ex.getMessage shouldBe "Government Gateway returned an upstream error"
-    }
-
-    "return an Upstream4xxResponse when an uncaught 4xx Http response status is found" in {
-      val response = HttpResponse(METHOD_NOT_ALLOWED)
-      val ex = intercept[Upstream4xxResponse] {
-        await(GovernmentGatewayConnector.customGovernmentGatewayRead("http://", "testUrl", response))
-      }
-      ex.getMessage shouldBe "http:// of 'testUrl' returned 405. Response body: 'null'"
-    }
-
-    "return an Upstream5xxResponse when an uncaught 5xx Http response status is found" in {
-      val response = HttpResponse(HTTP_VERSION_NOT_SUPPORTED)
-      val ex = intercept[Upstream5xxResponse] {
-        await(GovernmentGatewayConnector.customGovernmentGatewayRead("http://", "testUrl", response))
-      }
-      ex.getMessage shouldBe "http:// of 'testUrl' returned 505. Response body: 'null'"
     }
   }
 }

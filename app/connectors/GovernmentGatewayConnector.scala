@@ -26,7 +26,10 @@ import config.Keys.GovernmentGateway._
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.logging.Authorization
 import models.Client
+import play.api.Logger
+import common.Constants.Audit._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 sealed trait GovernmentGatewayResponse
@@ -43,36 +46,42 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
   val urlHeaderEnvironment: String = ""
   val urlHeaderAuthorization: String = ""
 
-  implicit val httpRds = new HttpReads[HttpResponse] {
-    def read(http: String, url: String, res: HttpResponse): HttpResponse = customGovernmentGatewayRead(http, url, res)
-  }
+//  implicit val httpRds = new HttpReads[HttpResponse] {
+//    def read(http: String, url: String, res: HttpResponse): HttpResponse = customGovernmentGatewayRead(http, url, res)
+//  }
 
-  @inline
-  private def cGET[O](url: String, queryParams: Seq[(String, String)] = Seq.empty)(implicit rds: HttpReads[O], hc: HeaderCarrier) = {
-    http.GET[O](url, queryParams)(rds, hc = createHeaderCarrier(hc))
-  }
+//  @inline
+//  private def cGET[O](url: String)(implicit rds: HttpReads[O], hc: HeaderCarrier) = {
+//    http.GET[O](url)(rds, hc = createHeaderCarrier(hc))
+//  }
+//
+//  private def createHeaderCarrier(headerCarrier: HeaderCarrier): HeaderCarrier = {
+//    headerCarrier.
+//      withExtraHeaders("Environment" -> urlHeaderEnvironment).
+//      copy(authorization = Some(Authorization(urlHeaderAuthorization)))
+//  }
 
-  private def createHeaderCarrier(headerCarrier: HeaderCarrier): HeaderCarrier = {
-    headerCarrier.
-      withExtraHeaders("Environment" -> urlHeaderEnvironment).
-      copy(authorization = Some(Authorization(urlHeaderAuthorization)))
-  }
-
-  private[connectors] def customGovernmentGatewayRead(http: String, url: String, response: HttpResponse) = {
-    response.status match {
-      case BAD_REQUEST => response
-      case NOT_FOUND => response
-      case INTERNAL_SERVER_ERROR => throw new InternalServerException("Government Gateway responded with INTERNAL_SERVER_ERROR")
-      case BAD_GATEWAY => throw new BadGatewayException("Government Gateway returned an upstream error")
-      case _ => handleResponse(http, url)(response)
-    }
-  }
+//  private[connectors] def customGovernmentGatewayRead(http: String, url: String, response: HttpResponse) = {
+//    response.status match {
+//      case BAD_REQUEST => response
+//      case NOT_FOUND => response
+//      case INTERNAL_SERVER_ERROR => throw new InternalServerException("Government Gateway responded with INTERNAL_SERVER_ERROR")
+//      case BAD_GATEWAY => throw new BadGatewayException("Government Gateway returned an upstream error")
+//      case _ => handleResponse(http, url)(response)
+//    }
+//  }
 
   def getExistingClients(arn: String)(implicit hc: HeaderCarrier): Future[GovernmentGatewayResponse] = {
     val getUrl = s"""$serviceUrl/$serviceContext/$arn/client-list/$clientServiceName/$assignedTo"""
-    http.GET[HttpResponse](getUrl) map { response =>
+    val auditMap: Map[String, String] = Map("ARN" -> arn, "Url" -> getUrl)
+    val result = http.GET[HttpResponse](getUrl)
+     result.map { response =>
       response.status match {
         case OK => SuccessGovernmentGatewayResponse(response.json.as[List[Client]])
+        case BAD_REQUEST =>
+          Logger.warn(s"Government Gateway returned a bad request with the request $getUrl with ${response.body}")
+          auditLogger.audit(transactionGetClientList, auditMap, eventTypeFailure)
+          FailedGovernmentGatewayResponse
       }
     }
   }
