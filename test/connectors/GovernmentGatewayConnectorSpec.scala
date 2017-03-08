@@ -109,5 +109,17 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
         result shouldEqual FailedGovernmentGatewayResponse
       }
     }
+
+    "An unhandled response is returned" should {
+
+      when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = 507, responseJson = Some(Json.obj("reason" -> "y")))))
+
+      val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+
+      "return a FailedGovernmentGatewayResponse" in {
+        result shouldEqual FailedGovernmentGatewayResponse
+      }
+    }
   }
 }

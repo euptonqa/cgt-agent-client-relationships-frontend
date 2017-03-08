@@ -63,6 +63,10 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
           Logger.warn(s"Government Gateway returned an internal server error with the request $getUrl with ${response.body}")
           auditLogger.audit(transactionGetClientList, auditMap, eventTypeFailure)
           FailedGovernmentGatewayResponse
+        case ex =>
+          Logger.warn(s"Government Gateway returned an unexpected $ex error with the request $getUrl with ${response.body}")
+          auditLogger.audit(transactionGetClientList, auditMap, eventTypeFailure)
+          FailedGovernmentGatewayResponse
       }
     }
   }
