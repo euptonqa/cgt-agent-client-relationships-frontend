@@ -28,6 +28,11 @@ trait AppConfig {
   val reportAProblemNonJSUrl: String
   val contactFormServiceIdentifier: String
   val contactFrontendService: String
+  val agentPostSignIn: String
+  val governmentGatewaySignIn: String
+  val notAuthorisedRedirect: String
+  val badAffinity: String
+  val noEnrolment: String
 }
 
 @Singleton
@@ -45,4 +50,10 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   //GA Config
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
+
+  override lazy val agentPostSignIn: String = configuration.getString(s"agent-sign-in.url").getOrElse("")
+  override lazy val governmentGatewaySignIn: String = configuration.getString(s"government-gateway-sign-in.host").getOrElse("")
+  override lazy val notAuthorisedRedirect: String = configuration.getString(s"not-authorised-callback.url").getOrElse("")
+  override lazy val badAffinity: String = configuration.getString(s"agent-bad-affinity.url").getOrElse("")
+  override lazy val noEnrolment: String = configuration.getString(s"no-enrolment.url").getOrElse("")
 }
