@@ -18,7 +18,7 @@ package auth
 
 import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
 
-class class GovernmentGatewayProvider(postSignInRedirectUrl: String, loginUrl: String) extends GovernmentGateway {
+case class GovernmentGatewayProvider(postSignInRedirectUrl: String, loginUrl: String) extends GovernmentGateway {
 
   override def continueURL: String = postSignInRedirectUrl
 

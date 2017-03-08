@@ -1,8 +1,3 @@
-import auth.CgtAgent
-import play.api.mvc.{AnyContent, Request, Result}
-
-import scala.concurrent.Future
-
 /*
  * Copyright 2017 HM Revenue & Customs
  *
@@ -18,7 +13,13 @@ import scala.concurrent.Future
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import auth.CgtAgent
+import play.api.mvc.{AnyContent, Request, Result}
+
+import scala.concurrent.Future
+
 package object auth {
-  type AuthenticatedAgentAction = CgtAgent => Request[AnyContent] => Future[Result]
+  type AuthenticatedAction = CgtAgent => Request[AnyContent] => Future[Result]
 
 }

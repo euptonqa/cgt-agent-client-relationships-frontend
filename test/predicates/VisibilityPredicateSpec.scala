@@ -38,7 +38,7 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 import scala.concurrent.Future
 
-class AgentVisibilityPredicateSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
+class VisibilityPredicateSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
   def mockedService(authorisationDataModel: Option[AuthorisationDataModel],
                     enrolments: Option[Seq[Enrolment]],
                     enrolmentUri: String = "http://enrolments-uri.com",
@@ -60,8 +60,8 @@ class AgentVisibilityPredicateSpec extends UnitSpec with WithFakeApplication wit
   val injector: Injector = fakeApplication.injector
   val enrolmentsCheck = injector.instanceOf[EnrolmentCheck]
 
-  def predicate(dataModel: Option[AuthorisationDataModel], enrolments: Option[Seq[Enrolment]], affinityGroup: String="Agent"): AgentVisibilityPredicate = {
-    new AgentVisibilityPredicate(enrolmentsCheck, mockedService(dataModel, enrolments, affinityGroup=affinityGroup))("example.com","exampletwo.com")}
+  def predicate(dataModel: Option[AuthorisationDataModel], enrolments: Option[Seq[Enrolment]], affinityGroup: String="Agent"): VisibilityPredicate = {
+    new VisibilityPredicate(enrolmentsCheck, mockedService(dataModel, enrolments, affinityGroup=affinityGroup))("example.com","exampletwo.com")}
 
   "return true for page visibility when the component predicates' conditions are met" in {
     val authContext = TestUsers.create500ConfidenceUserAuthContext

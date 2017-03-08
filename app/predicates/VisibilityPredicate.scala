@@ -23,12 +23,12 @@ import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.auth.{CompositePageVisibilityPredicate, PageVisibilityPredicate}
 import uk.gov.hmrc.play.http.HeaderCarrier
 
-class AgentVisibilityPredicate @Inject()(enrolmentCheck: EnrolmentCheck, authorisationService: AuthorisationService)
+class VisibilityPredicate @Inject()(enrolmentCheck: EnrolmentCheck, authorisationService: AuthorisationService)
                                         (enrolmentUrl: String,
-                                         agentUrl: String)(implicit val hc: HeaderCarrier) extends CompositePageVisibilityPredicate{
+                                         nonAgentUrl: String)(implicit val hc: HeaderCarrier) extends CompositePageVisibilityPredicate{
 
   override def children: Seq[PageVisibilityPredicate] = Seq (
-    new AffinityGroupAgentPredicate(authorisationService)(agentUrl),
+    new AffinityGroupAgentPredicate(authorisationService)(nonAgentUrl),
     new EnrolmentPredicate(enrolmentCheck, authorisationService)(enrolmentUrl)
   )
 
