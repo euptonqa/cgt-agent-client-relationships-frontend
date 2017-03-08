@@ -56,6 +56,8 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
     authenticatedAction
   }
 
+  def authorisedAgentAction(action: AuthenticatedAgentAction): Action[AnyContent] = composeAuthorisedAgentAction(action)
+
 
   trait CgtRegime extends TaxRegime {
     override def isAuthorised(accounts: Accounts): Boolean = true
