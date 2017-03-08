@@ -28,6 +28,7 @@ trait AppConfig {
   val reportAProblemNonJSUrl: String
   val contactFormServiceIdentifier: String
   val contactFrontendService: String
+  val governmentGatewayContextUrl: String
 }
 
 @Singleton
@@ -47,4 +48,6 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   //GA Config
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
   override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
+
+  override val governmentGatewayContextUrl: String = loadConfig("microservice.services.government-gateway.context")
 }
