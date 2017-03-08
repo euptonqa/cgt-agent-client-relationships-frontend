@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package test.controllers
+package controllers
 
-import controllers.routes
-import assets.ControllerSpecHelper
+import traits.ControllerSpecHelper
 import config.WSHttp
-import controllers.FeedbackController
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import play.api.http.Status
