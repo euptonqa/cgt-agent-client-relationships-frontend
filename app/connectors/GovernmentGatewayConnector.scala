@@ -19,15 +19,14 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import audit.Logging
-import config.FrontendAuthConnector.WSHttp
+import common.Constants.Audit._
 import config.ApplicationConfig
-import play.api.http.Status._
+import config.FrontendAuthConnector.WSHttp
 import config.Keys.GovernmentGateway._
-import uk.gov.hmrc.play.http._
-import uk.gov.hmrc.play.http.logging.Authorization
 import models.Client
 import play.api.Logger
-import common.Constants.Audit._
+import play.api.http.Status._
+import uk.gov.hmrc.play.http._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -46,30 +45,6 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
   val urlHeaderEnvironment: String = ""
   val urlHeaderAuthorization: String = ""
 
-//  implicit val httpRds = new HttpReads[HttpResponse] {
-//    def read(http: String, url: String, res: HttpResponse): HttpResponse = customGovernmentGatewayRead(http, url, res)
-//  }
-
-//  @inline
-//  private def cGET[O](url: String)(implicit rds: HttpReads[O], hc: HeaderCarrier) = {
-//    http.GET[O](url)(rds, hc = createHeaderCarrier(hc))
-//  }
-//
-//  private def createHeaderCarrier(headerCarrier: HeaderCarrier): HeaderCarrier = {
-//    headerCarrier.
-//      withExtraHeaders("Environment" -> urlHeaderEnvironment).
-//      copy(authorization = Some(Authorization(urlHeaderAuthorization)))
-//  }
-
-//  private[connectors] def customGovernmentGatewayRead(http: String, url: String, response: HttpResponse) = {
-//    response.status match {
-//      case BAD_REQUEST => response
-//      case NOT_FOUND => response
-//      case INTERNAL_SERVER_ERROR => throw new InternalServerException("Government Gateway responded with INTERNAL_SERVER_ERROR")
-//      case BAD_GATEWAY => throw new BadGatewayException("Government Gateway returned an upstream error")
-//      case _ => handleResponse(http, url)(response)
-//    }
-//  }
 
   def getExistingClients(arn: String)(implicit hc: HeaderCarrier): Future[GovernmentGatewayResponse] = {
     val getUrl = s"""$serviceUrl/$serviceContext/$arn/client-list/$clientServiceName/$assignedTo"""
