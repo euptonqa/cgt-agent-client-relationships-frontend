@@ -55,5 +55,5 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val governmentGatewaySignIn: String = configuration.getString(s"government-gateway-sign-in.host").getOrElse("")
   override lazy val notAuthorisedRedirect: String = configuration.getString(s"not-authorised-callback.url").getOrElse("")
   override lazy val badAffinity: String = configuration.getString(s"agent-bad-affinity.url").getOrElse("")
-  override lazy val noEnrolment: String = configuration.getString(s"no-enrolment.url").getOrElse("")
+  override lazy val noEnrolment: String = configuration.getString(s"agent-sign-in.ur").getOrElse("")
 }
