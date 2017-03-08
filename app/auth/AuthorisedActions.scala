@@ -52,6 +52,8 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
           action(CgtAgent(authContext))(request)
       }
     }
+
+    authenticatedAction
   }
 
 
