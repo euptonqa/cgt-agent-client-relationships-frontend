@@ -18,6 +18,7 @@ package audit
 
 import javax.inject.{Inject, Singleton}
 
+import common.Constants.Audit
 import play.api.Logger
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -25,7 +26,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 class Logging @Inject()(auditing: Auditing) {
 
   private def sendDataToSplunk(transactionName: String, detail: Map[String, String], eventType: String)(implicit hc: HeaderCarrier): Unit = {
-    Logger.debug("SPLUNK AUDIT:\n" + splunkToLogger(transactionName, detail, eventType))
+    Logger.debug(Audit.splunk + splunkToLogger(transactionName, detail, eventType))
     auditing.sendDataEvent(
       transactionName = transactionName,
       detail = detail,

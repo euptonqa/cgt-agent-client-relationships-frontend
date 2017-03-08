@@ -98,7 +98,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
       }
     }
 
-    "A INTERNAL_SERVER_ERROR is returned" should {
+    "An INTERNAL_SERVER_ERROR is returned" should {
 
       when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR, responseJson = Some(Json.obj("reason" -> "y")))))
