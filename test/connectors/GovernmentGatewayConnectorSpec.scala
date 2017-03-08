@@ -64,7 +64,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
         val clients = List(Client("John Smith", List(identifier)))
 
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-          .thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(Json.toJson(clients)))))
+          .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
 
         val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
 
@@ -76,7 +76,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
       "the client list is empty" should {
 
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-          .thenReturn(Future.successful(HttpResponse(OK, responseJson = Some(Json.toJson(List.empty[Client])))))
+          .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(List.empty[Client])))))
 
         val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
 
@@ -89,7 +89,19 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
     "A BAD_REQUEST is returned" should {
 
       when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .thenReturn(Future.successful(HttpResponse(BAD_REQUEST, responseJson = Some(Json.obj("reason" -> "y")))))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.obj("reason" -> "y")))))
+
+      val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+
+      "return a FailedGovernmentGatewayResponse" in {
+        result shouldEqual FailedGovernmentGatewayResponse
+      }
+    }
+
+    "A INTERNAL_SERVER_ERROR is returned" should {
+
+      when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR, responseJson = Some(Json.obj("reason" -> "y")))))
 
       val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
 

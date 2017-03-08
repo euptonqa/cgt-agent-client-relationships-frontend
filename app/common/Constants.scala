@@ -28,5 +28,6 @@ object Constants {
     val splunk: String = "SPLUNK AUDIT:\n"
     val transactionGetClientList: String = "CGT Government Gateway Get Client List"
     val eventTypeFailure: String = "CGTFailure"
+    val eventTypeSuccess: String = "CGTSuccess"
   }
 }
