@@ -19,10 +19,11 @@ package services
 import javax.inject.Inject
 
 import connectors.{GovernmentGatewayConnector, GovernmentGatewayResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class AgentService @Inject()(governmentGatewayConnector: GovernmentGatewayConnector){
+class AgentService @Inject()(governmentGatewayConnector: GovernmentGatewayConnector)(implicit val hc: HeaderCarrier){
 
   def getExistingClients(arn: String): Future[GovernmentGatewayResponse] = {
     governmentGatewayConnector.getExistingClients(arn)

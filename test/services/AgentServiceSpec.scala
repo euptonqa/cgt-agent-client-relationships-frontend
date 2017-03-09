@@ -16,16 +16,62 @@
 
 package services
 
+import java.util.UUID
+
+import audit.Logging
 import config.{ApplicationConfig, WSHttp}
+import connectors.{GovernmentGatewayConnector, SuccessGovernmentGatewayResponse}
+import models.{Client, IdentifierForDisplay}
+import org.mockito.ArgumentMatchers
 import org.scalatest.BeforeAndAfter
 import org.scalatest.mock.MockitoSugar
+import org.mockito.Mockito._
 import org.scalatestplus.play.OneAppPerSuite
+import play.api.http.Status._
+import play.api.libs.json.Json
+import uk.gov.hmrc.play.http.logging.SessionId
+import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.test.UnitSpec
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class AgentServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar with BeforeAndAfter {
 
   val mockWSHttp: WSHttp = mock[WSHttp]
   val mockLoggingUtils: Logging = mock[Logging]
   lazy val mockAppConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
+  implicit val ec = mock[ExecutionContext]
 
+  object GGConnector extends GovernmentGatewayConnector(mockAppConfig, mockLoggingUtils){
+    override val http: HttpPut with HttpGet with HttpPost = mockWSHttp
+    override val serviceContext: String = ""
+    override lazy val serviceUrl: String = ""
+  }
+
+  before {
+    reset(mockWSHttp)
+  }
+  implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
+
+
+  val agentService = new AgentService(GGConnector)
+
+  "Calling .getExistingClients" when {
+
+    "an OK response is returned" when {
+      "the client list is not empty" should {
+        val identifier = IdentifierForDisplay("CGT ref", "CGT123456")
+        val clients = List(Client("John Smith", List(identifier)))
+
+        when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+          .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
+
+        val result = await(agentService.getExistingClients("ARN"))
+
+        "return a SuccessGovernmentGatewayResponse with a list of clients" in {
+          result shouldEqual SuccessGovernmentGatewayResponse(clients)
+        }
+      }
+    }
+  }
 }
