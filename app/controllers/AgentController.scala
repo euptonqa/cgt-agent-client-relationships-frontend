@@ -18,6 +18,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.AuthorisedActions
 import config.AppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
@@ -26,7 +27,9 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class AgentController @Inject()(appConfig: AppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class AgentController @Inject()(appConfig: AppConfig,
+                                authActions: AuthorisedActions,
+                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   val showClientList: Action[AnyContent] = Action.async { implicit request =>
     //TODO remove this dummy code - for test purposes only
@@ -36,5 +39,9 @@ class AgentController @Inject()(appConfig: AppConfig, val messagesApi: MessagesA
 
   val selectClient = TODO
 
-  val makeDeclaration = TODO
+  val makeDeclaration: Action[AnyContent] = authActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.confirmPermission(appConfig)))
+  }
 }

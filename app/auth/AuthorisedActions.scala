@@ -24,18 +24,17 @@ import predicates.VisibilityPredicate
 import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext, AuthenticationProvider, TaxRegime}
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 @Singleton
 class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
                                   authorisationService: AuthorisationService,
-                                  feAuthConnector: FrontendAuthConnector)(implicit val hc: HeaderCarrier) extends Actions {
+                                  feAuthConnector: FrontendAuthConnector) extends Actions {
 
   override val authConnector: FrontendAuthConnector = feAuthConnector
 
   private val composeAuthorisedAction: AuthenticatedAction => Action[AnyContent] = {
     val postSignInRedirectUrl = controllers.routes.AgentController.showClientList().url
-    val ggProvider = new GovernmentGatewayProvider(postSignInRedirectUrl,
+    val ggProvider = GovernmentGatewayProvider(postSignInRedirectUrl,
       applicationConfig.governmentGatewaySignIn)
     val regime = new CgtRegime {
       override def authenticationType: AuthenticationProvider = ggProvider
@@ -50,7 +49,7 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
       guardedAction.async {
         authContext: AuthContext =>
           implicit request =>
-          action(CgtAgent(authContext))(request)
+            action(CgtAgent(authContext))(request)
       }
     }
 

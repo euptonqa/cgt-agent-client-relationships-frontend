@@ -1,0 +1,10 @@
+@(appConfig: config.AppConfig)(implicit request: Request[_], messages: Messages)
+
+@views.html.main_template(title = Messages("confirmPermission.title"), bodyClasses = None, appConfig = appConfig) {
+
+    <h1 class="heading-xlarge">@Messages("confirmPermission.title")</h1>
+
+    <p>@Messages("confirmPermission.body")</p>
+
+    <a class="button" href="@controllers.routes.ClientController.clientType().url">@Messages("common.continue")</a>
+}
