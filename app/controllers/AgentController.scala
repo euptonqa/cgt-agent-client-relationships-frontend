@@ -18,6 +18,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.AuthorisedActions
 import config.AppConfig
 import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,27 +29,33 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import scala.concurrent.Future
 
 @Singleton
-class AgentController @Inject()(agentService: AgentService, appConfig: AppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+class AgentController @Inject()(authorisedActions: AuthorisedActions,
+                                agentService: AgentService,
+                                appConfig: AppConfig,
+                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  val showClientList: Action[AnyContent] = Action.async { implicit request =>
-    val stubbedArn = "ARN-12132"
-    //TODO: Replace with a call to a fetch ARN function
+  val showClientList: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        val stubbedArn = "ARN-12132"
+        //TODO: Replace with a call to a fetch ARN function
 
-    def handleGGResponse(response: GovernmentGatewayResponse): Result = {
-      response match {
-        case SuccessGovernmentGatewayResponse(clients) => {
-          if(clients.size>0)
-            Ok(views.html.clientList(appConfig, clients))
-          else Redirect("google.co.uk")
-          //TODO: replace with confirm permission screen
+        def handleGGResponse(response: GovernmentGatewayResponse): Result = {
+          response match {
+            case SuccessGovernmentGatewayResponse(clients) => {
+              if(clients.size>0)
+                Ok(views.html.clientList(appConfig, clients))
+              else Redirect("google.co.uk")
+              //TODO: replace with confirm permission screen
+            }
+            case FailedGovernmentGatewayResponse => InternalServerError
+          }
         }
-        case FailedGovernmentGatewayResponse => InternalServerError
-      }
-    }
 
-    for {
-      clients <- agentService.getExistingClients(stubbedArn)
-    } yield handleGGResponse(clients)
+        for {
+          //make call for ARN here
+          clients <- agentService.getExistingClients(stubbedArn)
+        } yield handleGGResponse(clients)
   }
 
   val selectClient = TODO
