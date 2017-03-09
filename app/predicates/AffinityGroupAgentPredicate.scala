@@ -16,7 +16,6 @@
 
 package predicates
 
-import java.net.URI
 import javax.inject.Inject
 
 import checks.AffinityGroupCheck

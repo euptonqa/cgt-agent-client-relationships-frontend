@@ -16,8 +16,6 @@
 
 package predicates
 
-import java.net.URI
-
 import common.Constants.AffinityGroup._
 import connectors.AuthorisationConnector
 import data.TestUsers

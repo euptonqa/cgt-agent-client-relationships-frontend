@@ -17,21 +17,16 @@
 package predicates
 
 import checks.EnrolmentCheck
-import common.Constants.AffinityGroup
 import common.Constants.AffinityGroup._
 import common.Keys
 import data.TestUsers
 import models.{AuthorisationDataModel, Enrolment, Identifier}
-import org.mockito.Mockito._
 import services.AuthorisationService
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.mock.MockitoSugar._
 import play.api.inject.Injector
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength, PayeAccount}
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
