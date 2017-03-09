@@ -51,9 +51,8 @@ class AgentServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar wi
   before {
     reset(mockWSHttp)
   }
+
   implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
-
-
   val agentService = new AgentService(GGConnector)
 
   "Calling .getExistingClients" when {
