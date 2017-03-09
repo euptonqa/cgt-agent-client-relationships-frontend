@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import auth.CgtAgent
 import play.api.mvc.{AnyContent, Request, Result}
 
 import scala.concurrent.Future
