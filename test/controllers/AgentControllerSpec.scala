@@ -18,7 +18,7 @@ package controllers
 
 import data.MessageLookup
 import data.TestUsers
-import auth.{AuthorisedActions, CgtAgent}
+import auth.{AuthorisedActions, CgtAgent, AuthenticatedAction}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.invocation.InvocationOnMock
@@ -27,7 +27,6 @@ import org.mockito.stubbing.Answer
 import play.api.mvc.{Action, AnyContent, Results}
 import play.api.test.FakeRequest
 import traits.ControllerSpecHelper
-import types.AuthenticatedAgentAction
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 
 class AgentControllerSpec extends ControllerSpecHelper {
@@ -45,7 +44,7 @@ class AgentControllerSpec extends ControllerSpecHelper {
         .thenAnswer(new Answer[Action[AnyContent]] {
 
           override def answer(invocation: InvocationOnMock): Action[AnyContent] = {
-            val action = invocation.getArgument[AuthenticatedAgentAction](0)
+            val action = invocation.getArgument[AuthenticatedAction](0)
             val agent = CgtAgent(authContext)
             Action.async(action(agent))
           }

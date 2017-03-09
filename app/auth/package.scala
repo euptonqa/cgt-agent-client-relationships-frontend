@@ -20,5 +20,4 @@ import scala.concurrent.Future
 
 package object auth {
   type AuthenticatedAction = CgtAgent => Request[AnyContent] => Future[Result]
-
 }
