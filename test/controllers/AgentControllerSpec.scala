@@ -17,16 +17,57 @@
 package controllers
 
 import assets.MessageLookup
+import auth.{AuthorisedActions, CgtAgent}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.Mockito._
+import org.mockito.stubbing.Answer
+import play.api.mvc.{Action, AnyContent, Results}
 import play.api.test.FakeRequest
 import traits.ControllerSpecHelper
+import types.AuthenticatedAgentAction
+import uk.gov.hmrc.play.frontend.auth.AuthContext
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
 
 class AgentControllerSpec extends ControllerSpecHelper {
+
+
+  private val testOnlyUnauthorisedLoginUri = "just-a-test"
+
+  private val strongUserAuthContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong, ConfidenceLevel.L50, None, Some("testEnrolmentUri"), None, ""))
+  }
+
+  def setupController(correctAuthentication: Boolean = true,
+                      authContext: AuthContext = strongUserAuthContext): AgentController = {
+
+    val mockActions = mock[AuthorisedActions]
+
+    if (correctAuthentication) {
+      when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
+        .thenAnswer(new Answer[Action[AnyContent]] {
+
+          override def answer(invocation: InvocationOnMock): Action[AnyContent] = {
+            val action = invocation.getArgument[AuthenticatedAgentAction](0)
+            val agent = CgtAgent(authContext)
+            Action.async(action(agent))
+          }
+        })
+    }
+    else {
+      when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
+        .thenReturn(Action.async(Results.Redirect(testOnlyUnauthorisedLoginUri)))
+    }
+
+    new AgentController(config, mockActions, messagesApi)
+  }
+
 
   "Calling .declaration" when {
 
     "provided with a valid authorised user" should {
-      val controller = new AgentController(config, messagesApi)
+      lazy val controller = setupController()
       lazy val result = controller.makeDeclaration(FakeRequest())
 
       "return a status of 200" in {
@@ -41,7 +82,7 @@ class AgentControllerSpec extends ControllerSpecHelper {
     }
 
     "provided with an invalid unauthorised user" should {
-      val controller = new AgentController(config, messagesApi)
+      lazy val controller = setupController(correctAuthentication = false)
       lazy val result = controller.makeDeclaration(FakeRequest())
 
       "return a status of 303" in {
