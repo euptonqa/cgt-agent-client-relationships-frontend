@@ -19,11 +19,13 @@ package traits
 import config.AppConfig
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.inject.Injector
+import play.api.test.FakeRequest
 import uk.gov.hmrc.play.test.UnitSpec
 
-trait ViewTestSpec extends UnitSpec with OneAppPerSuite with FakeRequestHelper with I18nSupport {
-  lazy val injector: Injector = app.injector
-  lazy val appConfig: AppConfig = injector.instanceOf[AppConfig]
-  implicit def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
+trait ViewSpecHelper extends UnitSpec with OneAppPerSuite with I18nSupport {
+
+  lazy implicit val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  lazy implicit val fakeRequest = FakeRequest()
+
+  lazy val config: AppConfig = app.injector.instanceOf[AppConfig]
 }

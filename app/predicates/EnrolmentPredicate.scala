@@ -50,5 +50,5 @@ class EnrolmentPredicate @Inject()(authService: AuthorisationService)
     }
   }
 
-  private val needsEnrolment = Future.successful(Redirect(enrolmentURI.toString))
+  private val needsEnrolment = Future.successful(Redirect(enrolmentURI))
 }

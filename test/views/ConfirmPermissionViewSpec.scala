@@ -16,9 +16,9 @@
 
 package views
 
-import assets.MessageLookup.{Common, ConfirmPermission}
-import assets.ViewSpecHelper
+import data.MessageLookup.{Common, ConfirmPermission}
 import org.jsoup.Jsoup
+import traits.ViewSpecHelper
 import views.html.confirmPermission
 
 class ConfirmPermissionViewSpec extends ViewSpecHelper {

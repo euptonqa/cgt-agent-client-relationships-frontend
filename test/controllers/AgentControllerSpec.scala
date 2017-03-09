@@ -16,7 +16,8 @@
 
 package controllers
 
-import assets.MessageLookup
+import data.MessageLookup
+import data.TestUsers
 import auth.{AuthorisedActions, CgtAgent}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -28,19 +29,14 @@ import play.api.test.FakeRequest
 import traits.ControllerSpecHelper
 import types.AuthenticatedAgentAction
 import uk.gov.hmrc.play.frontend.auth.AuthContext
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
 
 class AgentControllerSpec extends ControllerSpecHelper {
 
 
   private val testOnlyUnauthorisedLoginUri = "just-a-test"
 
-  private val strongUserAuthContext: AuthContext = {
-    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Strong, ConfidenceLevel.L50, None, Some("testEnrolmentUri"), None, ""))
-  }
-
   def setupController(correctAuthentication: Boolean = true,
-                      authContext: AuthContext = strongUserAuthContext): AgentController = {
+                      authContext: AuthContext = TestUsers.strongUserAuthContext): AgentController = {
 
     val mockActions = mock[AuthorisedActions]
 

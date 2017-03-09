@@ -16,17 +16,17 @@
 
 package views
 
-import traits.ViewTestSpec
 import data.MessageLookup.{ClientList => messages}
 import org.jsoup.Jsoup
+import traits.ViewSpecHelper
 import views.html.clientList
 
-class ClientListViewSpec extends ViewTestSpec {
+class ClientListViewSpec extends ViewSpecHelper {
 
   "The clientList view" should {
 
     val users: Seq[String] = Seq("John Smith", "Company 123")
-    lazy val view = clientList(appConfig, users)
+    lazy val view = clientList(config, users)
     lazy val doc = Jsoup.parse(view.body)
 
     s"display a title of ${messages.title}" in {
