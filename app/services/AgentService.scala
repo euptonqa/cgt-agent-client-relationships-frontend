@@ -18,14 +18,24 @@ package services
 
 import javax.inject.Inject
 
-import connectors.{GovernmentGatewayConnector, GovernmentGatewayResponse}
+import config.Keys.GovernmentGateway._
+import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayConnector, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
+import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
-class AgentService @Inject()(governmentGatewayConnector: GovernmentGatewayConnector)(implicit val hc: HeaderCarrier){
+class AgentService @Inject()(governmentGatewayConnector: GovernmentGatewayConnector) {
 
-  def getExistingClients(arn: String): Future[GovernmentGatewayResponse] = {
-    governmentGatewayConnector.getExistingClients(arn)
+  def getExistingClients(authContext: AuthContext)(implicit hc: HeaderCarrier): Future[GovernmentGatewayResponse] = {
+    for {
+      individualResponse <- governmentGatewayConnector.getExistingClients(clientServiceNameIndividual, authContext)
+      organisationResponse <- governmentGatewayConnector.getExistingClients(clientServiceNameOrganisation, authContext)
+    } yield (individualResponse, organisationResponse) match {
+      case (SuccessGovernmentGatewayResponse(individuals), SuccessGovernmentGatewayResponse(organisations)) =>
+        SuccessGovernmentGatewayResponse(individuals ++ organisations)
+      case (_, _) => FailedGovernmentGatewayResponse
+    }
   }
 }

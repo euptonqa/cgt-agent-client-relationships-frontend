@@ -26,13 +26,14 @@ import config.Keys.GovernmentGateway._
 import models.Client
 import play.api.Logger
 import play.api.http.Status._
+import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 sealed trait GovernmentGatewayResponse
-case class SuccessGovernmentGatewayResponse(clients: List[Client]) extends GovernmentGatewayResponse
+case class SuccessGovernmentGatewayResponse(clients: Seq[Client]) extends GovernmentGatewayResponse
 case object FailedGovernmentGatewayResponse extends GovernmentGatewayResponse
 
 @Singleton
@@ -45,16 +46,17 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
   val urlHeaderEnvironment: String = ""
   val urlHeaderAuthorization: String = ""
 
-  def getExistingClients(arn: String)(implicit hc: HeaderCarrier): Future[GovernmentGatewayResponse] = {
-    val getUrl = s"""$serviceUrl/$serviceContext/$arn/client-list/$clientServiceName/$assignedTo"""
-    val auditMap: Map[String, String] = Map("ARN" -> arn, "Url" -> getUrl)
+  def getExistingClients(serviceName: String, authContext: AuthContext)(implicit hc: HeaderCarrier): Future[GovernmentGatewayResponse] = {
+    val agentCode = authContext.principal.accounts.agent.map(_.agentCode.value).getOrElse("")
+    val getUrl = s"""$serviceUrl/$serviceContext/$agentCode/client-list/$serviceName/$assignedTo"""
+    val auditMap: Map[String, String] = Map("Agent Code" -> agentCode, "Url" -> getUrl)
     val result = http.GET[HttpResponse](getUrl)
      result.map { response =>
       response.status match {
         case OK =>
           Logger.info(s"Government Gateway returned an OK with the request $getUrl")
           auditLogger.audit(transactionGetClientList, auditMap, eventTypeSuccess)
-          SuccessGovernmentGatewayResponse(response.json.as[List[Client]])
+          SuccessGovernmentGatewayResponse(response.json.as[Seq[Client]])
         case BAD_REQUEST =>
           Logger.warn(s"Government Gateway returned a bad request with the request $getUrl with ${response.body}")
           auditLogger.audit(transactionGetClientList, auditMap, eventTypeFailure)
