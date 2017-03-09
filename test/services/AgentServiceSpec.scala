@@ -20,7 +20,7 @@ import java.util.UUID
 
 import audit.Logging
 import config.{ApplicationConfig, WSHttp}
-import connectors.{GovernmentGatewayConnector, SuccessGovernmentGatewayResponse}
+import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayConnector, SuccessGovernmentGatewayResponse}
 import models.{Client, IdentifierForDisplay}
 import org.mockito.ArgumentMatchers
 import org.scalatest.BeforeAndAfter
@@ -71,6 +71,18 @@ class AgentServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar wi
         "return a SuccessGovernmentGatewayResponse with a list of clients" in {
           result shouldEqual SuccessGovernmentGatewayResponse(clients)
         }
+      }
+    }
+
+    "A BAD_REQUEST is returned" should {
+
+      when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.obj("reason" -> "y")))))
+
+      val result = await(agentService.getExistingClients("ARN"))
+
+      "return a FailedGovernmentGatewayResponse" in {
+        result shouldEqual FailedGovernmentGatewayResponse
       }
     }
   }
