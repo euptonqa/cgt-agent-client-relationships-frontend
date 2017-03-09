@@ -18,7 +18,6 @@ package predicates
 
 import javax.inject.Inject
 
-import checks.EnrolmentCheck
 import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.auth.{CompositePageVisibilityPredicate, PageVisibilityPredicate}
 import uk.gov.hmrc.play.http.HeaderCarrier

@@ -18,7 +18,6 @@ package checks
 
 import common.Keys.{EnrolmentKeys => Keys}
 import models.{Enrolment, Identifier}
-import play.api.inject.Injector
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class EnrolmentCheckSpec extends UnitSpec with WithFakeApplication {

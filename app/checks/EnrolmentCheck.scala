@@ -16,8 +16,6 @@
 
 package checks
 
-import javax.inject.Inject
-
 import common.Keys
 import models.Enrolment
 

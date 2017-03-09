@@ -16,7 +16,6 @@
 
 package predicates
 
-import checks.EnrolmentCheck
 import common.Constants.AffinityGroup._
 import common.Keys
 import data.TestUsers

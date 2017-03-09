@@ -17,13 +17,11 @@
 package predicates
 
 import data.TestUsers
-import checks.EnrolmentCheck
 import common.Keys
 import models.{Enrolment, Identifier}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
-import play.api.inject.Injector
 import play.api.test.FakeRequest
 import services.AuthorisationService
 import uk.gov.hmrc.play.http.HeaderCarrier

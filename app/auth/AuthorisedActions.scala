@@ -18,7 +18,6 @@ package auth
 
 import javax.inject.{Inject, Singleton}
 
-import checks.EnrolmentCheck
 import config.{ApplicationConfig, FrontendAuthConnector}
 import play.api.mvc.{Action, AnyContent}
 import predicates.VisibilityPredicate
