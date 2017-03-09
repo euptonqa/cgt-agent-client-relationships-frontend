@@ -28,13 +28,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
-class EnrolmentPredicate @Inject()(enrolmentCheck: EnrolmentCheck, authService: AuthorisationService)
+class EnrolmentPredicate @Inject()(authService: AuthorisationService)
                                   (enrolmentURI: String)(implicit hc: HeaderCarrier) extends PageVisibilityPredicate {
 
   override def apply(authContext: AuthContext, request: Request[AnyContent]): Future[PageVisibilityResult] = {
     for {
       enrolments <- authService.getEnrolments
-      isEnrolled <- enrolmentCheck.checkEnrolments(enrolments)
+      isEnrolled <- EnrolmentCheck.checkEnrolments(enrolments)
     } yield {
       if(isEnrolled) {
         PageIsVisible

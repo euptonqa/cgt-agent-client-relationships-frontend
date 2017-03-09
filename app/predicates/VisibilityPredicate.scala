@@ -18,18 +18,17 @@ package predicates
 
 import javax.inject.Inject
 
-import checks.EnrolmentCheck
 import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.auth.{CompositePageVisibilityPredicate, PageVisibilityPredicate}
 import uk.gov.hmrc.play.http.HeaderCarrier
 
-class VisibilityPredicate @Inject()(enrolmentCheck: EnrolmentCheck, authorisationService: AuthorisationService)
+class VisibilityPredicate @Inject()(authorisationService: AuthorisationService)
                                         (enrolmentUrl: String,
                                          nonAgentUrl: String)(implicit val hc: HeaderCarrier) extends CompositePageVisibilityPredicate{
 
   override def children: Seq[PageVisibilityPredicate] = Seq (
     new AffinityGroupAgentPredicate(authorisationService)(nonAgentUrl),
-    new EnrolmentPredicate(enrolmentCheck, authorisationService)(enrolmentUrl)
+    new EnrolmentPredicate(authorisationService)(enrolmentUrl)
   )
 
 }

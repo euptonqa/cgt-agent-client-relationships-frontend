@@ -16,7 +16,6 @@
 
 package predicates
 
-import checks.EnrolmentCheck
 import common.Constants.AffinityGroup._
 import common.Keys
 import data.TestUsers
@@ -27,7 +26,7 @@ import org.mockito.Mockito.when
 import org.scalatest.mock.MockitoSugar
 import play.api.inject.Injector
 import play.api.test.FakeRequest
-import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength, PayeAccount}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, ConfidenceLevel, CredentialStrength}
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
@@ -53,10 +52,9 @@ class VisibilityPredicateSpec extends UnitSpec with WithFakeApplication with Moc
   implicit val hc = HeaderCarrier()
 
   val injector: Injector = fakeApplication.injector
-  val enrolmentsCheck = injector.instanceOf[EnrolmentCheck]
 
   def predicate(dataModel: Option[AuthorisationDataModel], enrolments: Option[Seq[Enrolment]], affinityGroup: String="Agent"): VisibilityPredicate = {
-    new VisibilityPredicate(enrolmentsCheck, mockedService(dataModel, enrolments, affinityGroup=affinityGroup))("example.com","exampletwo.com")}
+    new VisibilityPredicate(mockedService(dataModel, enrolments, affinityGroup=affinityGroup))("example.com","exampletwo.com")}
 
   "return true for page visibility when the component predicates' conditions are met" in {
     val authContext = TestUsers.create500ConfidenceUserAuthContext
