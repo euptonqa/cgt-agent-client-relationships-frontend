@@ -30,8 +30,7 @@ import uk.gov.hmrc.play.http.HeaderCarrier
 @Singleton
 class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
                                   authorisationService: AuthorisationService,
-                                  feAuthConnector: FrontendAuthConnector,
-                                  enrolmentCheck: EnrolmentCheck)(implicit val hc: HeaderCarrier) extends Actions {
+                                  feAuthConnector: FrontendAuthConnector)(implicit val hc: HeaderCarrier) extends Actions {
 
   override val authConnector: FrontendAuthConnector = feAuthConnector
 
@@ -43,7 +42,7 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
       override def authenticationType: AuthenticationProvider = ggProvider
     }
 
-    lazy val visibilityPredicate = new VisibilityPredicate(enrolmentCheck, authorisationService)(applicationConfig.badAffinity,
+    lazy val visibilityPredicate = new VisibilityPredicate(authorisationService)(applicationConfig.badAffinity,
       applicationConfig.noEnrolment)
 
     lazy val guardedAction: AuthenticatedBy = AuthorisedFor(regime, visibilityPredicate)

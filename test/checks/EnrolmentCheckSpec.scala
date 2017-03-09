@@ -23,14 +23,12 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 class EnrolmentCheckSpec extends UnitSpec with WithFakeApplication {
 
-  val injector: Injector = fakeApplication.injector
-  val enrolmentCheck: EnrolmentCheck = injector.instanceOf[EnrolmentCheck]
 
   "Calling .checkEnrolments" should {
 
     "return true when supplied with a single element Sequence of Enrolments that includes the Agent enrolment" in {
       val enrolments = Seq(Enrolment(Keys.agentEnrolmentKey, Seq(Identifier("DummyKey", "DummyValue")), ""))
-      await(enrolmentCheck.checkEnrolments(Some(enrolments))) shouldBe true
+      await(EnrolmentCheck.checkEnrolments(Some(enrolments))) shouldBe true
     }
 
     "return true when supplied with a multiple element Sequence of Enrolments that includes the Agent enrolment" in {
@@ -38,16 +36,16 @@ class EnrolmentCheckSpec extends UnitSpec with WithFakeApplication {
         Enrolment("Not the CGT Key", Seq(Identifier("DummyKey", "DummyValue")), ""),
         Enrolment(Keys.agentEnrolmentKey, Seq(Identifier("DummyKey", "DummyValue")), "")
       )
-      await(enrolmentCheck.checkEnrolments(Some(enrolments))) shouldBe true
+      await(EnrolmentCheck.checkEnrolments(Some(enrolments))) shouldBe true
     }
 
     "return false when supplied with Sequence of Enrolments that does not include the CGT enrolment" in {
       val enrolments = Seq(Enrolment("Not the CGT Key", Seq(Identifier("DummyKey", "DummyValue")), ""))
-      await(enrolmentCheck.checkEnrolments(Some(enrolments))) shouldBe false
+      await(EnrolmentCheck.checkEnrolments(Some(enrolments))) shouldBe false
     }
 
     "return false when supplied with a None" in {
-      await(enrolmentCheck.checkEnrolments(None)) shouldBe false
+      await(EnrolmentCheck.checkEnrolments(None)) shouldBe false
     }
   }
 

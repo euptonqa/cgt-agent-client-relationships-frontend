@@ -34,8 +34,6 @@ import scala.concurrent.Future
 class EnrolmentPredicateSpec extends UnitSpec with WithFakeApplication with MockitoSugar {
 
   val dummyUrl = "http://example.com"
-  val injector: Injector = fakeApplication.injector
-  lazy val cgtCheck = injector.instanceOf[EnrolmentCheck]
   implicit val hc = HeaderCarrier()
 
   def mockedPredicate(response: Option[Seq[Enrolment]]): EnrolmentPredicate = {
@@ -44,7 +42,7 @@ class EnrolmentPredicateSpec extends UnitSpec with WithFakeApplication with Mock
     when(mockService.getEnrolments(ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 
-    new EnrolmentPredicate(cgtCheck, mockService)(dummyUrl)
+    new EnrolmentPredicate(mockService)(dummyUrl)
   }
 
   "Calling the EnrolmentPredicate" should {
