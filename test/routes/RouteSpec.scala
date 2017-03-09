@@ -16,63 +16,63 @@
 
 package routes
 
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-class RouteSpec extends UnitSpec {
+class RouteSpec extends UnitSpec with WithFakeApplication {
 
   "The URL for the AgentController .showClientList action" should {
-    "be equal to /capital-gains-tax/subscription/agent/client" in {
+    "be equal to /capital-gains-tax/agent/client" in {
       val path = controllers.routes.AgentController.showClientList().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/client"
+      path shouldEqual "/capital-gains-tax/agent/client"
     }
   }
 
   "The URL for the AgentController .selectClient action" should {
-    "be equal to /capital-gains-tax/subscription/agent/client" in {
+    "be equal to /capital-gains-tax/agent/client" in {
       val path = controllers.routes.AgentController.selectClient().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/client"
+      path shouldEqual "/capital-gains-tax/agent/client"
     }
   }
 
   "The URL for the AgentController .makeDeclaration action" should {
-    "be equal to /capital-gains-tax/subscription/agent/declaration" in {
+    "be equal to /capital-gains-tax/agent/declaration" in {
       val path = controllers.routes.AgentController.makeDeclaration().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/declaration"
+      path shouldEqual "/capital-gains-tax/agent/declaration"
     }
   }
 
   "The URL for the ClientController .clientType action" should {
-    "be equal to /capital-gains-tax/subscription/agent/client-type" in {
+    "be equal to /capital-gains-tax/agent/client-type" in {
       val path = controllers.routes.ClientController.clientType().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/client-type"
+      path shouldEqual "/capital-gains-tax/agent/client-type"
     }
   }
 
   "The URL for the ClientController .submitClientType action" should {
-    "be equal to /capital-gains-tax/subscription/agent/client-type" in {
+    "be equal to /capital-gains-tax/agent/client-type" in {
       val path = controllers.routes.ClientController.submitClientType().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/client-type"
+      path shouldEqual "/capital-gains-tax/agent/client-type"
     }
   }
 
   "The URL for the ClientController .enterIndividualCorrespondenceDetails action" should {
-    "be equal to /capital-gains-tax/subscription/agent/individual/correspondence-details" in {
+    "be equal to /capital-gains-tax/agent/individual/correspondence-details" in {
       val path = controllers.routes.ClientController.enterIndividualCorrespondenceDetails().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/individual/correspondence-details"
+      path shouldEqual "/capital-gains-tax/agent/individual/correspondence-details"
     }
   }
 
   "The URL for the ClientController .submitIndividualCorrespondenceDetails action" should {
-    "be equal to /capital-gains-tax/subscription/agent/individual/correspondence-details" in {
+    "be equal to /capital-gains-tax/agent/individual/correspondence-details" in {
       val path = controllers.routes.ClientController.submitIndividualCorrespondenceDetails().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/individual/correspondence-details"
+      path shouldEqual "/capital-gains-tax/agent/individual/correspondence-details"
     }
   }
 
   "The URL for the ClientController .confirmation action" should {
-    "be equal to /capital-gains-tax/subscription/agent/confirmation" in {
+    "be equal to /capital-gains-tax/agent/confirmation" in {
       val path = controllers.routes.ClientController.confirmation().url
-      path shouldEqual "/capital-gains-tax/subscription/agent/confirmation"
+      path shouldEqual "/capital-gains-tax/agent/confirmation"
     }
   }
 }

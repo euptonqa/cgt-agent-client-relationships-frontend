@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package checks
+package data
 
-import common.Keys
-import models.Enrolment
+object MessageLookup {
 
-import scala.concurrent.Future
-
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
+  object ClientList {
+    val title = "Client overview"
+    val clientName = "Client name"
+    val addClient = "Add a new client"
+    val report = "Report"
   }
 }

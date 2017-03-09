@@ -1,6 +1,17 @@
 ## Common Messages ##
 common.continue = Continue
+common.back = Back
 
 ## Confirm Permission Messages ##
 confirmPermission.title = Confirm you have permission
 confirmPermission.body = By continuing, you confirm that you have permission to act on your client''s behalf.
+
+## Client List messages ##
+clientList.title = Client overview
+clientList.clientName = Client name
+clientList.addClient = Add a new client
+clientList.report = Report
+
+## Feedback ##
+feedback.send = Send your feedback
+feedback.thankyou = Your feedback

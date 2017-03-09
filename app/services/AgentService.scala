@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package checks
+package services
 
-import common.Keys
-import models.Enrolment
+import javax.inject.Inject
+
+import connectors.{GovernmentGatewayConnector, GovernmentGatewayResponse}
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
+class AgentService @Inject()(governmentGatewayConnector: GovernmentGatewayConnector)(implicit val hc: HeaderCarrier){
+
+  def getExistingClients(arn: String): Future[GovernmentGatewayResponse] = {
+    governmentGatewayConnector.getExistingClients(arn)
   }
 }

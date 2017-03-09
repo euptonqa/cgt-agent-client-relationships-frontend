@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package checks
+package traits
 
-import common.Keys
-import models.Enrolment
+import config.AppConfig
+import org.scalatestplus.play.OneAppPerSuite
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.inject.Injector
+import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
-
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
-  }
+trait ViewTestSpec extends UnitSpec with OneAppPerSuite with FakeRequestHelper with I18nSupport {
+  lazy val injector: Injector = app.injector
+  lazy val appConfig: AppConfig = injector.instanceOf[AppConfig]
+  implicit def messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
 }

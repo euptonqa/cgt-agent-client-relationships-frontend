@@ -16,14 +16,10 @@
 
 package checks
 
-import common.Keys
-import models.Enrolment
+import common.Constants.AffinityGroup._
 
 import scala.concurrent.Future
 
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
-  }
+object AffinityGroupCheck {
+  def affinityGroupCheckAgent(affinityGroup: String): Future[Boolean] = Future.successful(affinityGroup == Agent)
 }

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package checks
+package auth
 
-import common.Keys
-import models.Enrolment
+import uk.gov.hmrc.play.frontend.auth.GovernmentGateway
 
-import scala.concurrent.Future
+case class GovernmentGatewayProvider(postSignInRedirectUrl: String, loginUrl: String) extends GovernmentGateway {
 
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
-  }
+  override def continueURL: String = postSignInRedirectUrl
+
+  override def loginURL: String = loginUrl
+
 }

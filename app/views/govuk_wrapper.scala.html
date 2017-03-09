@@ -49,9 +49,17 @@
 
 @serviceInfo = {
     @uiLayouts.serviceInfo(
-      betaBanner = HtmlFormat.empty,
+      betaBanner = betaBanner,
       includeGridWrapper = false,
       serviceInfoContent = Some(serviceInfoContent))
+}
+
+@betaBanner = {
+    @uiLayouts.betaBanner(
+        userLoggedIn = true,
+        betaFeedbackUrl = controllers.routes.FeedbackController.show.url,
+        betaFeedbackUnauthenticatedUrl = controllers.routes.FeedbackController.show.url
+    )
 }
 
 @mainContentHeader = {

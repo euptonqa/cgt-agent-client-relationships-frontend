@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package checks
+package config
 
-import common.Keys
-import models.Enrolment
+import javax.inject.{Inject, Singleton}
 
-import scala.concurrent.Future
+import uk.gov.hmrc.play.audit.http.HttpAuditing
+import uk.gov.hmrc.play.config.{AppName, RunMode}
+import uk.gov.hmrc.play.http.ws.{WSDelete, WSGet, WSPost, WSPut}
 
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
-  }
+@Singleton
+class WSHttp @Inject()(override val auditConnector: FrontendAuditConnector)
+  extends WSGet with WSPut with WSPost with WSDelete with AppName with RunMode with HttpAuditing {
+  override val hooks = Seq(AuditingHook)
 }

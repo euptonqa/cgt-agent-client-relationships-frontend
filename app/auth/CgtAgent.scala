@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package assets
+package auth
 
-import akka.stream.Materializer
-import config.AppConfig
-import org.scalatest.mock.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.i18n.MessagesApi
-import uk.gov.hmrc.play.test.UnitSpec
+import org.joda.time.DateTime
+import uk.gov.hmrc.play.frontend.auth.AuthContext
 
-trait ControllerSpecHelper extends UnitSpec with MockitoSugar with OneAppPerSuite {
-
-  val config: AppConfig = app.injector.instanceOf[AppConfig]
-  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-
-  implicit val mat: Materializer = app.injector.instanceOf[Materializer]
-
+case class CgtAgent(authContext: AuthContext) {
+  def previouslyLoggedInAt: Option[DateTime] = authContext.user.previouslyLoggedInAt
 }

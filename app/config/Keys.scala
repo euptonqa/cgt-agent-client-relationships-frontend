@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package checks
+package config
 
-import common.Keys
-import models.Enrolment
+object Keys {
 
-import scala.concurrent.Future
-
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
+  object GovernmentGateway {
+    val clientServiceName = "HMRC-AGENT-AGENT"
+    val assignedTo = "ALL"
   }
 }

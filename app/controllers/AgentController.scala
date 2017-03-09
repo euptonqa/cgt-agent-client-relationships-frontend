@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import config.AppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
@@ -28,7 +28,11 @@ import scala.concurrent.Future
 @Singleton
 class AgentController @Inject()(appConfig: AppConfig, val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  val showClientList = TODO
+  val showClientList: Action[AnyContent] = Action.async { implicit request =>
+    //TODO remove this dummy code - for test purposes only
+    val clients: Seq[String] = Seq("Client Company 1", "Client Company 2", "Client Individual 3")
+    Future.successful(Ok(views.html.clientList(appConfig, clients)))
+  }
 
   val selectClient = TODO
 

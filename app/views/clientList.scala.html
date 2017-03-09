@@ -1,0 +1,31 @@
+@(appConfig: config.AppConfig, clients: Seq[String])(implicit request: Request[_], messages: Messages)
+
+@views.html.main_template(title = Messages("clientList.title"), bodyClasses = None, appConfig = appConfig) {
+
+    <h1 class="heading-xlarge">@Messages("clientList.title")</h1>
+
+    <div class="grid-row">
+        <div class="form-group">
+            <table>
+                <tbody>
+                    <tr>
+                        <th class="bold-small">@Messages("clientList.clientName")</th>
+                        <td></td>
+                    </tr>
+                    @for(clientName <- clients) {
+                        <tr>
+                            <td class="font-small">
+                                @clientName
+                            </td>
+                            <td class="font-small" style="width:25%">
+                                <a href="@controllers.routes.AgentController.selectClient">@Messages("clientList.report")</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a class="button" id="add-client" href="@controllers.routes.AgentController.makeDeclaration">@Messages("clientList.addClient")</a>
+}

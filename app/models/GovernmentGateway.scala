@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package checks
+package models
 
-import common.Keys
-import models.Enrolment
+import play.api.libs.json.Json
 
-import scala.concurrent.Future
+case class IdentifierForDisplay(`type`: String, value: String)
 
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
-  }
+object IdentifierForDisplay {
+  implicit val formats = Json.format[IdentifierForDisplay]
+}
+
+case class Client(friendlyName: String, identifiersForDisplay: List[IdentifierForDisplay])
+
+object Client {
+  implicit val formats = Json.format[Client]
 }

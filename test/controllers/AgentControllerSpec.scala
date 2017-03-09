@@ -16,9 +16,10 @@
 
 package controllers
 
-import assets.{ControllerSpecHelper, MessageLookup}
+import assets.MessageLookup
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
+import traits.ControllerSpecHelper
 
 class AgentControllerSpec extends ControllerSpecHelper {
 
@@ -39,7 +40,6 @@ class AgentControllerSpec extends ControllerSpecHelper {
       }
     }
 
-    //TODO currently fails, to be updated with correct setup when auth is introduced
     "provided with an invalid unauthorised user" should {
       val controller = new AgentController(config, messagesApi)
       lazy val result = controller.makeDeclaration(FakeRequest())

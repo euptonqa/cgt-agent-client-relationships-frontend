@@ -44,7 +44,7 @@ class ConfirmPermissionViewSpec extends ViewSpecHelper {
     }
 
     "have a paragraph" which {
-      lazy val paragraph = doc.select("main p")
+      lazy val paragraph = doc.select("main p").get(1)
 
       s"has the text s${ConfirmPermission.body}" in {
         paragraph.text() shouldBe ConfirmPermission.body
@@ -52,7 +52,7 @@ class ConfirmPermissionViewSpec extends ViewSpecHelper {
     }
 
     "have a link" which {
-      lazy val link = doc.select("main a").first()
+      lazy val link = doc.select("main a").get(1)
 
       "has the class button" in {
         link.attr("class") shouldBe "button"

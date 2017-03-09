@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package checks
+package traits
 
-import common.Keys
-import models.Enrolment
+import akka.stream.Materializer
+import config.AppConfig
+import org.scalatest.mock.MockitoSugar
+import org.scalatestplus.play.OneAppPerSuite
+import play.api.i18n.MessagesApi
+import uk.gov.hmrc.play.test.UnitSpec
 
-import scala.concurrent.Future
+trait ControllerSpecHelper extends UnitSpec with MockitoSugar with OneAppPerSuite {
 
-object EnrolmentCheck {
-  def checkEnrolments(enrolments: Option[Seq[Enrolment]]): Future[Boolean] = enrolments match {
-    case Some(data) => Future.successful(data.exists(_.key == Keys.EnrolmentKeys.agentEnrolmentKey))
-    case None => Future.successful(false)
-  }
+  val config: AppConfig = app.injector.instanceOf[AppConfig]
+  val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+
+  implicit val mat: Materializer = app.injector.instanceOf[Materializer]
+
 }
