@@ -14,33 +14,17 @@
  * limitations under the License.
  */
 
-package controllers
+package traits
 
-import traits.ControllerSpecHelper
-import play.api.http.Status
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
+import uk.gov.hmrc.play.http.SessionKeys
 
-class HelloWorldControllerSpec extends ControllerSpecHelper {
+trait FakeRequestHelper extends MicroserviceFilterSupport {
+  lazy implicit val fakeRequest = FakeRequest()
+  lazy val fakeRequestWithSession: FakeRequest[AnyContentAsEmpty.type] = fakeRequest.withSession((SessionKeys.sessionId, ""))
 
-  val fakeRequest = FakeRequest("GET", "/")
-
-  val target: HelloWorld= app.injector.instanceOf[HelloWorld]
-
-  "GET /" should {
-    "return 200" in {
-      val result = target.helloWorld(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
-
-    "return HTML" in {
-      val result = target.helloWorld(fakeRequest)
-      contentType(result) shouldBe Some("text/html")
-      charset(result) shouldBe Some("utf-8")
-    }
-
-
-  }
-
-
+  def fakeRequestToPOSTWithSession (input: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] =
+    fakeRequestWithSession.withFormUrlEncodedBody(input: _*)
 }

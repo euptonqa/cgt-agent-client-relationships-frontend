@@ -33,6 +33,7 @@ trait AppConfig {
   val notAuthorisedRedirect: String
   val badAffinity: String
   val noEnrolment: String
+  val governmentGatewayContextUrl: String
 }
 
 @Singleton
@@ -42,10 +43,12 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   private def loadConfig(key: String) = configuration.getString(key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
   //Contact Frontend Config
+  private lazy val contactHost = configuration.getString(s"$env.microservice.services.contact-frontend.host").getOrElse("")
   override lazy val contactFrontendService: String = baseUrl("contact-frontend")
+
   override lazy val contactFormServiceIdentifier = "CGT-Agent-Client"
-  override lazy val reportAProblemPartialUrl = s"$contactFrontendService/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
-  override lazy val reportAProblemNonJSUrl = s"$contactFrontendService/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemPartialUrl = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
+  override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
   //GA Config
   override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
@@ -56,4 +59,6 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val notAuthorisedRedirect: String = configuration.getString(s"not-authorised-callback.url").getOrElse("")
   override lazy val badAffinity: String = configuration.getString(s"agent-bad-affinity.url").getOrElse("")
   override lazy val noEnrolment: String = configuration.getString(s"agent-sign-in.ur").getOrElse("")
+  override val governmentGatewayContextUrl: String = loadConfig("microservice.services.government-gateway.context")
+
 }

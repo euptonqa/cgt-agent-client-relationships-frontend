@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object Constants {
+import play.api.libs.json.Json
 
-  object AffinityGroup {
-    val Agent = "Agent"
-    val Individual = "Individual"
-    val Organisation = "Organisation"
-  }
+case class IdentifierForDisplay(`type`: String, value: String)
 
-  object Audit {
-    val splunk: String = "SPLUNK AUDIT:\n"
-    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
-    val eventTypeFailure: String = "CGTFailure"
-    val eventTypeSuccess: String = "CGTSuccess"
-  }
+object IdentifierForDisplay {
+  implicit val formats = Json.format[IdentifierForDisplay]
+}
+
+case class Client(friendlyName: String, identifiersForDisplay: List[IdentifierForDisplay])
+
+object Client {
+  implicit val formats = Json.format[Client]
 }

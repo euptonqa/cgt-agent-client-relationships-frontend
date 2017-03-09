@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package common
+package data
 
-object Constants {
+object MessageLookup {
 
-  object AffinityGroup {
-    val Agent = "Agent"
-    val Individual = "Individual"
-    val Organisation = "Organisation"
-  }
-
-  object Audit {
-    val splunk: String = "SPLUNK AUDIT:\n"
-    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
-    val eventTypeFailure: String = "CGTFailure"
-    val eventTypeSuccess: String = "CGTSuccess"
+  object ClientList {
+    val title = "Client overview"
+    val clientName = "Client name"
+    val addClient = "Add a new client"
+    val report = "Report"
   }
 }
