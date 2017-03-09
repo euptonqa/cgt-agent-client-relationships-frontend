@@ -19,7 +19,8 @@ package config
 object Keys {
 
   object GovernmentGateway {
-    val clientServiceName = "HMRC-AGENT-AGENT"
+    val clientServiceNameIndividual = "HMRC-CGT-IND"
+    val clientServiceNameOrganisation = "HMRC-CGT-ORG"
     val assignedTo = "ALL"
   }
 }

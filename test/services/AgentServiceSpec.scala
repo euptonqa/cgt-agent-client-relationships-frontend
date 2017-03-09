@@ -29,6 +29,8 @@ import org.mockito.Mockito._
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.play.frontend.auth.AuthContext
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
 import uk.gov.hmrc.play.http.logging.SessionId
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.test.UnitSpec
@@ -55,6 +57,10 @@ class AgentServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar wi
   implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
   val agentService = new AgentService(GGConnector)
 
+  val authContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Weak, ConfidenceLevel.L50, None, None, None, ""))
+  }
+
   "Calling .getExistingClients" when {
 
     "an OK response is returned" when {
@@ -65,10 +71,10 @@ class AgentServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar wi
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
 
-        val result = await(agentService.getExistingClients("ARN"))
+        val result = await(agentService.getExistingClients(authContext))
 
         "return a SuccessGovernmentGatewayResponse with a list of clients" in {
-          result shouldEqual SuccessGovernmentGatewayResponse(clients)
+          result shouldEqual SuccessGovernmentGatewayResponse(clients ++ clients)
         }
       }
     }
@@ -78,7 +84,7 @@ class AgentServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar wi
       when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.obj("reason" -> "y")))))
 
-      val result = await(agentService.getExistingClients("ARN"))
+      val result = await(agentService.getExistingClients(authContext))
 
       "return a FailedGovernmentGatewayResponse" in {
         result shouldEqual FailedGovernmentGatewayResponse

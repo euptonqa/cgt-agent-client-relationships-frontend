@@ -20,6 +20,7 @@ import java.util.UUID
 
 import audit.Logging
 import config.ApplicationConfig
+import config.Keys.GovernmentGateway._
 import models.{Client, IdentifierForDisplay}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -28,6 +29,8 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.play.frontend.auth.AuthContext
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.{Accounts, Authority, ConfidenceLevel, CredentialStrength}
 import uk.gov.hmrc.play.http._
 import uk.gov.hmrc.play.http.logging.SessionId
 import uk.gov.hmrc.play.http.ws.WSHttp
@@ -52,6 +55,10 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
     reset(mockWSHttp)
   }
 
+  val authContext: AuthContext = {
+    AuthContext.apply(Authority("testUserId", Accounts(), None, None, CredentialStrength.Weak, ConfidenceLevel.L50, None, None, None, ""))
+  }
+
   "Calling .getExistingClients" when {
 
     implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
@@ -66,7 +73,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
 
-        val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+        val result = await(TestGovernmentGatewayConnector.getExistingClients(clientServiceNameIndividual, authContext))
 
         "return a SuccessGovernmentGatewayResponse with a list of clients" in {
           result shouldEqual SuccessGovernmentGatewayResponse(clients)
@@ -78,7 +85,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(List.empty[Client])))))
 
-        val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+        val result = await(TestGovernmentGatewayConnector.getExistingClients(clientServiceNameIndividual, authContext))
 
         "return a SuccessGovernmentGatewayResponse with an empty list of clients" in {
           result shouldEqual SuccessGovernmentGatewayResponse(List.empty[Client])
@@ -91,7 +98,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
       when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = BAD_REQUEST, responseJson = Some(Json.obj("reason" -> "y")))))
 
-      val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+      val result = await(TestGovernmentGatewayConnector.getExistingClients(clientServiceNameIndividual, authContext))
 
       "return a FailedGovernmentGatewayResponse" in {
         result shouldEqual FailedGovernmentGatewayResponse
@@ -103,7 +110,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
       when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = INTERNAL_SERVER_ERROR, responseJson = Some(Json.obj("reason" -> "y")))))
 
-      val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+      val result = await(TestGovernmentGatewayConnector.getExistingClients(clientServiceNameIndividual, authContext))
 
       "return a FailedGovernmentGatewayResponse" in {
         result shouldEqual FailedGovernmentGatewayResponse
@@ -115,7 +122,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
       when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = 507, responseJson = Some(Json.obj("reason" -> "y")))))
 
-      val result = await(TestGovernmentGatewayConnector.getExistingClients("ARN"))
+      val result = await(TestGovernmentGatewayConnector.getExistingClients(clientServiceNameIndividual, authContext))
 
       "return a FailedGovernmentGatewayResponse" in {
         result shouldEqual FailedGovernmentGatewayResponse
