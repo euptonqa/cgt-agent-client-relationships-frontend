@@ -16,6 +16,38 @@
 
 package controllers
 
-class AgentControllerSpec {
+import audit.Logging
+import auth.AuthorisedActions
+import config.ApplicationConfig
+import connectors.GovernmentGatewayConnector
+import data.TestUsers
+import models.{AuthorisationDataModel, Enrolment}
+import play.api.inject.Injector
+import services.AgentService
+import traits.ControllerSpecHelper
+import uk.gov.hmrc.play.frontend.auth.AuthContext
+
+class AgentControllerSpec extends ControllerSpecHelper {
+
+  val injector: Injector = app.injector
+  val appConfig: ApplicationConfig = injector.instanceOf[ApplicationConfig]
+  val auditLogger: Logging = injector.instanceOf[Logging]
+
+  object mockGovernmentGatewayConnector extends GovernmentGatewayConnector(appConfig, auditLogger) {
+
+  }
+
+  object mockAgentService extends AgentService(mockGovernmentGatewayConnector) {
+
+  }
+
+  def mockAuthorisationService(enrolmentsResponse: Option[Seq[Enrolment]], autuhResponse: Option[AuthorisationDataModel]): Unit = {
+
+  }
+
+  def setupController(valid: Boolean = true, authContext: AuthContext = TestUsers.strongUserAuthContext,
+                     ): Unit = {
+
+  }
 
 }

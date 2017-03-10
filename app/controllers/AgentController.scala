@@ -22,11 +22,10 @@ import auth.AuthorisedActions
 import config.AppConfig
 import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Request, Result}
+import play.api.mvc.{Action, AnyContent, Result}
 import services.AgentService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
-
-import scala.concurrent.Future
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 @Singleton
 class AgentController @Inject()(authorisedActions: AuthorisedActions,
@@ -39,7 +38,6 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
       implicit request =>
         val stubbedArn = "ARN-12132"
         //TODO: Replace with a call to a fetch ARN function
-
         def handleGGResponse(response: GovernmentGatewayResponse): Result = {
           response match {
             case SuccessGovernmentGatewayResponse(clients) => {
