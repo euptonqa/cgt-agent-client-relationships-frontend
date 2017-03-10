@@ -35,7 +35,7 @@ class FeedbackControllerSpec extends ControllerSpecHelper {
   val mockHttp = mock[WSHttp]
 
   def setupController(): FeedbackController = {
-    lazy val controller = new FeedbackController()(mockConfig, mockHttp, messagesApi) {
+    lazy val controller = new FeedbackController()(config, mockHttp, messagesApi) {
       override implicit val cachedStaticHtmlPartialRetriever: CachedStaticHtmlPartialRetriever = new CachedStaticHtmlPartialRetriever {
         override def httpGet: HttpGet = mockHttp
 

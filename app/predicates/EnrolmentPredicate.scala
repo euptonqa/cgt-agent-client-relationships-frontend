@@ -20,20 +20,26 @@ import javax.inject.Inject
 
 import play.api.mvc.Results._
 import checks.EnrolmentCheck
+import models.Enrolment
 import play.api.mvc.{AnyContent, Request}
 import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.auth._
 import uk.gov.hmrc.play.http.HeaderCarrier
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class EnrolmentPredicate @Inject()(authService: AuthorisationService)
-                                  (enrolmentURI: String)(implicit hc: HeaderCarrier) extends PageVisibilityPredicate {
+                                  (enrolmentURI: String) extends PageVisibilityPredicate {
 
   override def apply(authContext: AuthContext, request: Request[AnyContent]): Future[PageVisibilityResult] = {
+
+    implicit def hc(implicit request: Request[_]): HeaderCarrier = HeaderCarrier.fromHeadersAndSession(request.headers, Some(request.session))
+
+    val authorityAffinityGroup: Future[Option[Seq[Enrolment]]] = authService.getEnrolments(hc(request))
+
     for {
-      enrolments <- authService.getEnrolments
+      enrolments <- authorityAffinityGroup
       isEnrolled <- EnrolmentCheck.checkEnrolments(enrolments)
     } yield {
       if(isEnrolled) {
@@ -44,5 +50,5 @@ class EnrolmentPredicate @Inject()(authService: AuthorisationService)
     }
   }
 
-  private val needsEnrolment = Future.successful(Redirect(enrolmentURI.toString))
+  private val needsEnrolment = Future.successful(Redirect(enrolmentURI))
 }

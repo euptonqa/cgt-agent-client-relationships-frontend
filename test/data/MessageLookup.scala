@@ -18,6 +18,15 @@ package data
 
 object MessageLookup {
 
+  object Common {
+    val continue = "Continue"
+  }
+
+  object ConfirmPermission {
+    val title = "Confirm you have permission"
+    val body = "By continuing, you confirm that you have permission to act on your client's behalf."
+  }
+
   object ClientList {
     val title = "Client overview"
     val clientName = "Client name"

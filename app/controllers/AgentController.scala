@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 @Singleton
+<<<<<<< HEAD
 class AgentController @Inject()(authorisedActions: AuthorisedActions,
                                 agentService: AgentService,
                                 appConfig: AppConfig,
@@ -54,9 +55,23 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
           //make call for ARN here
           clients <- agentService.getExistingClients(stubbedArn)
         } yield handleGGResponse(clients)
+=======
+class AgentController @Inject()(appConfig: AppConfig,
+                                authActions: AuthorisedActions,
+                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+
+  val showClientList: Action[AnyContent] = Action.async { implicit request =>
+    //TODO remove this dummy code - for test purposes only
+    val clients: Seq[String] = Seq("Client Company 1", "Client Company 2", "Client Individual 3")
+    Future.successful(Ok(views.html.clientList(appConfig, clients)))
+>>>>>>> master
   }
 
   val selectClient = TODO
 
-  val makeDeclaration = TODO
+  val makeDeclaration: Action[AnyContent] = authActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.confirmPermission(appConfig)))
+  }
 }
