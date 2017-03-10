@@ -16,17 +16,16 @@
 
 package controllers
 
-<<<<<<< HEAD
 import audit.Logging
 import auth.AuthorisedActions
-import config.ApplicationConfig
-import connectors.GovernmentGatewayConnector
+import config.{ApplicationConfig, WSHttp}
+import connectors.{AuthorisationConnector, GovernmentGatewayConnector}
 import models.{AuthorisationDataModel, Enrolment}
 import play.api.inject.Injector
-import services.AgentService
+import services.{AgentService, AuthorisationService}
 import data.MessageLookup
 import data.TestUsers
-import auth.{AuthorisedActions, CgtAgent, AuthenticatedAction}
+import auth.{AuthenticatedAction, AuthorisedActions, CgtAgent}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.invocation.InvocationOnMock
@@ -34,30 +33,44 @@ import org.mockito.Mockito._
 import org.mockito.stubbing.Answer
 import play.api.mvc.{Action, AnyContent, Results}
 import play.api.test.FakeRequest
->>>>>>> master
 import traits.ControllerSpecHelper
 import uk.gov.hmrc.play.frontend.auth.AuthContext
+import org.scalatest.BeforeAndAfter
+import uk.gov.hmrc.play.http.{HttpGet, HttpPost, HttpPut}
 
-class AgentControllerSpec extends ControllerSpecHelper {
+import scala.concurrent.Future
+
+class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   val injector: Injector = app.injector
   val appConfig: ApplicationConfig = injector.instanceOf[ApplicationConfig]
   val auditLogger: Logging = injector.instanceOf[Logging]
+  val mockWSHttp: WSHttp = mock[WSHttp]
+
+  before {
+    reset(mockWSHttp)
+  }
 
   object mockGovernmentGatewayConnector extends GovernmentGatewayConnector(appConfig, auditLogger) {
-
+    override val http: HttpPut with HttpGet with HttpPost = mockWSHttp
+    override val serviceContext: String = ""
+    override lazy val serviceUrl: String = ""
   }
 
   object mockAgentService extends AgentService(mockGovernmentGatewayConnector) {
 
   }
 
-  def mockAuthorisationService(enrolmentsResponse: Option[Seq[Enrolment]], autuhResponse: Option[AuthorisationDataModel]): Unit = {
+  def mockAuthorisationService(enrolmentsResponse: Option[Seq[Enrolment]], authResponse: Option[AuthorisationDataModel]): Unit = {
+    val mockConnector = mock[AuthorisationConnector]
 
-  }
+    when(mockConnector.getAuthResponse()(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(authResponse))
 
-  def setupController(valid: Boolean = true, authContext: AuthContext = TestUsers.strongUserAuthContext,
-                     ): Unit = {
+    when(mockConnector.getEnrolmentsResponse(ArgumentMatchers.any())(ArgumentMatchers.any()))
+      .thenReturn(Future.successful(enrolmentsResponse))
+
+    new AuthorisationService(mockConnector)
 
   }
 
@@ -85,7 +98,13 @@ class AgentControllerSpec extends ControllerSpecHelper {
         .thenReturn(Action.async(Results.Redirect(testOnlyUnauthorisedLoginUri)))
     }
 
-    new AgentController(config, mockActions, messagesApi)
+    val authModel = mock[AuthorisationDataModel]
+    when(authModel.uri).thenReturn("")
+    val mockEnrolments = Some(Seq(mock[Enrolment]))
+
+    mockAuthorisationService(mockEnrolments, Some(authModel))
+
+    new AgentController(mockActions, mockAgentService, appConfig, messagesApi)
   }
 
 
@@ -115,5 +134,4 @@ class AgentControllerSpec extends ControllerSpecHelper {
       }
     }
   }
->>>>>>> master
 }

@@ -27,8 +27,9 @@ import services.AgentService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrier
 
+import scala.concurrent.Future
+
 @Singleton
-<<<<<<< HEAD
 class AgentController @Inject()(authorisedActions: AuthorisedActions,
                                 agentService: AgentService,
                                 appConfig: AppConfig,
@@ -37,39 +38,25 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
   val showClientList: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
-        val stubbedArn = "ARN-12132"
-        //TODO: Replace with a call to a fetch ARN function
         def handleGGResponse(response: GovernmentGatewayResponse): Result = {
           response match {
             case SuccessGovernmentGatewayResponse(clients) => {
-              if(clients.size>0)
+              if (clients.size > 0)
                 Ok(views.html.clientList(appConfig, clients))
-              else Redirect("google.co.uk")
-              //TODO: replace with confirm permission screen
+              else Ok(views.html.confirmPermission(appConfig))
             }
             case FailedGovernmentGatewayResponse => InternalServerError
           }
         }
 
         for {
-          //make call for ARN here
-          clients <- agentService.getExistingClients(stubbedArn)
+          clients <- agentService.getExistingClients(user.authContext)
         } yield handleGGResponse(clients)
-=======
-class AgentController @Inject()(appConfig: AppConfig,
-                                authActions: AuthorisedActions,
-                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-
-  val showClientList: Action[AnyContent] = Action.async { implicit request =>
-    //TODO remove this dummy code - for test purposes only
-    val clients: Seq[String] = Seq("Client Company 1", "Client Company 2", "Client Individual 3")
-    Future.successful(Ok(views.html.clientList(appConfig, clients)))
->>>>>>> master
   }
 
   val selectClient = TODO
 
-  val makeDeclaration: Action[AnyContent] = authActions.authorisedAgentAction {
+  val makeDeclaration: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
         Future.successful(Ok(views.html.confirmPermission(appConfig)))
