@@ -19,7 +19,7 @@ package controllers
 import audit.Logging
 import auth.AuthorisedActions
 import config.{ApplicationConfig, WSHttp}
-import connectors.{AuthorisationConnector, GovernmentGatewayConnector, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
+import connectors._
 import models.{AuthorisationDataModel, Client, Enrolment, IdentifierForDisplay}
 import play.api.inject.Injector
 import services.{AgentService, AuthorisationService}
@@ -149,7 +149,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   "Calling .showClientList" when {
     "provided with a valid authorised user" when {
-      "the fetched client list is not empty" should {
+      "a successGovernmentGatewayResponse is obtained" should {
         val identifier = IdentifierForDisplay("CGT ref", "CGT123456")
         val clients = List(Client("John Smith", List(identifier)))
         val ggConnector = mockGovernmentGatewayConnector(SuccessGovernmentGatewayResponse(Seq(Client("John Smith", List[IdentifierForDisplay]
@@ -176,6 +176,22 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         "have an entry for John Smith in the clients table" in {
           val nameField = doc.select("tr:nth-of-type(2)").select("td:nth-of-type(1)")
           nameField.text shouldEqual "John Smith"
+        }
+      }
+
+      "a FailedGovernmentGatewayResponse is obtained" should {
+        val identifier = IdentifierForDisplay("CGT ref", "CGT123456")
+        val clients = List(Client("John Smith", List(identifier)))
+        val ggConnector = mockGovernmentGatewayConnector(FailedGovernmentGatewayResponse)
+        val agentService = new AgentService(ggConnector)
+
+        when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+          .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
+
+        lazy val controller = setupController(correctAuthentication = true, agentService = agentService)
+        lazy val result = controller.showClientList(FakeRequest())
+        "return a status of 500" in {
+          status(result) shouldBe 500
         }
       }
     }
