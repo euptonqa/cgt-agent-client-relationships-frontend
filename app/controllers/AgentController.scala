@@ -20,26 +20,39 @@ import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
 import config.AppConfig
+import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
+import services.AgentService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
 
 @Singleton
-class AgentController @Inject()(appConfig: AppConfig,
-                                authActions: AuthorisedActions,
+class AgentController @Inject()(authorisedActions: AuthorisedActions,
+                                agentService: AgentService,
+                                appConfig: AppConfig,
                                 val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  val showClientList: Action[AnyContent] = Action.async { implicit request =>
-    //TODO remove this dummy code - for test purposes only
-    val clients: Seq[String] = Seq("Client Company 1", "Client Company 2", "Client Individual 3")
-    Future.successful(Ok(views.html.clientList(appConfig, clients)))
+  val showClientList: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        def handleGGResponse(response: GovernmentGatewayResponse): Result = {
+          response match {
+            case SuccessGovernmentGatewayResponse(clients) =>
+              if (clients.nonEmpty)
+                Ok(views.html.clientList(appConfig, clients))
+              else Ok(views.html.confirmPermission(appConfig))
+            case FailedGovernmentGatewayResponse => InternalServerError
+          }
+        }
+
+      agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
   }
 
   val selectClient = TODO
 
-  val makeDeclaration: Action[AnyContent] = authActions.authorisedAgentAction {
+  val makeDeclaration: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
         Future.successful(Ok(views.html.confirmPermission(appConfig)))

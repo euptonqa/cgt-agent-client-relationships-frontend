@@ -17,6 +17,7 @@
 package views
 
 import data.MessageLookup.{ClientList => messages}
+import models.{Client, IdentifierForDisplay}
 import org.jsoup.Jsoup
 import traits.ViewSpecHelper
 import views.html.clientList
@@ -25,8 +26,11 @@ class ClientListViewSpec extends ViewSpecHelper {
 
   "The clientList view" should {
 
-    val users: Seq[String] = Seq("John Smith", "Company 123")
-    lazy val view = clientList(config, users)
+    val clients: Seq[Client] = Seq(Client("John Smith", List[IdentifierForDisplay]
+      (IdentifierForDisplay("Individual", "johnsmith"))),
+      Client("Company 123", List[IdentifierForDisplay]
+        (IdentifierForDisplay("Organisation", "company123"))))
+    lazy val view = clientList(config, clients)
     lazy val doc = Jsoup.parse(view.body)
 
     s"display a title of ${messages.title}" in {

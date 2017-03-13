@@ -1,4 +1,6 @@
-@(appConfig: config.AppConfig, clients: Seq[String])(implicit request: Request[_], messages: Messages)
+@import models.Client
+
+@(appConfig: config.AppConfig, clients: Seq[Client])(implicit request: Request[_], messages: Messages)
 
 @views.html.main_template(title = Messages("clientList.title"), bodyClasses = None, appConfig = appConfig) {
 
@@ -12,10 +14,10 @@
                         <th class="bold-small">@Messages("clientList.clientName")</th>
                         <td></td>
                     </tr>
-                    @for(clientName <- clients) {
+                    @for(client <- clients) {
                         <tr>
                             <td class="font-small">
-                                @clientName
+                                @client.friendlyName
                             </td>
                             <td class="font-small" style="width:25%">
                                 <a href="@controllers.routes.AgentController.selectClient">@Messages("clientList.report")</a>
