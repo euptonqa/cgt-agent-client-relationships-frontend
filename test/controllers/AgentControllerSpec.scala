@@ -17,7 +17,7 @@
 package controllers
 
 import audit.Logging
-import config.{ApplicationConfig, WSHttp}
+import config.WSHttp
 import connectors._
 import models.{AuthorisationDataModel, Client, Enrolment, IdentifierForDisplay}
 import play.api.inject.Injector
@@ -37,7 +37,7 @@ import uk.gov.hmrc.play.frontend.auth.AuthContext
 import org.scalatest.BeforeAndAfter
 import play.api.http.Status._
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.http.{HttpGet, HttpPost, HttpPut, HttpResponse}
+import uk.gov.hmrc.play.http.HttpResponse
 
 import scala.concurrent.Future
 
