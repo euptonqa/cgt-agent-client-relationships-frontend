@@ -39,18 +39,15 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
       implicit request =>
         def handleGGResponse(response: GovernmentGatewayResponse): Result = {
           response match {
-            case SuccessGovernmentGatewayResponse(clients) => {
-              if (clients.size > 0)
+            case SuccessGovernmentGatewayResponse(clients) =>
+              if (clients.nonEmpty)
                 Ok(views.html.clientList(appConfig, clients))
               else Ok(views.html.confirmPermission(appConfig))
-            }
             case FailedGovernmentGatewayResponse => InternalServerError
           }
         }
 
-        for {
-          clients <- agentService.getExistingClients(user.authContext)
-        } yield handleGGResponse(clients)
+      agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
   }
 
   val selectClient = TODO
