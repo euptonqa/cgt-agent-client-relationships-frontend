@@ -52,20 +52,13 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     reset(mockWSHttp)
   }
 
-
-
-  def mockGovernmentGatewayConnector(governmentGatewayResponse: GovernmentGatewayResponse): GovernmentGatewayConnector ={
-    val mockConnector = mock[GovernmentGatewayConnector]
-    when(mockConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
-      .thenReturn(governmentGatewayResponse)
-    mockConnector
-  }
-
-  def mockAuthorisationService(authResponse: Option[AuthorisationDataModel]): Unit = {
+  def mockAuthorisationService(): AuthorisationService = {
     val mockConnector = mock[AuthorisationConnector]
 
+    val mockAuthResponse = Some(mock[AuthorisationDataModel])
+
     when(mockConnector.getAuthResponse()(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(authResponse))
+      .thenReturn(Future.successful(mockAuthResponse))
 
     when(mockConnector.getEnrolmentsResponse(ArgumentMatchers.any())(ArgumentMatchers.any()))
       .thenReturn(Future.successful(Some(Seq(mock[Enrolment]))))
@@ -102,7 +95,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     val authModel = mock[AuthorisationDataModel]
     when(authModel.uri).thenReturn("")
 
-    mockAuthorisationService(Some(authModel))
+    mockAuthorisationService
 
     new AgentController(mockActions, agentService, config, messagesApi)
   }
@@ -121,7 +114,8 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   "Calling .declaration" when {
 
     "provided with a valid authorised user" should {
-      ggSetUp
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
 
       val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(agentService = agentService)
@@ -139,7 +133,8 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "provided with an invalid unauthorised user" should {
-      ggSetUp
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
 
       val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(correctAuthentication = false, agentService = agentService)
@@ -154,7 +149,8 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   "Calling .showClientList" when {
     "provided with a valid authorised user" when {
       "a successGovernmentGatewayResponse is obtained" should {
-        ggSetUp
+        when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+          .thenReturn(SuccessGovernmentGatewayResponse(clients))
 
         val agentService = new AgentService(ggConnector)
 
@@ -180,9 +176,9 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       }
 
       "a FailedGovernmentGatewayResponse is obtained" should {
-        ggSetUp
+        when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+          .thenReturn(FailedGovernmentGatewayResponse)
 
-        val ggConnector = mockGovernmentGatewayConnector(FailedGovernmentGatewayResponse)
         val agentService = new AgentService(ggConnector)
 
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
@@ -197,7 +193,8 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "provided with an unauthorised user" should {
-      ggSetUp
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
 
       val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(correctAuthentication = false, agentService = agentService)
