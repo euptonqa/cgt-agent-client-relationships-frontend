@@ -45,7 +45,6 @@ import scala.concurrent.Future
 class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   lazy val injector: Injector = app.injector
-  lazy val appConfig: ApplicationConfig = injector.instanceOf[ApplicationConfig]
   lazy val auditLogger: Logging = injector.instanceOf[Logging]
   lazy val mockWSHttp: WSHttp = mock[WSHttp]
 
@@ -105,7 +104,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     mockAuthorisationService(Some(authModel))
 
-    new AgentController(mockActions, agentService, appConfig, messagesApi)
+    new AgentController(mockActions, agentService, config, messagesApi)
   }
 
 
