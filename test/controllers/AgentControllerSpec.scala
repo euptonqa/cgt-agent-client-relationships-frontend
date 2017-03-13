@@ -17,7 +17,6 @@
 package controllers
 
 import audit.Logging
-import auth.AuthorisedActions
 import config.{ApplicationConfig, WSHttp}
 import connectors._
 import models.{AuthorisationDataModel, Client, Enrolment, IdentifierForDisplay}
@@ -42,6 +41,7 @@ import uk.gov.hmrc.play.http.{HttpGet, HttpPost, HttpPut, HttpResponse}
 
 import scala.concurrent.Future
 
+
 class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   lazy val injector: Injector = app.injector
@@ -62,14 +62,14 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     mockConnector
   }
 
-  def mockAuthorisationService(enrolmentsResponse: Option[Seq[Enrolment]], authResponse: Option[AuthorisationDataModel]): Unit = {
+  def mockAuthorisationService(authResponse: Option[AuthorisationDataModel]): Unit = {
     val mockConnector = mock[AuthorisationConnector]
 
     when(mockConnector.getAuthResponse()(ArgumentMatchers.any()))
       .thenReturn(Future.successful(authResponse))
 
     when(mockConnector.getEnrolmentsResponse(ArgumentMatchers.any())(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(enrolmentsResponse))
+      .thenReturn(Future.successful(Some(Seq(mock[Enrolment]))))
 
     new AuthorisationService(mockConnector)
 
@@ -102,21 +102,28 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     val authModel = mock[AuthorisationDataModel]
     when(authModel.uri).thenReturn("")
-    val mockEnrolments = Some(Seq(mock[Enrolment]))
 
-    mockAuthorisationService(mockEnrolments, Some(authModel))
+    mockAuthorisationService(Some(authModel))
 
     new AgentController(mockActions, agentService, appConfig, messagesApi)
   }
 
 
+  lazy val ggConnector = mock[GovernmentGatewayConnector]
+
+  val identifier = IdentifierForDisplay("CGT ref", "CGT123456")
+  val clients = List(Client("John Smith", List(identifier)))
+
+  lazy val ggSetUp = {
+
+    when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+      .thenReturn(SuccessGovernmentGatewayResponse(clients))}
+
   "Calling .declaration" when {
 
     "provided with a valid authorised user" should {
-      val ggConnector = mockGovernmentGatewayConnector(SuccessGovernmentGatewayResponse(Seq(Client("John Smith", List[IdentifierForDisplay]
-        (IdentifierForDisplay("Individual", "johnsmith"))),
-        Client("Company 123", List[IdentifierForDisplay]
-          (IdentifierForDisplay("Organisation", "company123"))))))
+      ggSetUp
+
       val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(agentService = agentService)
       lazy val result = controller.makeDeclaration(FakeRequest())
@@ -133,10 +140,8 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "provided with an invalid unauthorised user" should {
-      val ggConnector = mockGovernmentGatewayConnector(SuccessGovernmentGatewayResponse(Seq(Client("John Smith", List[IdentifierForDisplay]
-        (IdentifierForDisplay("Individual", "johnsmith"))),
-        Client("Company 123", List[IdentifierForDisplay]
-          (IdentifierForDisplay("Organisation", "company123"))))))
+      ggSetUp
+
       val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(correctAuthentication = false, agentService = agentService)
       lazy val result = controller.makeDeclaration(FakeRequest())
@@ -150,12 +155,8 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   "Calling .showClientList" when {
     "provided with a valid authorised user" when {
       "a successGovernmentGatewayResponse is obtained" should {
-        val identifier = IdentifierForDisplay("CGT ref", "CGT123456")
-        val clients = List(Client("John Smith", List(identifier)))
-        val ggConnector = mockGovernmentGatewayConnector(SuccessGovernmentGatewayResponse(Seq(Client("John Smith", List[IdentifierForDisplay]
-          (IdentifierForDisplay("Individual", "johnsmith"))),
-          Client("Company 123", List[IdentifierForDisplay]
-            (IdentifierForDisplay("Organisation", "company123"))))))
+        ggSetUp
+
         val agentService = new AgentService(ggConnector)
 
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
@@ -180,8 +181,8 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       }
 
       "a FailedGovernmentGatewayResponse is obtained" should {
-        val identifier = IdentifierForDisplay("CGT ref", "CGT123456")
-        val clients = List(Client("John Smith", List(identifier)))
+        ggSetUp
+
         val ggConnector = mockGovernmentGatewayConnector(FailedGovernmentGatewayResponse)
         val agentService = new AgentService(ggConnector)
 
@@ -197,14 +198,12 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "provided with an unauthorised user" should {
-      val ggConnector = mockGovernmentGatewayConnector(SuccessGovernmentGatewayResponse(Seq(Client("John Smith", List[IdentifierForDisplay]
-        (IdentifierForDisplay("Individual", "johnsmith"))),
-        Client("Company 123", List[IdentifierForDisplay]
-          (IdentifierForDisplay("Organisation", "company123"))))))
+      ggSetUp
+
       val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(correctAuthentication = false, agentService = agentService)
       lazy val result = controller.showClientList(FakeRequest())
-      "return a status type of 330" in {
+      "return a status type of 303" in {
         status(result) shouldBe 303
       }
     }

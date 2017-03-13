@@ -1,4 +1,6 @@
-@(appConfig: config.AppConfig, clients: Seq[models.Client])(implicit request: Request[_], messages: Messages)
+@import models.Client
+
+@(appConfig: config.AppConfig, clients: Seq[Client])(implicit request: Request[_], messages: Messages)
 
 @views.html.main_template(title = Messages("clientList.title"), bodyClasses = None, appConfig = appConfig) {
 
