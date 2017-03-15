@@ -19,6 +19,8 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
+import common.Constants
+import common.Constants.AffinityGroup
 import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.AuthorisationService
@@ -33,7 +35,7 @@ class ClientController @Inject()(authorisedActions: AuthorisedActions, authorisa
     implicit user =>
       implicit request =>
         authorisationService.getAffinityGroup(hc).map{
-          case Some("Individual") => Ok(enterIndividualCorrespondenceDetails)
+          case Some(AffinityGroup.Individual) => Ok(enterIndividualCorrespondenceDetails)
           case _ => NotImplemented
         }
   }
