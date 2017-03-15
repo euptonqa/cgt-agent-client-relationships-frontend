@@ -18,14 +18,25 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.AuthorisedActions
+import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
+import play.api.mvc.{Action, AnyContent, Result}
+import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 @Singleton
-class ClientController @Inject()() extends FrontendController {
+class ClientController @Inject()(authorisedActions: AuthorisedActions, authorisationService: AuthorisationService) extends FrontendController {
 
-  val clientType = TODO
+  val clientType= TODO
 
-  val submitClientType = TODO
+  val submitClientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        authorisationService.getAffinityGroup(hc).map{
+          case Some("Individual") => Ok(enterIndividualCorrespondenceDetails)
+          case _ => NotImplemented
+        }
+  }
 
   val enterIndividualCorrespondenceDetails = TODO
 
