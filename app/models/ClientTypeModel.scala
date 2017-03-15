@@ -16,4 +16,10 @@
 
 package models
 
+import play.api.libs.json.{Json, OFormat}
+
 case class ClientTypeModel(clientType: String)
+
+object ClientTypeModel {
+  implicit val formats: OFormat[ClientTypeModel] = Json.format[ClientTypeModel]
+}
