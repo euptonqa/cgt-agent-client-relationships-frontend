@@ -18,10 +18,20 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.AuthorisedActions
+import config.AppConfig
+import models.UserFactsModel
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+import scala.concurrent.Future
+
 @Singleton
-class ClientController @Inject()() extends FrontendController {
+class ClientController @Inject()(authorisedActions: AuthorisedActions,
+                                 clientService: ClientService,
+                                 appConfig: AppConfig,
+                                 val messages: MessagesApi) extends FrontendController with I18nSupport {
 
   val clientType = TODO
 
@@ -29,7 +39,31 @@ class ClientController @Inject()() extends FrontendController {
 
   val enterIndividualCorrespondenceDetails = TODO
 
-  val submitIndividualCorrespondenceDetails = TODO
+  val submitIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+
+        def handleRealtionshipResponse(response: T) = {
+
+        }
+
+        def successAction(model: UserFactsModel): Future[Result] = {
+          for {
+            cgtRef <- clientService.subscribeIndividualClient(model)
+            relationshipResponse <- relationshipService.createRelationship(cgtRef)
+          }
+
+
+
+          Future.successful(Redirect(routes.ContactDetailsController.contactDetails()))
+        }
+
+
+        correspondenceAddressForm.correspondenceAddressForm.bindFromRequest.fold(errors =>
+          Future.successful(BadRequest(views.html.address.enterCorrespondenceAddress(appConfig, errors))),
+          successAction)
+
+  }
 
   val confirmation = TODO
 }
