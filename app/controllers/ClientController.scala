@@ -74,6 +74,7 @@ class ClientController @Inject()(appConfig: AppConfig,
         def successAction(model: UserFactsModel): Future[Result] = {
           for {
             cgtRef <- clientService.subscribeIndividualClient(model)
+            //Depending on how this is handled with affect how the success is done.
             relationshipResponse <- relationshipService.createRelationship(cgtRef)
           }
         }
