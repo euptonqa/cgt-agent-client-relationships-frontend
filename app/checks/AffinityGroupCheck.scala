@@ -21,5 +21,5 @@ import common.Constants.AffinityGroup._
 import scala.concurrent.Future
 
 object AffinityGroupCheck {
-  def affinityGroupCheckAgent(affinityGroup: String): Future[Boolean] = Future.successful(affinityGroup == Agent)
+  def affinityGroupCheckAgent(affinityGroup: String): Future[Boolean] = Future.successful(affinityGroup == agent)
 }

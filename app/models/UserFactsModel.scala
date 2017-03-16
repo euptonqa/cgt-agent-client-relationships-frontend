@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object Constants {
+import play.api.libs.json.{Json, OFormat}
 
-  object AffinityGroup {
-    val agent = "Agent"
-    val individual = "Individual"
-    val organisation = "Organisation"
-  }
+case class UserFactsModel(firstName: String,
+                          lastName: String,
+                          addressLineOne: String,
+                          addressLineTwo: Option[String],
+                          townOrCity: String,
+                          county: Option[String],
+                          postCode: String,
+                          country: String)
 
-  object Audit {
-    val splunk: String = "SPLUNK AUDIT:\n"
-    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
-    val eventTypeFailure: String = "CGTFailure"
-    val eventTypeSuccess: String = "CGTSuccess"
-  }
-
-  object ClientType {
-    val individual = "Individual"
-    val company = "Company"
-  }
+object UserFactsModel {
+  implicit val formats: OFormat[UserFactsModel] = Json.format[UserFactsModel]
 }
