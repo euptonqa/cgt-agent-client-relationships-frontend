@@ -60,7 +60,7 @@ class ClientControllerSpec extends ControllerSpecHelper {
       lazy val controller = new ClientController(config, actions, form, messagesApi)
       lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "Individual")))
 
-      "return a status of 200" in {
+      "return a status of 303" in {
         status(result) shouldBe 303
       }
 
