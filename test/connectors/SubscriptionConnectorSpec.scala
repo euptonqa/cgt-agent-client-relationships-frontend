@@ -54,10 +54,10 @@ class SubscriptionConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
   }
 
   "SubscriptionConnector .subscribeIndividualClient" should {
+    val model = UserFactsModel("", "", "", None, "", None, "", "")
 
     "return a successful future with a subscription reference on a success" in {
       val json = cgtSubscriptionResponse("CGT123456789")
-      val model = UserFactsModel("", "", "", None, "", None, "", "")
       lazy val mockHttp = createMockHttp(successfulResponse = true, json)
       lazy val connector = new SubscriptionConnector(mockHttp, config)
       lazy val result = connector.subscribeIndividualClient(model)
@@ -67,7 +67,6 @@ class SubscriptionConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
 
     "return a failed future with a Json formatting error with invalid json" in {
       val json = Json.toJson("")
-      val model = UserFactsModel("", "", "", None, "", None, "", "")
       lazy val mockHttp = createMockHttp(successfulResponse = true, json)
       lazy val connector = new SubscriptionConnector(mockHttp, config)
       lazy val result = connector.subscribeIndividualClient(model)
@@ -80,7 +79,6 @@ class SubscriptionConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
 
     "return a failed future with a response error with an invalid response" in {
       val json = cgtSubscriptionResponse("CGT123456789")
-      val model = UserFactsModel("", "", "", None, "", None, "", "")
       lazy val mockHttp = createMockHttp(successfulResponse = false, json)
       lazy val connector = new SubscriptionConnector(mockHttp, config)
       lazy val result = connector.subscribeIndividualClient(model)

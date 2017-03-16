@@ -31,9 +31,12 @@ import scala.concurrent.Future
 @Singleton
 class SubscriptionConnector @Inject()(http: WSHttp, applicationConfig: ApplicationConfig) {
 
+  lazy val serviceUrl = applicationConfig.subscriptionServiceUrl
+
   def subscribeIndividualClient(userFactsModel: UserFactsModel)(implicit hc: HeaderCarrier): Future[SubscriptionReference] = {
-    val url = applicationConfig.subscriptionServiceIndividualUrl
-    http.POST[JsValue, HttpResponse](url, Json.toJson(userFactsModel)).map {
+    val postUrl = s"$serviceUrl/capital-gains-tax/subscription/agent/individual"
+
+    http.POST[JsValue, HttpResponse](postUrl, Json.toJson(userFactsModel)).map {
       response => response.status match {
         case OK => response.json.as[SubscriptionReference]
         case _ =>
