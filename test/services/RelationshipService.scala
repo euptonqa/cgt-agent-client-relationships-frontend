@@ -18,7 +18,7 @@ package services
 
 import javax.inject.Inject
 
-import connectors.RelationshipConnector
+import connectors.{RelationshipConnector, RelationshipConnectorResponse}
 import models.RelationshipModel
 import uk.gov.hmrc.play.http.HeaderCarrier
 
@@ -26,8 +26,8 @@ import scala.concurrent.Future
 
 class RelationshipService@ Inject()(relationshipConnector: RelationshipConnector) {
 
-  def createClientRelationship(relationshipModel: RelationshipModel)
-                              (implicit hc: HeaderCarrier): Future[relationshipConnector.RelationshipConnectorResponse] = {
+  def createClientRelationship(relationshipModel: RelationshipModel)(implicit hc: HeaderCarrier)
+  : Future[RelationshipConnectorResponse] = {
     relationshipConnector.createClientRelationship(relationshipModel)
   }
 

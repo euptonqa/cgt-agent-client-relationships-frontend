@@ -27,14 +27,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
+trait RelationshipConnectorResponse
+case object SuccessfulRelationshipResponse extends RelationshipConnectorResponse
+case object FailedRelationshipResponse extends RelationshipConnectorResponse
+
 class RelationshipConnector @Inject()(appConfig: AppConfig, http: WSHttp) {
 
   lazy val serviceUrl: String = appConfig.agentRelationship
   val createRelationship: String = "/client"
-
-  sealed trait RelationshipConnectorResponse
-  case object SuccessfulRelationshipResponse extends RelationshipConnectorResponse
-  case object FailedRelationshipResponse extends RelationshipConnectorResponse
 
   def createClientRelationship(relationshipModel: RelationshipModel)(implicit hc: HeaderCarrier): Future[RelationshipConnectorResponse] = {
     val postUrl = s"""$serviceUrl/$createRelationship"""

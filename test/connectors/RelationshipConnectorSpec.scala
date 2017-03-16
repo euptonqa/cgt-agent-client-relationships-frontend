@@ -56,7 +56,7 @@ class RelationshipConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
       lazy val connector = new RelationshipConnector(config, mockHttp)
       lazy val result = connector.createClientRelationship(relationshipModel)
 
-      await(result) shouldBe connector.SuccessfulRelationshipResponse
+      await(result) shouldBe SuccessfulRelationshipResponse
     }
 
     "return a FailedRelationshipResponse on failure" in {
@@ -64,7 +64,7 @@ class RelationshipConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
       lazy val connector = new RelationshipConnector(config, mockHttp)
       lazy val result = connector.createClientRelationship(relationshipModel)
 
-      await(result) shouldBe connector.FailedRelationshipResponse
+      await(result) shouldBe FailedRelationshipResponse
     }
   }
 
