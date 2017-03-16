@@ -44,4 +44,11 @@ object MessageLookup {
     val company = "Company"
     val individual = "Individual"
   }
+
+  object ClientConfirmation {
+    val title = "Capital Gains Tax Service registration complete"
+    val reference = "Your client's Capital Gains Tax reference:"
+    val whatNext = "What happens next?"
+    val guidance = "{COPY TO BE CONFIRMED}"
+  }
 }

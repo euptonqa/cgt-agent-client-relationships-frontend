@@ -19,6 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
+import common.Constants.{ClientType => CTConstants}
 import config.AppConfig
 import forms.ClientTypeForm
 import models.ClientTypeModel
@@ -27,7 +28,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.{clientType => clientTypeView}
-import common.Constants.{ClientType => CTConstants}
 
 import scala.concurrent.Future
 
@@ -39,7 +39,11 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   lazy val form = clientTypeForm.clientTypeForm
 
-  val clientType = TODO
+  val clientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.clientType(appConfig, clientTypeForm.clientTypeForm)))
+  }
 
   val submitClientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
@@ -49,7 +53,7 @@ class ClientController @Inject()(appConfig: AppConfig,
         }
         def successAction(model: ClientTypeModel): Future[Result] = {
           model.clientType match {
-            case CTConstants.individual  => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
+            case CTConstants.individual => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
             case CTConstants.company => Future.successful(NotImplemented)
           }
         }
