@@ -19,28 +19,48 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
-import common.Constants
-import common.Constants.AffinityGroup
-import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
+import config.AppConfig
+import forms.ClientTypeForm
+import models.ClientTypeModel
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import views.html.{clientType => clientTypeView}
+
+import scala.concurrent.Future
 
 @Singleton
-class ClientController @Inject()(authorisedActions: AuthorisedActions, authorisationService: AuthorisationService) extends FrontendController {
+class ClientController @Inject()(appConfig: AppConfig,
+                                 authorisedActions: AuthorisedActions,
+                                 clientTypeForm: ClientTypeForm,
+                                 val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  val clientType= TODO
+  lazy val form = clientTypeForm.clientTypeForm
+
+  val clientType = TODO
 
   val submitClientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
-        authorisationService.getAffinityGroup(hc).map{
-          case Some(AffinityGroup.Individual) => Ok(enterIndividualCorrespondenceDetails)
-          case _ => NotImplemented
+        def errorAction(form: Form[ClientTypeModel]) = {
+          Future.successful(BadRequest(clientTypeView(appConfig, form)))
         }
+        def successAction(model: ClientTypeModel) = {
+          routeRequest(model)
+        }
+
+        def routeRequest(data: ClientTypeModel): Future[Result] = {
+          data.clientType match {
+            case "Individual"  => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
+            case _ => Future.successful(NotImplemented)
+          }
+        }
+
+        form.bindFromRequest.fold(errorAction, successAction)
   }
 
-  val enterIndividualCorrespondenceDetails = TODO
+  val enterIndividualCorrespondenceDetails: Action[AnyContent] = TODO
 
   val submitIndividualCorrespondenceDetails = TODO
 
