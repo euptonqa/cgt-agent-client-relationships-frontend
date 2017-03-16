@@ -20,21 +20,41 @@ import data.MessageLookup.{ClientConfirmation => messages}
 import auth.{CgtAgent, _}
 import data.{MessageLookup, TestUsers}
 import forms.ClientTypeForm
+import audit.Logging
+import auth.{CgtAgent, _}
+import play.api.inject.Injector
+import config.WSHttp
+import connectors.AuthorisationConnector
+import data.{MessageLookup, TestUsers}
+import models.{AuthorisationDataModel, Enrolment}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
+import org.scalatest.BeforeAndAfter
 import play.api.mvc.{Action, AnyContent, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.AuthorisationService
 import traits.ControllerSpecHelper
+import uk.gov.hmrc.play.frontend.auth.AuthContext
 
-class ClientControllerSpec extends ControllerSpecHelper {
+import scala.concurrent.Future
+
+class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
   val unauthorisedLoginUrl = "some-url"
   val form = app.injector.instanceOf[ClientTypeForm]
   private val testOnlyUnauthorisedLoginUri = "just-a-test"
+
+  lazy val injector: Injector = app.injector
+  lazy val auditLogger: Logging = injector.instanceOf[Logging]
+  lazy val mockWSHttp: WSHttp = mock[WSHttp]
+
+  before {
+    reset(mockWSHttp)
+  }
 
   def createMockActions(valid: Boolean = true): AuthorisedActions = {
     val authContext = TestUsers.strongUserAuthContext
@@ -55,6 +75,7 @@ class ClientControllerSpec extends ControllerSpecHelper {
     }
     mockActions
   }
+
 
   "Calling .clientType" when {
 
@@ -144,6 +165,35 @@ class ClientControllerSpec extends ControllerSpecHelper {
       val fakeRequest = FakeRequest("GET", "/")
       lazy val controller = new ClientController(config, actions, form, messagesApi)
       lazy val result = controller.confirmation("TestRef")(fakeRequest)
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+    }
+  }
+
+  "Calling .enterIndividualCorrespondenceDetails" when {
+
+    "an authorised user made the request" should {
+      val actions = createMockActions()
+      lazy val controller =  new ClientController(config, actions, form, messagesApi)
+      lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
+
+      "return a status of 200" in {
+        status(result) shouldBe 200
+      }
+
+      "load the confirmPermission view" in {
+        lazy val doc = Jsoup.parse(bodyOf(result))
+
+        doc.title() shouldBe MessageLookup.ConfirmPermission.title
+      }
+    }
+
+    "provided with an invalid unauthorised user" should {
+      val actions = createMockActions(valid = false)
+      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
 
       "return a status of 303" in {
         status(result) shouldBe 303
