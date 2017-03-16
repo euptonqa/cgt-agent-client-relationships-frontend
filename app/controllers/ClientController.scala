@@ -47,12 +47,8 @@ class ClientController @Inject()(appConfig: AppConfig,
         def errorAction(form: Form[ClientTypeModel]) = {
           Future.successful(BadRequest(clientTypeView(appConfig, form)))
         }
-        def successAction(model: ClientTypeModel) = {
-          routeRequest(model)
-        }
-
-        def routeRequest(data: ClientTypeModel): Future[Result] = {
-          data.clientType match {
+        def successAction(model: ClientTypeModel): Future[Result] = {
+          model.clientType match {
             case individual  => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
             case company => Future.successful(NotImplemented)
             case _ => Future.successful(BadRequest)
