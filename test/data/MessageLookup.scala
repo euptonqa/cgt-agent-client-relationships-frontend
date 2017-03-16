@@ -39,4 +39,8 @@ object MessageLookup {
     val addClient = "Add a new client"
     val report = "Report"
   }
+
+  object Errors {
+    val errorRequired = "This field is required"
+  }
 }

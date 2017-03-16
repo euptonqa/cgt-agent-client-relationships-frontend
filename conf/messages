@@ -17,6 +17,12 @@ clientList.clientName = Client name
 clientList.addClient = Add a new client
 clientList.report = Report
 
+## Error Messages ##
+errors.required = This field is required
+
+## Error Summary Messages ##
+error.summary.heading = This page has errors
+
 ## Feedback ##
 feedback.send = Send your feedback
 feedback.thankyou = Your feedback
