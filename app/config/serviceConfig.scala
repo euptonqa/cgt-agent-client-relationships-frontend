@@ -33,6 +33,7 @@ trait AppConfig {
   val badAffinity: String
   val noEnrolment: String
   val governmentGatewayContextUrl: String
+  val subscriptionServiceIndividualUrl: String
 }
 
 @Singleton
@@ -58,5 +59,8 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val badAffinity: String = configuration.getString(s"agent-bad-affinity.url").getOrElse("")
   override lazy val noEnrolment: String = configuration.getString(s"agent-subscribe.url").getOrElse("")
   override val governmentGatewayContextUrl: String = loadConfig("microservice.services.government-gateway.context")
+
+  //Subscription Config
+  override lazy val subscriptionServiceIndividualUrl: String = configuration.getString("capital-gains-subscription.url").getOrElse("")
 
 }
