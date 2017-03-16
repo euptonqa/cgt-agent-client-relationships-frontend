@@ -18,6 +18,8 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import connectors.SubscriptionConnector
+import models.{SubscriptionReference, UserFactsModel}
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
