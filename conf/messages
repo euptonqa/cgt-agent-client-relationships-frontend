@@ -24,3 +24,9 @@ clientType.company = Company
 ## Feedback ##
 feedback.send = Send your feedback
 feedback.thankyou = Your feedback
+
+## Client Confirmation ##
+clientConfirmation.title = Capital Gains Tax Service registration complete
+clientConfirmation.reference = Your client''s Capital Gains Tax reference:
+clientConfirmation.whatNext = What happens next?
+clientConfirmation.guidance = '{COPY TO BE CONFIRMED'}
