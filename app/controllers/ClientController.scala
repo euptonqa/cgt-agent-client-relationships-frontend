@@ -18,16 +18,46 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.AuthorisedActions
+import config.AppConfig
+import forms.ClientTypeForm
+import models.ClientTypeModel
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
+import views.html.{clientType => clientTypeView}
+import common.Constants.{ClientType => CTConstants}
+
+import scala.concurrent.Future
 
 @Singleton
-class ClientController @Inject()() extends FrontendController {
+class ClientController @Inject()(appConfig: AppConfig,
+                                 authorisedActions: AuthorisedActions,
+                                 clientTypeForm: ClientTypeForm,
+                                 val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+
+  lazy val form = clientTypeForm.clientTypeForm
 
   val clientType = TODO
 
-  val submitClientType = TODO
+  val submitClientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        def errorAction(form: Form[ClientTypeModel]) = {
+          Future.successful(BadRequest(clientTypeView(appConfig, form)))
+        }
+        def successAction(model: ClientTypeModel): Future[Result] = {
+          model.clientType match {
+            case CTConstants.individual  => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
+            case CTConstants.company => Future.successful(NotImplemented)
+          }
+        }
 
-  val enterIndividualCorrespondenceDetails = TODO
+        form.bindFromRequest.fold(errorAction, successAction)
+  }
+
+  val enterIndividualCorrespondenceDetails: Action[AnyContent] = TODO
 
   val submitIndividualCorrespondenceDetails = TODO
 
