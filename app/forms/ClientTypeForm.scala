@@ -22,10 +22,7 @@ import models.ClientTypeModel
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-<<<<<<< HEAD
-=======
 import common.Constants.ClientType._
->>>>>>> master
 
 class ClientTypeForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
 

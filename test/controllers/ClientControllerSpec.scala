@@ -71,7 +71,7 @@ class ClientControllerSpec extends ControllerSpecHelper {
       "supplied with a valid form with a clientType of Organisation" should {
         val actions = createMockActions()
         lazy val controller = new ClientController(config, actions, form, messagesApi)
-        lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "Company")))
+        lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "company")))
         "return a status of 501" in {
           status(result) shouldBe 501
         }

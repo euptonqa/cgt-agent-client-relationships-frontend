@@ -27,6 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.{clientType => clientTypeView}
+import common.Constants.ClientType._
 
 import scala.concurrent.Future
 
@@ -52,8 +53,9 @@ class ClientController @Inject()(appConfig: AppConfig,
 
         def routeRequest(data: ClientTypeModel): Future[Result] = {
           data.clientType match {
-            case "Individual"  => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
-            case _ => Future.successful(NotImplemented)
+            case individual  => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
+            case company => Future.successful(NotImplemented)
+            case _ => Future.successful(BadRequest)
           }
         }
 
