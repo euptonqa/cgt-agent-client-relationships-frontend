@@ -68,10 +68,10 @@ class ClientControllerSpec extends ControllerSpecHelper {
         redirectLocation(result) shouldBe Some(controllers.routes.ClientController.enterIndividualCorrespondenceDetails().url)
       }
 
-      "supplied with a valid form with a clientType of Organisation" should {
+      "supplied with a valid form with a clientType of Company" should {
         val actions = createMockActions()
         lazy val controller = new ClientController(config, actions, form, messagesApi)
-        lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "company")))
+        lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "Company")))
         "return a status of 501" in {
           status(result) shouldBe 501
         }
