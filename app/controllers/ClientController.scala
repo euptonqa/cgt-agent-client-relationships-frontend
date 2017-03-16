@@ -18,16 +18,29 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import auth.AuthorisedActions
+import config.AppConfig
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+import scala.concurrent.Future
+
 @Singleton
-class ClientController @Inject()() extends FrontendController {
+class ClientController @Inject()(authorisedActions: AuthorisedActions,
+                                 appConfig: AppConfig,
+                                 val messagesApi: MessagesApi
+                                 ) extends FrontendController with I18nSupport{
 
   val clientType = TODO
 
   val submitClientType = TODO
 
-  val enterIndividualCorrespondenceDetails = TODO
+  val enterIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.confirmPermission(appConfig)))
+  }
 
   val submitIndividualCorrespondenceDetails = TODO
 
