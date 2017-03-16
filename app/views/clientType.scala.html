@@ -1,0 +1,29 @@
+@import uk.gov.hmrc.play.views.html.helpers.{form, input}
+@import views.html.partials._
+@import models.ClientTypeModel
+
+@(appConfig: config.AppConfig, clientTypeForm: Form[ClientTypeModel])(implicit request: Request[_], messages: Messages)
+
+@views.html.main_template(title = Messages("clientType.title"), bodyClasses = None, appConfig = appConfig) {
+
+    @errorSummary(clientTypeForm, "client-type", "clientType")
+
+    <h1 class="heading-xlarge">@Messages("clientType.title")</h1>
+
+    @form(action = controllers.routes.ClientController.submitClientType()) {
+
+        @inputRadioGroup(
+            clientTypeForm("clientType"),
+            Seq(
+                "Company" -> Messages("clientType.company"),
+                "Individual" -> Messages("clientType.individual")),
+            '_legend -> Messages("clientType.title"),
+            '_labelAfter -> true,
+            '_labelClass -> "block-label",
+            '_legendClass -> "visuallyhidden",
+            '_groupClass -> "form-group radio-list"
+        )
+
+        <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
+    }
+}

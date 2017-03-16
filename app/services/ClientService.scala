@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package common
+package services
 
-object Constants {
+import javax.inject.{Inject, Singleton}
 
-  object AffinityGroup {
-    val agent = "Agent"
-    val individual = "Individual"
-    val organisation = "Organisation"
-  }
+import connectors.SubscriptionConnector
+import models.{SubscriptionReference, UserFactsModel}
+import uk.gov.hmrc.play.http.HeaderCarrier
 
-  object Audit {
-    val splunk: String = "SPLUNK AUDIT:\n"
-    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
-    val eventTypeFailure: String = "CGTFailure"
-    val eventTypeSuccess: String = "CGTSuccess"
-  }
+import scala.concurrent.Future
 
-  object ClientType {
-    val individual = "Individual"
-    val company = "Company"
+@Singleton
+class ClientService @Inject()(connector: SubscriptionConnector) {
+
+  def subscribeIndividualClient(userFacts: UserFactsModel)(implicit hc: HeaderCarrier): Future[SubscriptionReference] = {
+    connector.subscribeIndividualClient(userFacts)
   }
 }

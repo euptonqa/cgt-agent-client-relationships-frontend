@@ -51,7 +51,7 @@ class AffinityGroupAgentPredicateSpec extends UnitSpec with WithFakeApplication 
 
     "supplied with an authContext with an agent credential should return true for page visibility" in {
 
-      val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, Agent, ConfidenceLevel.L200, "", Accounts())), None)
+      val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, agent, ConfidenceLevel.L200, "", Accounts())), None)
 
       val predicate = new AffinityGroupAgentPredicate(service)(dummyUri)
       val authContext = TestUsers.weakUserAuthContext
@@ -64,7 +64,7 @@ class AffinityGroupAgentPredicateSpec extends UnitSpec with WithFakeApplication 
 
     "supplied with an authContext with a organisation credential should return false for page visibility" in {
 
-      val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, Organisation, ConfidenceLevel.L200, "", Accounts())), None)
+      val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, organisation, ConfidenceLevel.L200, "", Accounts())), None)
 
       val predicate = new AffinityGroupAgentPredicate(service)(dummyUri)
       val authContext = TestUsers.weakUserAuthContext
@@ -77,7 +77,7 @@ class AffinityGroupAgentPredicateSpec extends UnitSpec with WithFakeApplication 
 
     "supplied with an authContext with an individual credential should return false for page visibility" in {
 
-      val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, Individual, ConfidenceLevel.L200, "", Accounts())), None)
+      val service = mockedService(Some(AuthorisationDataModel(CredentialStrength.Strong, individual, ConfidenceLevel.L200, "", Accounts())), None)
 
       val predicate = new AffinityGroupAgentPredicate(service)(dummyUri)
       val authContext = TestUsers.noCredUserAuthContext
