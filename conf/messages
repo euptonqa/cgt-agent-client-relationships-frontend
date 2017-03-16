@@ -9,6 +9,11 @@ error.summary.heading = This page has errors
 confirmPermission.title = Confirm you have permission
 confirmPermission.body = By continuing, you confirm that you have permission to act on your client''s behalf.
 
+## Correspondence Details Messages ##
+correspondenceDetails.title = Your client''s correspondence details
+correspondenceDetails.country = Country
+correspondenceDetails.postcode = Postcode
+
 ## Client List messages ##
 clientList.title = Client overview
 clientList.clientName = Client name

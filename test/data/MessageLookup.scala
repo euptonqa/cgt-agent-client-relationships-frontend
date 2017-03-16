@@ -31,6 +31,12 @@ object MessageLookup {
     val body = "By continuing, you confirm that you have permission to act on your client's behalf."
   }
 
+  object CorrespondenceDetails {
+    val title = "Your client's correspondence details"
+    val country = "Country"
+    val postcode = "Postcode"
+  }
+
   object ClientList {
     val title = "Client overview"
     val clientName = "Client name"
