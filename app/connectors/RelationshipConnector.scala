@@ -23,6 +23,7 @@ import models.RelationshipModel
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import play.api.http.Status._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
 
