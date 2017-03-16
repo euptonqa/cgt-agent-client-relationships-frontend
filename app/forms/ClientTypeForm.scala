@@ -22,11 +22,12 @@ import models.ClientTypeModel
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import common.Constants.ClientType._
 
 class ClientTypeForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
 
   private val validateType: String => Boolean = {
-    value => value.equals("Company") || value.equals("Individual")
+    value => value.equals(company) || value.equals(individual)
   }
 
   val clientTypeForm = Form(

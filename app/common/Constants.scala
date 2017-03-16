@@ -19,9 +19,9 @@ package common
 object Constants {
 
   object AffinityGroup {
-    val Agent = "Agent"
-    val Individual = "Individual"
-    val Organisation = "Organisation"
+    val agent = "Agent"
+    val individual = "Individual"
+    val organisation = "Organisation"
   }
 
   object Audit {
@@ -29,5 +29,10 @@ object Constants {
     val transactionGetClientList: String = "CGT Government Gateway Get Client List"
     val eventTypeFailure: String = "CGTFailure"
     val eventTypeSuccess: String = "CGTSuccess"
+  }
+
+  object ClientType {
+    val individual = "Individual"
+    val company = "Company"
   }
 }
