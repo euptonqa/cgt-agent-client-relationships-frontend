@@ -17,8 +17,9 @@
 package controllers
 
 import auth.{CgtAgent, _}
-import data.TestUsers
+import data.{MessageLookup, TestUsers}
 import forms.ClientTypeForm
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
@@ -52,6 +53,35 @@ class ClientControllerSpec extends ControllerSpecHelper {
         .thenReturn(Action.async(Results.Redirect(testOnlyUnauthorisedLoginUri)))
     }
     mockActions
+  }
+
+  "Calling .clientType" when {
+
+    "an authorised user made the request" should {
+      val actions = createMockActions()
+      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val result = controller.clientType(FakeRequest("GET", ""))
+
+      "return a status of 200" in {
+        status(result) shouldBe 200
+      }
+
+      "load the clientType page" in {
+        lazy val doc = Jsoup.parse(bodyOf(result))
+
+        doc.title() shouldBe MessageLookup.ClientType.title
+      }
+    }
+
+    "an unauthorised user made the request" should {
+      val actions = createMockActions(valid = false)
+      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val result = controller.clientType(FakeRequest("GET", ""))
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+    }
   }
 
   "Calling .submitClient when" when {
