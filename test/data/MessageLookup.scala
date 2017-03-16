@@ -57,4 +57,8 @@ object MessageLookup {
     val whatNext = "What happens next?"
     val guidance = "{COPY TO BE CONFIRMED}"
   }
+
+  object Errors {
+    val errorRequired = "This field is required"
+  }
 }

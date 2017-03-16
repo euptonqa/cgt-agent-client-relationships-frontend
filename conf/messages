@@ -26,6 +26,12 @@ clientType.error = Select your client type.
 clientType.individual = Individual
 clientType.company = Company
 
+## Error Messages ##
+errors.required = This field is required
+
+## Error Summary Messages ##
+error.summary.heading = This page has errors
+
 ## Feedback ##
 feedback.send = Send your feedback
 feedback.thankyou = Your feedback

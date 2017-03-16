@@ -17,19 +17,28 @@
 package views
 
 import data.MessageLookup.CorrespondenceDetails
+import forms.CorrespondenceDetailsForm
 import org.jsoup.Jsoup
 import traits.ViewSpecHelper
 import views.html.correspondenceDetails
 
 class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
 
-  "The confirm permission view" should {
-    lazy val view = correspondenceDetails(config)
+  "The confirm permission view with a form with no errors" should {
+    lazy val form = new CorrespondenceDetailsForm(messagesApi)
+    lazy val view = correspondenceDetails(config, form.correspondenceDetailsForm)
     lazy val doc = Jsoup.parse(view.body)
 
-    s"have the title of ${CorrespondenceDetails.title}" in {
-        doc.title() shouldBe CorrespondenceDetails.title
+    "have a header" which {
+      lazy val header = doc.select("h1")
+
+      "has a class of heading-xlarge" in {
+        header.attr("class") shouldBe "heading-xlarge"
+      }
+
+      s"has the text ${CorrespondenceDetails.title}" in {
+        header.text() shouldBe CorrespondenceDetails.title
       }
     }
-
+  }
 }
