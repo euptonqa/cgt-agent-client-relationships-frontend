@@ -14,29 +14,22 @@
  * limitations under the License.
  */
 
-package data
+package views
 
-object MessageLookup {
+import data.MessageLookup.CorrespondenceDetails
+import org.jsoup.Jsoup
+import traits.ViewSpecHelper
+import views.html.correspondenceDetails
 
-  object Common {
-    val continue = "Continue"
-  }
+class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
 
-  object ConfirmPermission {
-    val title = "Confirm you have permission"
-    val body = "By continuing, you confirm that you have permission to act on your client's behalf."
-  }
+  "The confirm permission view" should {
+    lazy val view = correspondenceDetails(config)
+    lazy val doc = Jsoup.parse(view.body)
 
-  object CorrespondenceDetails {
-    val title = "Your client's correspondence details"
-    val country = "Country"
-    val postcode = "Postcode"
-  }
+    s"have the title of ${CorrespondenceDetails.title}" in {
+        doc.title() shouldBe CorrespondenceDetails.title
+      }
+    }
 
-  object ClientList {
-    val title = "Client overview"
-    val clientName = "Client name"
-    val addClient = "Add a new client"
-    val report = "Report"
-  }
 }
