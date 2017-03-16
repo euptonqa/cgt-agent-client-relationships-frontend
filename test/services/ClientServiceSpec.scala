@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
-class ClientServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar with BeforeAndAfter {
+class ClientServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
 
   val mockWSHttp: WSHttp = mock[WSHttp]
   val mockLoggingUtils: Logging = mock[Logging]
