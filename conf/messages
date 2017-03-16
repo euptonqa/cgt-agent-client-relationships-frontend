@@ -8,6 +8,14 @@ confirmPermission.body = By continuing, you confirm that you have permission to 
 
 ## Correspondence Details Messages ##
 correspondenceDetails.title = Your client''s correspondence details
+correspondenceDetails.firstName = First name
+correspondenceDetails.lastName = Last name
+correspondenceDetails.contactAddress = Contact address
+correspondenceDetails.buildingAndStreet = Building and street
+correspondenceDetails.building = Building
+correspondenceDetails.street = street
+correspondenceDetails.town = Town or city
+correspondenceDetails.county = County
 correspondenceDetails.country = Country
 correspondenceDetails.postcode = Postcode
 

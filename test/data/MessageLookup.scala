@@ -29,6 +29,14 @@ object MessageLookup {
 
   object CorrespondenceDetails {
     val title = "Your client's correspondence details"
+    val firstName = "First name"
+    val lastName = "Last name"
+    val contactAddress = "Contact address"
+    val buildingAndStreet = "Building and street"
+    val building = "Building"
+    val street = "street"
+    val town = "Town or city"
+    val county = "County"
     val country = "Country"
     val postcode = "Postcode"
   }
