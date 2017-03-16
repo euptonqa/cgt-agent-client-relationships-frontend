@@ -78,7 +78,7 @@ class AuthorisationConnectorSpec extends UnitSpec with MockitoSugar with WithFak
       }
 
       "return an AuthorisationDataModel containing an Affinity Group of Individual" in {
-        result.affinityGroup shouldBe AffinityGroup.Individual
+        result.affinityGroup shouldBe AffinityGroup.individual
       }
     }
 

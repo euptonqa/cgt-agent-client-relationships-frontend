@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package common
+package forms
 
-object Constants {
+import javax.inject.Inject
 
-  object AffinityGroup {
-    val agent = "Agent"
-    val individual = "Individual"
-    val organisation = "Organisation"
+import models.ClientTypeModel
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import common.Constants.ClientType._
+
+class ClientTypeForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
+
+  private val validateType: String => Boolean = {
+    value => value.equals(company) || value.equals(individual)
   }
 
-  object Audit {
-    val splunk: String = "SPLUNK AUDIT:\n"
-    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
-    val eventTypeFailure: String = "CGTFailure"
-    val eventTypeSuccess: String = "CGTSuccess"
-  }
-
-  object ClientType {
-    val individual = "Individual"
-    val company = "Company"
-  }
+  val clientTypeForm = Form(
+    mapping(
+      "clientType" -> text
+        .verifying(Messages("clientType.error"), validateType)
+    )(ClientTypeModel.apply)(ClientTypeModel.unapply)
+  )
 }

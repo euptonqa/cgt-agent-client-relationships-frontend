@@ -16,22 +16,22 @@
 
 package checks
 
-import common.Constants.AffinityGroup.{Individual, Organisation, _}
+import common.Constants.AffinityGroup.{individual, organisation, _}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class AffinityGroupCheckSpec extends UnitSpec{
 
   "Calling .affinityGroupCheckAgent" should {
     "return true when supplied with an agent user" in {
-      await(AffinityGroupCheck.affinityGroupCheckAgent(Agent)) shouldBe true
+      await(AffinityGroupCheck.affinityGroupCheckAgent(agent)) shouldBe true
     }
 
     "return false when supplied with an organisation user" in {
-      await(AffinityGroupCheck.affinityGroupCheckAgent(Organisation)) shouldBe false
+      await(AffinityGroupCheck.affinityGroupCheckAgent(organisation)) shouldBe false
     }
 
     "return false when supplied with an individual user" in {
-      await(AffinityGroupCheck.affinityGroupCheckAgent(Individual)) shouldBe false
+      await(AffinityGroupCheck.affinityGroupCheckAgent(individual)) shouldBe false
     }
   }
 }

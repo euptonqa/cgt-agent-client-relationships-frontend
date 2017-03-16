@@ -59,7 +59,7 @@ class VisibilityPredicateSpec extends UnitSpec with WithFakeApplication with Moc
   "return true for page visibility when the component predicates' conditions are met" in {
     val authContext = TestUsers.create500ConfidenceUserAuthContext
     val enrolments = Seq(Enrolment(Keys.EnrolmentKeys.agentEnrolmentKey, Seq(Identifier("DummyKey", "DummyValue")), ""))
-    val authorisationDataModelPass = AuthorisationDataModel(CredentialStrength.Strong, Agent, ConfidenceLevel.L200, "", Accounts())
+    val authorisationDataModelPass = AuthorisationDataModel(CredentialStrength.Strong, agent, ConfidenceLevel.L200, "", Accounts())
 
     lazy val result = predicate(Some(authorisationDataModelPass), Some(enrolments))(authContext, FakeRequest())
 
@@ -71,9 +71,9 @@ class VisibilityPredicateSpec extends UnitSpec with WithFakeApplication with Moc
   "return false for page visibility when the component predicates' conditions are not met" in {
     val authContext = TestUsers.create500ConfidenceUserAuthContext
     val enrolments = Seq(Enrolment("Not agent enrolment key", Seq(Identifier("DummyKey", "DummyValue")), ""))
-    val authorisationDataModelFail = AuthorisationDataModel(CredentialStrength.Strong, Individual, ConfidenceLevel.L200, "", Accounts())
+    val authorisationDataModelFail = AuthorisationDataModel(CredentialStrength.Strong, individual, ConfidenceLevel.L200, "", Accounts())
 
-    lazy val result = predicate(Some(authorisationDataModelFail), Some(enrolments), affinityGroup=Individual)(authContext, FakeRequest())
+    lazy val result = predicate(Some(authorisationDataModelFail), Some(enrolments), affinityGroup=individual)(authContext, FakeRequest())
 
     lazy val pageVisibility = await(result)
 

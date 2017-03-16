@@ -22,6 +22,10 @@ object MessageLookup {
     val continue = "Continue"
   }
 
+  object ErrorSummary {
+    val errorSummaryHeading = "This page has errors"
+  }
+
   object ConfirmPermission {
     val title = "Confirm you have permission"
     val body = "By continuing, you confirm that you have permission to act on your client's behalf."
@@ -32,5 +36,12 @@ object MessageLookup {
     val clientName = "Client name"
     val addClient = "Add a new client"
     val report = "Report"
+  }
+
+  object ClientType {
+    val title = "Is your client a company or an individual?"
+    val error = "Select your client type."
+    val company = "Company"
+    val individual = "Individual"
   }
 }
