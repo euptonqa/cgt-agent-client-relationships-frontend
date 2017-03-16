@@ -33,7 +33,7 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
   override val authConnector: FrontendAuthConnector = feAuthConnector
 
   private val composeAuthorisedAction: AuthenticatedAction => Action[AnyContent] = {
-    val postSignInRedirectUrl = controllers.routes.AgentController.showClientList().url
+    val postSignInRedirectUrl = applicationConfig.postSignInRedirectUrl
     val ggProvider = GovernmentGatewayProvider(postSignInRedirectUrl,
       applicationConfig.governmentGatewaySignIn)
     val regime = new CgtRegime {
