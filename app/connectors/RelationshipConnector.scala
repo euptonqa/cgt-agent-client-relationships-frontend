@@ -20,11 +20,12 @@ import javax.inject.Inject
 
 import config.{AppConfig, WSHttp}
 import models.RelationshipModel
+import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
 import play.api.http.Status._
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait RelationshipConnectorResponse
@@ -34,15 +35,19 @@ case object FailedRelationshipResponse extends RelationshipConnectorResponse
 class RelationshipConnector @Inject()(appConfig: AppConfig, http: WSHttp) {
 
   lazy val serviceUrl: String = appConfig.agentRelationship
-  val createRelationship: String = "/client"
+  val createRelationship: String = "/relationship"
 
   def createClientRelationship(relationshipModel: RelationshipModel)(implicit hc: HeaderCarrier): Future[RelationshipConnectorResponse] = {
     val postUrl = s"""$serviceUrl/$createRelationship"""
     http.POST[JsValue, HttpResponse](postUrl, Json.toJson(relationshipModel)).map {
       response =>
         response.status match {
-          case NO_CONTENT => SuccessfulRelationshipResponse
-          case _ => FailedRelationshipResponse
+          case NO_CONTENT => Logger.info(s"Successful agent client relationship creation" +
+            s"with arn reference: ${relationshipModel.arn}")
+            SuccessfulRelationshipResponse
+          case _ => Logger.warn(s"Failed agent client relationship creation" +
+            s"with arn reference: ${relationshipModel.arn}")
+            FailedRelationshipResponse
         }
     }
   }
