@@ -16,6 +16,7 @@
 
 package controllers
 
+import data.MessageLookup.{ClientConfirmation => messages}
 import auth.{CgtAgent, _}
 import data.{MessageLookup, TestUsers}
 import forms.ClientTypeForm
@@ -84,7 +85,7 @@ class ClientControllerSpec extends ControllerSpecHelper {
     }
   }
 
-  "Calling .submitClient when" when {
+  "Calling .submitClient" when {
     "supplied with a valid form with a clientType of Individual" should {
       val actions = createMockActions()
       lazy val controller = new ClientController(config, actions, form, messagesApi)
@@ -120,4 +121,33 @@ class ClientControllerSpec extends ControllerSpecHelper {
     }
   }
 
+  "Calling .confirmation" when {
+
+    "an authorised user made the request" should {
+      val actions = createMockActions()
+      val fakeRequest = FakeRequest("GET", "/")
+      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val result = controller.confirmation("TestRef")(fakeRequest)
+
+      "return 200" in {
+        status(result) shouldBe 200
+      }
+
+      "display the confirmationOfSubscription screen" in {
+        lazy val doc = Jsoup.parse(bodyOf(result))
+        doc.title() shouldEqual messages.title
+      }
+    }
+
+    "an unauthorised user made the request" should {
+      val actions = createMockActions(valid = false)
+      val fakeRequest = FakeRequest("GET", "/")
+      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val result = controller.confirmation("TestRef")(fakeRequest)
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+    }
+  }
 }

@@ -13,7 +13,7 @@ POST       /client-type                         controllers.ClientController.sub
 GET        /individual/correspondence-details   controllers.ClientController.enterIndividualCorrespondenceDetails
 POST       /individual/correspondence-details   controllers.ClientController.submitIndividualCorrespondenceDetails
 
-GET        /confirmation                        controllers.ClientController.confirmation
+GET        /confirmation                        controllers.ClientController.confirmation(cgtReference: String)
 
 GET        /feedback                            controllers.FeedbackController.show
 POST       /feedback                            controllers.FeedbackController.submit

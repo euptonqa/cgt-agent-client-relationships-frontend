@@ -65,5 +65,9 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   val submitIndividualCorrespondenceDetails = TODO
 
-  val confirmation = TODO
+  val confirmation:String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.clientConfirmation(appConfig, cgtReference)))
+  }
 }
