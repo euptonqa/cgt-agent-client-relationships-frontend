@@ -20,7 +20,7 @@ import data.MessageLookup.CorrespondenceDetails
 import forms.CorrespondenceDetailsForm
 import org.jsoup.Jsoup
 import traits.ViewSpecHelper
-import views.html.correspondenceDetails
+import views.html.individual.correspondenceDetails
 
 class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
 
@@ -96,19 +96,19 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
     }
 
     "have a heading for contact address" which {
-      lazy val heading = doc.getElementsByTag("h2")
+      lazy val heading = doc.getElementsByTag("p").eq(2)
 
       s"has the text '${CorrespondenceDetails.contactAddress}'" in {
-        heading.text().trim shouldBe CorrespondenceDetails.contactAddress
+        heading.text() shouldBe CorrespondenceDetails.contactAddress
       }
 
       "has a class of heading-large" in {
-        heading.attr("class") shouldBe "heading-large"
+        heading.attr("class") shouldBe "heading-medium"
       }
     }
 
     "have a paragraph for building and street" which {
-      lazy val heading = doc.getElementsByTag("p").eq(2)
+      lazy val heading = doc.getElementsByTag("p").eq(3)
 
       s"has the text '${CorrespondenceDetails.buildingAndStreet}'" in {
         heading.text() shouldBe CorrespondenceDetails.buildingAndStreet
