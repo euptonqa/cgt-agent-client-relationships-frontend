@@ -68,5 +68,5 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val subscriptionServiceUrl: String = baseUrl("capital-gains-subscription")
 
   //AgentRelationshipBackendConfig
-  override lazy val agentRelationship: String = loadConfig("microservice.services.agent-client-relationships.context")
+  override lazy val agentRelationship: String = baseUrl("microservices.services.agent-client-relationships") + loadConfig("microservice.services.agent-client-relationships.context")
 }
