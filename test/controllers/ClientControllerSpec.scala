@@ -18,9 +18,9 @@ package controllers
 
 import data.MessageLookup.{ClientConfirmation => messages}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
+import play.api.inject.Injector
 import audit.Logging
 import auth.{CgtAgent, _}
-import play.api.inject.Injector
 import config.WSHttp
 import data.{MessageLookup, TestUsers}
 import org.jsoup.Jsoup
@@ -68,7 +68,6 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
     }
     mockActions
   }
-
 
   "Calling .clientType" when {
 
