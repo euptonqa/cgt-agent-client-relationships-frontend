@@ -41,7 +41,10 @@ class RelationshipServiceSpec extends UnitSpec with OneAppPerSuite with MockitoS
   lazy val mockAppConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
   implicit val ec = mock[ExecutionContext]
 
-  object RelationConnector extends RelationshipConnector(mockAppConfig, mockWSHttp)
+  object RelationConnector extends RelationshipConnector(mockAppConfig, mockWSHttp) {
+    override lazy val serviceUrl: String = "blah"
+    override val createRelationship: String = "/relationship"
+  }
 
   before{
     reset(mockWSHttp)
@@ -52,23 +55,18 @@ class RelationshipServiceSpec extends UnitSpec with OneAppPerSuite with MockitoS
 
   "Calling .createRelationship" when {
     "a 204 is returned" in {
-      val httpResponse: HttpResponse = mock[HttpResponse]
-      when(httpResponse.status).thenReturn(204)
-
       when(mockWSHttp.POST[JsValue, HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any(),
         ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .thenReturn(Future.successful(httpResponse))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = 204)))
 
       await(RelationConnector.createClientRelationship(mock[RelationshipModel])) shouldBe SuccessfulRelationshipResponse
     }
 
     "a 500 is returned" in {
-      val httpResponse: HttpResponse = mock[HttpResponse]
-      when(httpResponse.status).thenReturn(500)
 
       when(mockWSHttp.POST[JsValue, HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any(),
         ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .thenReturn(Future.successful(httpResponse))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = 500)))
 
       await(RelationConnector.createClientRelationship(mock[RelationshipModel])) shouldBe FailedRelationshipResponse
     }
