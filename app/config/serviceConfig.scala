@@ -32,8 +32,10 @@ trait AppConfig {
   val notAuthorisedRedirect: String
   val badAffinity: String
   val noEnrolment: String
-  val governmentGatewayContextUrl: String
   val subscriptionServiceUrl: String
+  val agentRelationship: String
+  val postSignInRedirectUrl: String
+  val governmentGatewayContextUrl: String
 }
 
 @Singleton
@@ -51,15 +53,20 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
   override lazy val reportAProblemNonJSUrl = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
 
   //GA Config
-  override lazy val analyticsToken: String = loadConfig(s"google-analytics.token")
-  override lazy val analyticsHost: String = loadConfig(s"google-analytics.host")
+  override lazy val analyticsToken: String = loadConfig("google-analytics.token")
+  override lazy val analyticsHost: String = loadConfig("google-analytics.host")
 
-  override lazy val governmentGatewaySignIn: String = loadConfig("microservice.services.company-auth-frontend.context")
-  override lazy val notAuthorisedRedirect: String = configuration.getString(s"not-authorised-callback.url").getOrElse("")
-  override lazy val badAffinity: String = configuration.getString(s"agent-bad-affinity.url").getOrElse("")
-  override lazy val noEnrolment: String = configuration.getString(s"agent-subscribe.url").getOrElse("")
-  override val governmentGatewayContextUrl: String = loadConfig("microservice.services.government-gateway.context")
+  //GG Config
+  override lazy val governmentGatewayContextUrl: String = loadConfig("microservice.services.company-auth-frontend.context")
+  override lazy val governmentGatewaySignIn: String = baseUrl("company-auth-frontend") + governmentGatewayContextUrl
+  override lazy val notAuthorisedRedirect: String = configuration.getString("not-authorised-callback.url").getOrElse("")
+  override lazy val badAffinity: String = configuration.getString("agent-bad-affinity.url").getOrElse("")
+  override lazy val noEnrolment: String = configuration.getString("agent-subscribe.url").getOrElse("")
+  override lazy val postSignInRedirectUrl: String = configuration.getString("government-gateway-post-redirect-sign-in.url").getOrElse("")
 
   //Subscription Config
   override lazy val subscriptionServiceUrl: String = baseUrl("capital-gains-subscription")
+
+  //AgentRelationshipBackendConfig
+  override lazy val agentRelationship: String = baseUrl("agent-client-relationships") + loadConfig("microservice.services.agent-client-relationships.context")
 }

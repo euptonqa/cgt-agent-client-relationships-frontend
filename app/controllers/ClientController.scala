@@ -32,7 +32,6 @@ import common.Constants.{ClientType => CTConstants}
 import services.ClientService
 
 import scala.concurrent.Future
-import scala.concurrent.Future
 
 @Singleton
 class ClientController @Inject()(appConfig: AppConfig,
@@ -43,7 +42,11 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   lazy val form = clientTypeForm.clientTypeForm
 
-  val clientType = TODO
+  val clientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.clientType(appConfig, clientTypeForm.clientTypeForm)))
+  }
 
   val submitClientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
@@ -53,7 +56,7 @@ class ClientController @Inject()(appConfig: AppConfig,
         }
         def successAction(model: ClientTypeModel): Future[Result] = {
           model.clientType match {
-            case CTConstants.individual  => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
+            case CTConstants.individual => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
             case CTConstants.company => Future.successful(NotImplemented)
           }
         }
@@ -85,5 +88,9 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   }
 
-  val confirmation = TODO
+  val confirmation:String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.clientConfirmation(appConfig, cgtReference)))
+  }
 }

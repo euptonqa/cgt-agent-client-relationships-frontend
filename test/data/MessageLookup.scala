@@ -31,6 +31,20 @@ object MessageLookup {
     val body = "By continuing, you confirm that you have permission to act on your client's behalf."
   }
 
+  object CorrespondenceDetails {
+    val title = "Your client's correspondence details"
+    val firstName = "First name"
+    val lastName = "Last name"
+    val contactAddress = "Contact address"
+    val buildingAndStreet = "Building and street"
+    val building = "Building"
+    val street = "street"
+    val town = "Town or city"
+    val county = "County"
+    val country = "Country"
+    val postcode = "Postcode"
+  }
+
   object ClientList {
     val title = "Client overview"
     val clientName = "Client name"
@@ -43,5 +57,16 @@ object MessageLookup {
     val error = "Select your client type."
     val company = "Company"
     val individual = "Individual"
+  }
+
+  object ClientConfirmation {
+    val title = "Capital Gains Tax Service registration complete"
+    val reference = "Your client's Capital Gains Tax reference:"
+    val whatNext = "What happens next?"
+    val guidance = "{COPY TO BE CONFIRMED}"
+  }
+
+  object Errors {
+    val errorRequired = "This field is required"
   }
 }
