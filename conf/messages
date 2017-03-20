@@ -9,6 +9,19 @@ error.summary.heading = This page has errors
 confirmPermission.title = Confirm you have permission
 confirmPermission.body = By continuing, you confirm that you have permission to act on your client''s behalf.
 
+## Correspondence Details Messages ##
+correspondenceDetails.title = Your client''s correspondence details
+correspondenceDetails.firstName = First name
+correspondenceDetails.lastName = Last name
+correspondenceDetails.contactAddress = Contact address
+correspondenceDetails.buildingAndStreet = Building and street
+correspondenceDetails.building = Building
+correspondenceDetails.street = street
+correspondenceDetails.town = Town or city
+correspondenceDetails.county = County
+correspondenceDetails.country = Country
+correspondenceDetails.postcode = Postcode
+
 ## Client List messages ##
 clientList.title = Client overview
 clientList.clientName = Client name
@@ -20,6 +33,12 @@ clientType.title = Is your client a company or an individual?
 clientType.error = Select your client type.
 clientType.individual = Individual
 clientType.company = Company
+
+## Error Messages ##
+errors.required = This field is required
+
+## Error Summary Messages ##
+error.summary.heading = This page has errors
 
 ## Feedback ##
 feedback.send = Send your feedback

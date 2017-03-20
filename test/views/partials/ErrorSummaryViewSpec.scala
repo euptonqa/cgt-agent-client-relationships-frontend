@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.helpers
+package views.partials
 
 import data.MessageLookup.{ClientType => errorMessages, ErrorSummary => messages}
 import forms.ClientTypeForm

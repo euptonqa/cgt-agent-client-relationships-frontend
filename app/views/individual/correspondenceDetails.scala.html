@@ -1,0 +1,58 @@
+@import uk.gov.hmrc.play.views.html.helpers.{form, input}
+@import models.CorrespondenceDetailsModel
+@import views.html.partials.errorSummary
+
+@(appConfig: config.AppConfig, correspondenceDetailsForm: Form[CorrespondenceDetailsModel])(implicit request: Request[_], messages: Messages)
+
+@userInput(label: String, identifier: String, additionalClass: String="") = {
+    @input(
+        correspondenceDetailsForm(identifier),
+        '_label -> label,
+        '_type -> "text",
+        '_inputClass -> s"shim $additionalClass",
+        '_labelClass -> "form-group"
+    )
+}
+
+@hiddenLabelInput(label: String, identifier: String, additionalClass: String="") = {
+    @input(
+        correspondenceDetailsForm(identifier),
+        '_label -> label,
+        '_labelTextClass -> "visuallyhidden",
+        '_type -> "text",
+        '_inputClass -> s"shim $additionalClass",
+        '_labelClass -> "form-group"
+    )
+}
+
+@views.html.main_template(title = Messages("correspondenceDetails.title"), bodyClasses = None, appConfig = appConfig) {
+
+    @errorSummary(correspondenceDetailsForm, "correspondence-details", "correspondenceDetails")
+
+    <h1 class="heading-xlarge">@Messages("correspondenceDetails.title")</h1>
+
+    @form(action = controllers.routes.ClientController.submitIndividualCorrespondenceDetails) {
+
+        @userInput(Messages("correspondenceDetails.firstName"), "firstName")
+
+        @userInput(Messages("correspondenceDetails.lastName"), "lastName")
+
+        <p class="heading-medium">@Messages("correspondenceDetails.contactAddress")</p>
+
+        <p>@Messages("correspondenceDetails.buildingAndStreet")</p>
+
+        @hiddenLabelInput(Messages("correspondenceDetails.building"), "building")
+
+        @hiddenLabelInput(Messages("correspondenceDetails.street"), "street")
+
+        @userInput(Messages("correspondenceDetails.town"), "townOrCity")
+
+        @userInput(Messages("correspondenceDetails.county"), "county")
+
+        @userInput(Messages("correspondenceDetails.postcode"), "postcode", additionalClass="input--small")
+
+        @userInput(Messages("correspondenceDetails.country"), "country")
+
+        <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
+    }
+}
