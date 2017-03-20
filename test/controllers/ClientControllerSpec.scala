@@ -17,16 +17,12 @@
 package controllers
 
 import data.MessageLookup.{ClientConfirmation => messages}
-import auth.{CgtAgent, _}
-import data.{MessageLookup, TestUsers}
-import forms.ClientTypeForm
+import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import audit.Logging
 import auth.{CgtAgent, _}
 import play.api.inject.Injector
 import config.WSHttp
-import connectors.AuthorisationConnector
 import data.{MessageLookup, TestUsers}
-import models.{AuthorisationDataModel, Enrolment}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -36,16 +32,13 @@ import org.scalatest.BeforeAndAfter
 import play.api.mvc.{Action, AnyContent, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.AuthorisationService
 import traits.ControllerSpecHelper
-import uk.gov.hmrc.play.frontend.auth.AuthContext
-
-import scala.concurrent.Future
 
 class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
   val unauthorisedLoginUrl = "some-url"
-  val form = app.injector.instanceOf[ClientTypeForm]
+  val clientTypeForm = app.injector.instanceOf[ClientTypeForm]
+  val correspondenceDetailsForm = app.injector.instanceOf[CorrespondenceDetailsForm]
   private val testOnlyUnauthorisedLoginUri = "just-a-test"
 
   lazy val injector: Injector = app.injector
@@ -81,7 +74,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
     "an authorised user made the request" should {
       val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.clientType(FakeRequest("GET", ""))
 
       "return a status of 200" in {
@@ -97,7 +90,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
     "an unauthorised user made the request" should {
       val actions = createMockActions(valid = false)
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm,  messagesApi)
       lazy val result = controller.clientType(FakeRequest("GET", ""))
 
       "return a status of 303" in {
@@ -109,7 +102,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
   "Calling .submitClient" when {
     "supplied with a valid form with a clientType of Individual" should {
       val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "Individual")))
 
       "return a status of 303" in {
@@ -123,7 +116,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
     "supplied with a valid form with a clientType of Company" should {
       val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "Company")))
 
       "return a status of 501" in {
@@ -133,7 +126,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
     "supplied with an invalid form" should {
       val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("notAValidField", "")))
 
       "return a status of 400" in {
@@ -147,7 +140,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
     "an authorised user made the request" should {
       val actions = createMockActions()
       val fakeRequest = FakeRequest("GET", "/")
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.confirmation("TestRef")(fakeRequest)
 
       "return 200" in {
@@ -163,7 +156,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
     "an unauthorised user made the request" should {
       val actions = createMockActions(valid = false)
       val fakeRequest = FakeRequest("GET", "/")
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.confirmation("TestRef")(fakeRequest)
 
       "return a status of 303" in {
@@ -176,23 +169,23 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
     "an authorised user made the request" should {
       val actions = createMockActions()
-      lazy val controller =  new ClientController(config, actions, form, messagesApi)
+      lazy val controller =  new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
 
       "return a status of 200" in {
         status(result) shouldBe 200
       }
 
-      "load the confirmPermission view" in {
+      "load the correspondence details view" in {
         lazy val doc = Jsoup.parse(bodyOf(result))
 
-        doc.title() shouldBe MessageLookup.ConfirmPermission.title
+        doc.title() shouldBe MessageLookup.CorrespondenceDetails.title
       }
     }
 
     "provided with an invalid unauthorised user" should {
       val actions = createMockActions(valid = false)
-      lazy val controller = new ClientController(config, actions, form, messagesApi)
+      lazy val controller = new ClientController(config, actions, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
 
       "return a status of 303" in {
