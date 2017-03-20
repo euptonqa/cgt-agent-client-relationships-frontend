@@ -68,10 +68,6 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
       "has a type of text" in {
         input.attr("type") shouldBe "text"
       }
-
-      "has a class of 'shim input grid-1-2'" in {
-        input.attr("class") shouldBe "shim input grid-1-2"
-      }
     }
 
     "have an input for last name" which {
@@ -88,10 +84,6 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
 
       "has a type of text" in {
         input.attr("type") shouldBe "text"
-      }
-
-      "has a class of 'shim input grid-1-2'" in {
-        input.attr("class") shouldBe "shim input grid-1-2"
       }
     }
 
@@ -154,10 +146,6 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
       "has a type of text" in {
         input.attr("type") shouldBe "text"
       }
-
-      "has a class of 'shim input grid-1-2'" in {
-        input.attr("class") shouldBe "shim input grid-1-2"
-      }
     }
 
     "have an input for county" which {
@@ -175,10 +163,6 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
       "has a type of text" in {
         input.attr("type") shouldBe "text"
       }
-
-      "has a class of 'shim input grid-1-2'" in {
-        input.attr("class") shouldBe "shim input grid-1-2"
-      }
     }
 
     "have an input for country" which {
@@ -195,10 +179,6 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
 
       "has a type of text" in {
         input.attr("type") shouldBe "text"
-      }
-
-      "has a class of 'shim input grid-1-2'" in {
-        input.attr("class") shouldBe "shim input grid-1-2"
       }
     }
 
@@ -218,8 +198,8 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
         input.attr("type") shouldBe "text"
       }
 
-      "has a class of 'shim input grid-1-2'" in {
-        input.attr("class") shouldBe "shim input grid-1-4"
+      "has a class of 'input-small'" in {
+        input.attr("class") shouldBe "shim input--small"
       }
     }
   }
