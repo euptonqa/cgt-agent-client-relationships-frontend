@@ -20,12 +20,13 @@ import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
 import common.Constants.{ClientType => CTConstants}
-import config.AppConfig
-import forms.ClientTypeForm
+import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models.ClientTypeModel
 import play.api.data.Form
+import play.api.mvc.Result
+import config.AppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.{clientType => clientTypeView}
 
@@ -35,6 +36,7 @@ import scala.concurrent.Future
 class ClientController @Inject()(appConfig: AppConfig,
                                  authorisedActions: AuthorisedActions,
                                  clientTypeForm: ClientTypeForm,
+                                 correspondenceDetailsForm: CorrespondenceDetailsForm,
                                  val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
   lazy val form = clientTypeForm.clientTypeForm
@@ -61,7 +63,11 @@ class ClientController @Inject()(appConfig: AppConfig,
         form.bindFromRequest.fold(errorAction, successAction)
   }
 
-  val enterIndividualCorrespondenceDetails: Action[AnyContent] = TODO
+  val enterIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Ok(views.html.individual.correspondenceDetails(appConfig, correspondenceDetailsForm.correspondenceDetailsForm)))
+  }
 
   val submitIndividualCorrespondenceDetails = TODO
 
