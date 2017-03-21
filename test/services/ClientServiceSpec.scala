@@ -21,10 +21,9 @@ import java.util.UUID
 import audit.Logging
 import config.{ApplicationConfig, WSHttp}
 import connectors.SubscriptionConnector
-import models.{SubscriptionReference, UserFactsModel}
-import org.mockito._
+import models.{CorrespondenceDetailsModel, SubscriptionReference}
 import org.mockito.Mockito._
-import org.scalatest.BeforeAndAfter
+import org.mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import uk.gov.hmrc.play.http.HeaderCarrier
@@ -40,7 +39,7 @@ class ClientServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   lazy val mockAppConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
   implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
 
-  val userFactsModel = UserFactsModel("", "", "", None, "", None, "", "")
+  val userFactsModel = CorrespondenceDetailsModel("", "", "", "", "", None, None, "")
 
   def setupService(subscriptionResponse: Future[SubscriptionReference]): ClientService = {
 
@@ -70,7 +69,6 @@ class ClientServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
       ex.getMessage shouldBe "Error message"
     }
   }
-
 
 
 }

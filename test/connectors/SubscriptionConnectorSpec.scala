@@ -17,7 +17,7 @@
 package connectors
 
 import config.{ApplicationConfig, WSHttp}
-import models.{SubscriptionReference, UserFactsModel}
+import models.{CorrespondenceDetailsModel, SubscriptionReference}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
@@ -44,7 +44,7 @@ class SubscriptionConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
       .thenReturn(if (successfulResponse) 200 else 500)
 
     when(httpResponse.json)
-        .thenReturn(json)
+      .thenReturn(json)
 
     when(mockHttp.POST[JsValue, HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any(),
       ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
@@ -54,7 +54,7 @@ class SubscriptionConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
   }
 
   "SubscriptionConnector .subscribeIndividualClient" should {
-    val model = UserFactsModel("", "", "", None, "", None, "", "")
+    val model = CorrespondenceDetailsModel("", "", "", "", "", None, None, "")
 
     "return a successful future with a subscription reference on a success" in {
       val json = cgtSubscriptionResponse("CGT123456789")

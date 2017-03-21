@@ -21,12 +21,14 @@ import javax.inject.{Inject, Singleton}
 import auth.AuthorisedActions
 import common.Constants.{ClientType => CTConstants}
 import config.AppConfig
+import connectors.{RelationshipConnectorResponse, SuccessfulRelationshipResponse}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
-import models.{ClientTypeModel, RelationshipModel, SubscriptionReference, UserFactsModel}
+import models._
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
-import services.{AuthorisationService, ClientService, RelationshipService}
+import services.{ClientService, RelationshipService}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.{clientType => clientTypeView}
 
@@ -35,14 +37,13 @@ import scala.concurrent.Future
 @Singleton
 class ClientController @Inject()(appConfig: AppConfig,
                                  authorisedActions: AuthorisedActions,
-                                 authorisationService: AuthorisationService,
                                  clientService: ClientService,
                                  relationshipService: RelationshipService,
                                  clientTypeForm: ClientTypeForm,
                                  correspondenceDetailsForm: CorrespondenceDetailsForm,
                                  val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  lazy val form = clientTypeForm.clientTypeForm
+  lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
   val clientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
@@ -77,21 +78,29 @@ class ClientController @Inject()(appConfig: AppConfig,
     implicit user =>
       implicit request =>
 
-        def handleRealtionshipResponse(clientSubscriptionResponse: SubscriptionReference,) = {
+        val arn = user.authContext.principal.accounts.agent.get.agentCode.value
 
-        }
-
-        def successAction(model: UserFactsModel): Future[Result] = {
-          for {
-            arn <- authorisationService.getAffinityGroup
-            cgtRef <- clientService.subscribeIndividualClient(model)
-            relationshipResponse <- relationshipService.createClientRelationship(RelationshipModel(arn, cgtRef))
+        def handleRelationshipResponse(clientSubscriptionResponse: RelationshipConnectorResponse, cgtRef: String): Future[Result] =
+          (arn, clientSubscriptionResponse) match {
+            case (_: String, SuccessfulRelationshipResponse) => Future.successful(Redirect(routes.ClientController.confirmation(cgtRef)))
+            case (_, _) => Future.successful(InternalServerError)
           }
+
+        def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
+          for {
+            subscription <- clientService.subscribeIndividualClient(model)
+            relationshipResponse <- relationshipService.createClientRelationship(RelationshipModel(arn, subscription.cgtRef))
+            response <- handleRelationshipResponse(relationshipResponse, subscription.cgtRef)
+          } yield response
         }
 
         correspondenceDetailsForm.correspondenceDetailsForm.bindFromRequest.fold(errors =>
-          Future.successful(BadRequest(views.html.address.enterCorrespondenceAddress(appConfig, errors))),
-          successAction)
+          Future.successful(BadRequest(views.html.individual.correspondenceDetails(appConfig, errors))),
+          successAction).recoverWith {
+          case error =>
+            Logger.warn(s"Failed to submit the correspondence address sue to ${error.getMessage}")
+            Future.successful(InternalServerError)
+        }
 
   }
 
