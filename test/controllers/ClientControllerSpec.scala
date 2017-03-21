@@ -23,6 +23,7 @@ import audit.Logging
 import auth.{CgtAgent, _}
 import config.WSHttp
 import data.{MessageLookup, TestUsers}
+import models.SubscriptionReference
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -40,8 +41,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
   val unauthorisedLoginUrl = "some-url"
   val clientTypeForm: ClientTypeForm = app.injector.instanceOf[ClientTypeForm]
   val correspondenceDetailsForm: CorrespondenceDetailsForm = app.injector.instanceOf[CorrespondenceDetailsForm]
-  lazy val clientService: ClientService = app.injector.instanceOf[ClientService]
-  lazy val relationshipService: RelationshipService = app.injector.instanceOf[RelationshipService]
+  lazy val clientService: ClientService = mock[ClientService]
+  lazy val relationshipService: RelationshipService = mock[RelationshipService]
 
 
   private val testOnlyUnauthorisedLoginUri = "just-a-test"
@@ -194,6 +195,65 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter{
 
       "return a status of 303" in {
         status(result) shouldBe 303
+      }
+    }
+  }
+
+  "Calling .submitIndividualCorrespondenceDetails" when {
+
+    "an authorised user made the request, the arn is present, and subscription completes" should {
+
+      "return a status of 303" in {
+
+      }
+
+      "redirect to the confirmation view" in {
+//        redirectLocation(result).get should include ("/calculate-your-capital-gains/resident/properties/session-timeout")
+      }
+    }
+
+    "an authorised user made the request but no arn was present" should {
+
+      val actions = createMockActions()
+      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
+        "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
+        "town" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
+
+      when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SubscriptionReference("dummyReference"))
+
+      "return a status of 500" in {
+        status(result) shouldBe 500
+      }
+    }
+
+    "an authorised user made the request but the subscription of the individual failed" should {
+
+      "return a status of 500" in {
+
+      }
+    }
+
+    "an authorised user made the request but the create relationship for the agent and client failed" should {
+
+      "return a status of 500" in {
+
+      }
+    }
+
+    "an unauthorised user made the request" should {
+
+      val actions = createMockActions(valid = false)
+      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+
+      "redirect to the test-url" in {
+        redirectLocation(result).get should include ("just-a-test")
       }
     }
   }

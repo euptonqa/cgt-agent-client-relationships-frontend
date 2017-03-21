@@ -21,10 +21,9 @@ import javax.inject.{Inject, Singleton}
 import auth.AuthorisedActions
 import common.Constants.{ClientType => CTConstants}
 import config.AppConfig
-import connectors.{RelationshipConnectorResponse, SuccessfulRelationshipResponse}
+import connectors.SuccessfulRelationshipResponse
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
@@ -78,29 +77,26 @@ class ClientController @Inject()(appConfig: AppConfig,
     implicit user =>
       implicit request =>
 
-        val arn = user.authContext.principal.accounts.agent.get.agentCode.value
-
-        def handleRelationshipResponse(clientSubscriptionResponse: RelationshipConnectorResponse, cgtRef: String): Future[Result] =
-          (arn, clientSubscriptionResponse) match {
-            case (_: String, SuccessfulRelationshipResponse) => Future.successful(Redirect(routes.ClientController.confirmation(cgtRef)))
-            case (_, _) => Future.successful(InternalServerError)
-          }
-
         def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
-          for {
-            subscription <- clientService.subscribeIndividualClient(model)
-            relationshipResponse <- relationshipService.createClientRelationship(RelationshipModel(arn, subscription.cgtRef))
-            response <- handleRelationshipResponse(relationshipResponse, subscription.cgtRef)
-          } yield response
+
+          lazy val arnAccount = user.authContext.principal.accounts.agent
+
+          clientService.subscribeIndividualClient(model).flatMap {
+            reference =>
+              arnAccount match {
+                case Some(account) =>
+                  relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
+                    case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
+                    case _ => Future.successful(InternalServerError)
+                  }
+                case None => Future.successful(InternalServerError)
+              }
+          }
         }
 
         correspondenceDetailsForm.correspondenceDetailsForm.bindFromRequest.fold(errors =>
           Future.successful(BadRequest(views.html.individual.correspondenceDetails(appConfig, errors))),
-          successAction).recoverWith {
-          case error =>
-            Logger.warn(s"Failed to submit the correspondence address due to ${error.getMessage}")
-            Future.successful(InternalServerError)
-        }
+          successAction)
 
   }
 
