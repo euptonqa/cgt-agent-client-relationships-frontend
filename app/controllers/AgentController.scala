@@ -42,7 +42,7 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
             case SuccessGovernmentGatewayResponse(clients) =>
               if (clients.nonEmpty)
                 Ok(views.html.clientList(appConfig, clients))
-              else Ok(views.html.confirmPermission(appConfig))
+              else Redirect(controllers.routes.AgentController.makeDeclaration())
             case FailedGovernmentGatewayResponse => InternalServerError
           }
         }

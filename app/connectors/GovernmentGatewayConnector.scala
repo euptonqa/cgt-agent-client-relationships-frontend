@@ -48,7 +48,7 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
 
   def getExistingClients(serviceName: String, authContext: AuthContext)(implicit hc: HeaderCarrier): Future[GovernmentGatewayResponse] = {
     val agentCode = authContext.principal.accounts.agent.map(_.agentCode.value).getOrElse("")
-    val getUrl = s"""$serviceUrl/$serviceContext/$agentCode/client-list/$serviceName/$assignedTo"""
+    val getUrl = s"""$serviceUrl/agent/$agentCode/client-list/$serviceName/$assignedTo"""
     val auditMap: Map[String, String] = Map("Agent Code" -> agentCode, "Url" -> getUrl)
     val result = http.GET[HttpResponse](getUrl)
      result.map { response =>
@@ -57,6 +57,10 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
           Logger.info(s"Government Gateway returned an OK with the request $getUrl")
           auditLogger.audit(transactionGetClientList, auditMap, eventTypeSuccess)
           SuccessGovernmentGatewayResponse(response.json.as[Seq[Client]])
+        case NO_CONTENT =>
+          Logger.info(s"Government Gateway returned a NO_CONTENT with the request $getUrl")
+          auditLogger.audit(transactionGetClientList, auditMap, eventTypeSuccess)
+          SuccessGovernmentGatewayResponse(Seq(): Seq[Client])
         case BAD_REQUEST =>
           Logger.warn(s"Government Gateway returned a bad request with the request $getUrl with ${response.body}")
           auditLogger.audit(transactionGetClientList, auditMap, eventTypeFailure)
