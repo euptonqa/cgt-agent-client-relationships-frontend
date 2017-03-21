@@ -98,7 +98,7 @@ class ClientController @Inject()(appConfig: AppConfig,
           Future.successful(BadRequest(views.html.individual.correspondenceDetails(appConfig, errors))),
           successAction).recoverWith {
           case error =>
-            Logger.warn(s"Failed to submit the correspondence address sue to ${error.getMessage}")
+            Logger.warn(s"Failed to submit the correspondence address due to ${error.getMessage}")
             Future.successful(InternalServerError)
         }
 
