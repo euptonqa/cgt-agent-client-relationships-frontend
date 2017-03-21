@@ -24,6 +24,7 @@ import config.AppConfig
 import connectors.SuccessfulRelationshipResponse
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
@@ -87,9 +88,13 @@ class ClientController @Inject()(appConfig: AppConfig,
                 case Some(account) =>
                   relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
                     case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
-                    case _ => Future.successful(InternalServerError)
+                    case _ =>
+                      Logger.warn("Agent Client relationship creation failed.")
+                      Future.successful(InternalServerError)
                   }
-                case None => Future.successful(InternalServerError)
+                case None =>
+                  Logger.warn("No ARN was supplied")
+                  Future.successful(InternalServerError)
               }
           }
         }
