@@ -29,6 +29,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.{ClientService, RelationshipService}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.AgentAccount
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.{clientType => clientTypeView}
 
@@ -78,20 +79,22 @@ class ClientController @Inject()(appConfig: AppConfig,
     implicit user =>
       implicit request =>
 
-        def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
+        def createRelationship(account: AgentAccount, reference: SubscriptionReference) = {
+          relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
+            case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
+            case _ =>
+              Logger.warn("Agent Client relationship creation failed.")
+              Future.successful(InternalServerError)
+          }
+        }
 
+        def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
           lazy val arnAccount = user.authContext.principal.accounts.agent
 
           clientService.subscribeIndividualClient(model).flatMap {
             reference =>
               arnAccount match {
-                case Some(account) =>
-                  relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
-                    case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
-                    case _ =>
-                      Logger.warn("Agent Client relationship creation failed.")
-                      Future.successful(InternalServerError)
-                  }
+                case Some(account) => createRelationship(account, reference)
                 case None =>
                   Logger.warn("No ARN was supplied")
                   Future.successful(InternalServerError)
