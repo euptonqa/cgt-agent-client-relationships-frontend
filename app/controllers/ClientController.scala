@@ -82,9 +82,7 @@ class ClientController @Inject()(appConfig: AppConfig,
         def createRelationship(account: AgentAccount, reference: SubscriptionReference) = {
           relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
             case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
-            case _ =>
-              Logger.warn("Agent Client relationship creation failed.")
-              Future.successful(InternalServerError)
+            case _ => Future.failed(new Exception("Failed to create relationship"))
           }
         }
 
@@ -95,9 +93,7 @@ class ClientController @Inject()(appConfig: AppConfig,
             reference =>
               arnAccount match {
                 case Some(account) => createRelationship(account, reference)
-                case None =>
-                  Logger.warn("No ARN was supplied")
-                  Future.successful(InternalServerError)
+                case None => Future.failed(new Exception("Failed to find ARN"))
               }
           }
         }

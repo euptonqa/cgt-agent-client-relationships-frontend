@@ -246,7 +246,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "town" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
 
-      "return a status of 500" in {
+      "return an exception" in {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(Future.failed(new Exception("Dummy exception")))
 
@@ -270,7 +270,10 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(SubscriptionReference("dummyReference"))
 
-        status(result) shouldBe 500
+        lazy val ex = intercept[Exception] {
+          await(result)
+        }
+        ex.getMessage shouldBe "Failed to find ARN"
       }
     }
 
@@ -290,7 +293,10 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         when(relationshipService.createClientRelationship(ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(FailedRelationshipResponse)
 
-        status(result) shouldBe 500
+        lazy val ex = intercept[Exception] {
+          await(result)
+        }
+        ex.getMessage shouldBe "Failed to create relationship"
       }
     }
 
