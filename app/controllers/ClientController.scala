@@ -20,13 +20,16 @@ import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
 import common.Constants.{ClientType => CTConstants}
-import forms.{ClientTypeForm, CorrespondenceDetailsForm}
-import models.ClientTypeModel
-import play.api.data.Form
-import play.api.mvc.Result
 import config.AppConfig
+import connectors.SuccessfulRelationshipResponse
+import forms.{ClientTypeForm, CorrespondenceDetailsForm}
+import models._
+import play.api.Logger
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, Result}
+import services.{ClientService, RelationshipService}
+import uk.gov.hmrc.play.frontend.auth.connectors.domain.AgentAccount
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.{clientType => clientTypeView}
 
@@ -35,11 +38,13 @@ import scala.concurrent.Future
 @Singleton
 class ClientController @Inject()(appConfig: AppConfig,
                                  authorisedActions: AuthorisedActions,
+                                 clientService: ClientService,
+                                 relationshipService: RelationshipService,
                                  clientTypeForm: ClientTypeForm,
                                  correspondenceDetailsForm: CorrespondenceDetailsForm,
                                  val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
 
-  lazy val form = clientTypeForm.clientTypeForm
+  lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
   val clientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
@@ -53,6 +58,7 @@ class ClientController @Inject()(appConfig: AppConfig,
         def errorAction(form: Form[ClientTypeModel]) = {
           Future.successful(BadRequest(clientTypeView(appConfig, form)))
         }
+
         def successAction(model: ClientTypeModel): Future[Result] = {
           model.clientType match {
             case CTConstants.individual => Future.successful(Redirect(routes.ClientController.enterIndividualCorrespondenceDetails().url))
@@ -69,9 +75,36 @@ class ClientController @Inject()(appConfig: AppConfig,
         Future.successful(Ok(views.html.individual.correspondenceDetails(appConfig, correspondenceDetailsForm.correspondenceDetailsForm)))
   }
 
-  val submitIndividualCorrespondenceDetails = TODO
+  val submitIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
 
-  val confirmation:String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
+        def createRelationship(account: AgentAccount, reference: SubscriptionReference) = {
+          relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
+            case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
+            case _ => Future.failed(new Exception("Failed to create relationship"))
+          }
+        }
+
+        def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
+          lazy val arnAccount = user.authContext.principal.accounts.agent
+
+          clientService.subscribeIndividualClient(model).flatMap {
+            reference =>
+              arnAccount match {
+                case Some(account) => createRelationship(account, reference)
+                case None => Future.failed(new Exception("Failed to find ARN"))
+              }
+          }
+        }
+
+        correspondenceDetailsForm.correspondenceDetailsForm.bindFromRequest.fold(errors =>
+          Future.successful(BadRequest(views.html.individual.correspondenceDetails(appConfig, errors))),
+          successAction)
+
+  }
+
+  val confirmation: String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
         Future.successful(Ok(views.html.clientConfirmation(appConfig, cgtReference)))

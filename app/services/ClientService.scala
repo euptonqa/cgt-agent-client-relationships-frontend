@@ -19,7 +19,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import connectors.SubscriptionConnector
-import models.{SubscriptionReference, UserFactsModel}
+import models.{CorrespondenceDetailsModel, SubscriptionReference}
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
@@ -27,7 +27,7 @@ import scala.concurrent.Future
 @Singleton
 class ClientService @Inject()(connector: SubscriptionConnector) {
 
-  def subscribeIndividualClient(userFacts: UserFactsModel)(implicit hc: HeaderCarrier): Future[SubscriptionReference] = {
-    connector.subscribeIndividualClient(userFacts)
+  def subscribeIndividualClient(correspondenceDetailsModel: CorrespondenceDetailsModel)(implicit hc: HeaderCarrier): Future[SubscriptionReference] = {
+    connector.subscribeIndividualClient(correspondenceDetailsModel)
   }
 }

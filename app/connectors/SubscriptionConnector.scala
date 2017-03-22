@@ -19,7 +19,7 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.{ApplicationConfig, WSHttp}
-import models.{SubscriptionReference, UserFactsModel}
+import models.{SubscriptionReference, CorrespondenceDetailsModel}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
@@ -33,10 +33,10 @@ class SubscriptionConnector @Inject()(http: WSHttp, applicationConfig: Applicati
 
   lazy val serviceUrl: String = applicationConfig.subscriptionServiceUrl
 
-  def subscribeIndividualClient(userFactsModel: UserFactsModel)(implicit hc: HeaderCarrier): Future[SubscriptionReference] = {
+  def subscribeIndividualClient(correspondenceDetailsModel: CorrespondenceDetailsModel)(implicit hc: HeaderCarrier): Future[SubscriptionReference] = {
     val postUrl = s"$serviceUrl/capital-gains-tax/subscription/agent/individual"
 
-    http.POST[JsValue, HttpResponse](postUrl, Json.toJson(userFactsModel)).map {
+    http.POST[JsValue, HttpResponse](postUrl, Json.toJson(correspondenceDetailsModel)).map {
       response => response.status match {
         case OK => response.json.as[SubscriptionReference]
         case _ =>
