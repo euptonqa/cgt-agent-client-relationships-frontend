@@ -40,7 +40,7 @@ case object FailedGovernmentGatewayResponse extends GovernmentGatewayResponse
 class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLogger: Logging) extends HttpErrorFunctions {
 
   lazy val serviceUrl: String = appConfig.baseUrl("government-gateway")
-  val serviceContext: String = appConfig.governmentGatewayContextUrl
+  lazy val serviceContext: String = appConfig.governmentGatewayContextUrl
   val http: HttpPut with HttpGet with HttpPost = WSHttp
 
   val urlHeaderEnvironment: String = ""
@@ -57,6 +57,10 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
           Logger.info(s"Government Gateway returned an OK with the request $getUrl")
           auditLogger.audit(transactionGetClientList, auditMap, eventTypeSuccess)
           SuccessGovernmentGatewayResponse(response.json.as[Seq[Client]])
+        case NO_CONTENT =>
+          Logger.info(s"Government Gateway returned a NO_CONTENT with the request $getUrl")
+          auditLogger.audit(transactionGetClientList, auditMap, eventTypeSuccess)
+          SuccessGovernmentGatewayResponse(Seq(): Seq[Client])
         case BAD_REQUEST =>
           Logger.warn(s"Government Gateway returned a bad request with the request $getUrl with ${response.body}")
           auditLogger.audit(transactionGetClientList, auditMap, eventTypeFailure)

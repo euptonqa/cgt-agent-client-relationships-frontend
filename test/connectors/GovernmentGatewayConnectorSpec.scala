@@ -47,7 +47,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
 
   object TestGovernmentGatewayConnector extends GovernmentGatewayConnector(mockAppConfig, mockLoggingUtils) {
     override val http: HttpPut with HttpGet with HttpPost = mockWSHttp
-    override val serviceContext: String = ""
+    override lazy val serviceContext: String = ""
     override lazy val serviceUrl: String = ""
   }
 
@@ -63,7 +63,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
 
     implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
 
-    "an OK response is returned" when {
+    "a valid response is returned" when {
 
       "the client list is not empty" should {
 
@@ -83,7 +83,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
       "the client list is empty" should {
 
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
-          .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(List.empty[Client])))))
+          .thenReturn(Future.successful(HttpResponse(responseStatus = NO_CONTENT, responseJson = None)))
 
         val result = await(TestGovernmentGatewayConnector.getExistingClients(clientServiceNameIndividual, authContext))
 
