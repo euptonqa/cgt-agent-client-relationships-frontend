@@ -266,7 +266,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "town" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
 
-      "return a status of 500" in {
+      "return an exception" in {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(SubscriptionReference("dummyReference"))
 
@@ -286,7 +286,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "town" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
 
-      "return a status of 500" in {
+      "return an exception" in {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(SubscriptionReference("dummyReference"))
 
