@@ -46,7 +46,7 @@ class AgentServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar wi
 
   object GGConnector extends GovernmentGatewayConnector(mockAppConfig, mockLoggingUtils){
     override val http: HttpPut with HttpGet with HttpPost = mockWSHttp
-    override val serviceContext: String = ""
+    override lazy val serviceContext: String = ""
     override lazy val serviceUrl: String = ""
   }
 

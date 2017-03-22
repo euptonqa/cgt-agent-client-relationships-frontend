@@ -47,7 +47,7 @@ class GovernmentGatewayConnectorSpec extends UnitSpec with OneAppPerSuite with M
 
   object TestGovernmentGatewayConnector extends GovernmentGatewayConnector(mockAppConfig, mockLoggingUtils) {
     override val http: HttpPut with HttpGet with HttpPost = mockWSHttp
-    override val serviceContext: String = ""
+    override lazy val serviceContext: String = ""
     override lazy val serviceUrl: String = ""
   }
 
