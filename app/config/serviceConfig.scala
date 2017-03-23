@@ -36,6 +36,7 @@ trait AppConfig {
   val agentRelationship: String
   val postSignInRedirectUrl: String
   val governmentGatewayContextUrl: String
+  val iformUrl: String
 }
 
 @Singleton
@@ -70,4 +71,7 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //AgentRelationshipBackendConfig
   override lazy val agentRelationship: String = baseUrl("agent-client-relationships") + loadConfig("microservice.services.agent-client-relationships.context")
+
+  //Iform config
+  override lazy val iformUrl: String = loadConfig("iform-url.url")
 }

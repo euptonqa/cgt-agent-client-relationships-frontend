@@ -50,7 +50,11 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
       agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
   }
 
-  val selectClient = TODO
+  val selectClient: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+        Future.successful(Redirect(appConfig.iformUrl))
+  }
 
   val makeDeclaration: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>

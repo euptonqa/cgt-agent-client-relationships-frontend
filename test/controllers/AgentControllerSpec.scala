@@ -37,6 +37,7 @@ import uk.gov.hmrc.play.frontend.auth.AuthContext
 import org.scalatest.BeforeAndAfter
 import play.api.http.Status._
 import play.api.libs.json.Json
+import play.api.test.Helpers.{OK => _, _}
 import uk.gov.hmrc.play.http.HttpResponse
 
 import scala.concurrent.Future
@@ -124,6 +125,43 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         lazy val doc = Jsoup.parse(bodyOf(result))
 
         doc.title() shouldBe MessageLookup.ConfirmPermission.title
+      }
+    }
+
+    "provided with an invalid unauthorised user" should {
+      lazy val ggConnector = mock[GovernmentGatewayConnector]
+
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
+
+      val agentService = new AgentService(ggConnector)
+      lazy val controller = setupController(correctAuthentication = false, agentService = agentService)
+      lazy val result = controller.makeDeclaration(FakeRequest())
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+    }
+  }
+
+  "Calling .selectClient" when {
+
+    "provided with a valid authorised user" should {
+      lazy val ggConnector = mock[GovernmentGatewayConnector]
+
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
+
+      val agentService = new AgentService(ggConnector)
+      lazy val controller = setupController(agentService = agentService)
+      lazy val result = controller.selectClient(FakeRequest())
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+
+      "redirect to the iForm" in {
+        redirectLocation(result).get.toString shouldBe "https://www.gov.uk"
       }
     }
 
