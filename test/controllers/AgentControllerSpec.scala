@@ -188,13 +188,16 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         lazy val controller = setupController(correctAuthentication = true, agentService = agentService)
         lazy val result = controller.showClientList(FakeRequest())
 
+        lazy val exception = intercept[Exception] {
+          await(result)
+        }
+
         "return an exception" in {
-
-          lazy val exception = intercept[Exception] {
-            await(result)
-          }
-
           exception.isInstanceOf[Exception] shouldBe true
+        }
+
+        "return a message of 'Failed to retrieve client'" in {
+          exception.getMessage shouldBe "Failed to retrieve client"
         }
       }
     }
