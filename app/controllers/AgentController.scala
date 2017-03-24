@@ -43,7 +43,7 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
               if (clients.nonEmpty)
                 Ok(views.html.clientList(appConfig, clients))
               else Redirect(controllers.routes.AgentController.makeDeclaration())
-            case FailedGovernmentGatewayResponse => InternalServerError
+            case FailedGovernmentGatewayResponse =>  throw new Exception("Failed to retrieve client")
           }
         }
       agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
