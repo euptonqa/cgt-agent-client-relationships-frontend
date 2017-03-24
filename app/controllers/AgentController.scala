@@ -46,7 +46,6 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
             case FailedGovernmentGatewayResponse => InternalServerError
           }
         }
-
       agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
   }
 
