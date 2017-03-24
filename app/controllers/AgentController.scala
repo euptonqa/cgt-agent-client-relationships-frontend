@@ -46,7 +46,6 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
             case FailedGovernmentGatewayResponse =>  throw new Exception("Failed to retrieve client")
           }
         }
-
       agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
   }
 
