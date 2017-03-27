@@ -48,7 +48,7 @@ class GovernmentGatewayConnector @Inject()(appConfig: ApplicationConfig, auditLo
 
   def getExistingClients(serviceName: String, authContext: AuthContext)(implicit hc: HeaderCarrier): Future[GovernmentGatewayResponse] = {
     val agentCode = authContext.principal.accounts.agent.map(_.agentCode.value).getOrElse("")
-    val getUrl = s"""$serviceUrl/$serviceContext/$agentCode/client-list/$serviceName/$assignedTo"""
+    val getUrl = s"""$serviceUrl$serviceContext/$agentCode/client-list/$serviceName/$assignedTo"""
     val auditMap: Map[String, String] = Map("Agent Code" -> agentCode, "Url" -> getUrl)
     val result = http.GET[HttpResponse](getUrl)
      result.map { response =>
