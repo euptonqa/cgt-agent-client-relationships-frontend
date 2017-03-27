@@ -21,6 +21,9 @@ import javax.inject.{Inject, Singleton}
 import auth.AuthorisedActions
 import config.AppConfig
 import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
+import forms.SelectedClientForm
+import models.SelectedClient
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.AgentService
@@ -32,7 +35,8 @@ import scala.concurrent.Future
 class AgentController @Inject()(authorisedActions: AuthorisedActions,
                                 agentService: AgentService,
                                 appConfig: AppConfig,
-                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+                                val messagesApi: MessagesApi,
+                                selectedClientForm: SelectedClientForm) extends FrontendController with I18nSupport {
 
   val showClientList: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
@@ -52,7 +56,14 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
   val selectClient: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
-        Future.successful(Redirect(appConfig.iformUrl))
+
+        def errorAction(form: Form[SelectedClient]) = throw new Exception
+
+        def successAction(model: SelectedClient): Future[Result] = {
+          Future.successful(Redirect(appConfig.iFormUrl))
+        }
+
+        selectedClientForm.selectedClientForm.bindFromRequest.fold(errorAction, successAction)
   }
 
   val makeDeclaration: Action[AnyContent] = authorisedActions.authorisedAgentAction {

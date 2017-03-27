@@ -1,4 +1,5 @@
-@import models.Client
+@import models.{Client, IdentifierForDisplay}
+@import uk.gov.hmrc.play.views.html.helpers.form
 
 @(appConfig: config.AppConfig, clients: Seq[Client])(implicit request: Request[_], messages: Messages)
 
@@ -16,12 +17,16 @@
                     </tr>
                     @for(client <- clients) {
                         <tr>
-                            <td class="font-small">
-                                @client.friendlyName
-                            </td>
-                            <td class="font-small" style="width:25%">
-                                <a href="@controllers.routes.AgentController.selectClient">@Messages("clientList.report")</a>
-                            </td>
+                            @form(action = controllers.routes.AgentController.selectClient()) {
+                                <td class="font-small">
+                                    <input class="visuallyhidden" id="friendlyName" name="friendlyName" value="@client.friendlyName">
+                                    <input class="visuallyhidden" id="cgtRef" name="cgtRef" value="@client.identifiersForDisplay.head.value">
+                                    @client.friendlyName
+                                </td>
+                                <td class="font-small" style="width:25%">
+                                    <button class="button--link-style" type="submit">@Messages("clientList.report")</button>
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
