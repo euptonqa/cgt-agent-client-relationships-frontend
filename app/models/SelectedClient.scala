@@ -21,5 +21,5 @@ import play.api.libs.json.Json
 case class SelectedClient(friendlyName: String, cgtRef: String)
 
 object SelectedClient {
-  implicit val formats = Json.format[IdentifierForDisplay]
+  implicit val formats = Json.format[SelectedClient]
 }
