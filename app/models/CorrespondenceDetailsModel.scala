@@ -22,7 +22,7 @@ case class CorrespondenceDetailsModel(firstName: String,
                                       lastName: String,
                                       addressLineOne: String,
                                       addressLineTwo: String,
-                                      town: String,
+                                      townOrCity: String,
                                       county: Option[String],
                                       postcode: Option[String],
                                       country: String)
