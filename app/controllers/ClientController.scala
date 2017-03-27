@@ -20,11 +20,11 @@ import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
 import common.Constants.{ClientType => CTConstants}
+import common.Keys.{GovernmentGateway => relationshipKeys}
 import config.AppConfig
 import connectors.SuccessfulRelationshipResponse
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
-import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
@@ -80,7 +80,8 @@ class ClientController @Inject()(appConfig: AppConfig,
       implicit request =>
 
         def createRelationship(account: AgentAccount, reference: SubscriptionReference) = {
-          relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
+          relationshipService.createClientRelationship(
+            RelationshipModel(account.agentCode.value, reference.cgtRef), relationshipKeys.clientServiceNameIndividual).flatMap {
             case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
             case _ => Future.failed(new Exception("Failed to create relationship"))
           }
