@@ -34,7 +34,7 @@ class SubscriptionConnector @Inject()(http: WSHttp, applicationConfig: Applicati
   lazy val serviceUrl: String = applicationConfig.subscriptionServiceUrl
 
   def subscribeIndividualClient(correspondenceDetailsModel: CorrespondenceDetailsModel)(implicit hc: HeaderCarrier): Future[SubscriptionReference] = {
-    val postUrl = s"$serviceUrl/capital-gains-tax/subscription/agent/individual"
+    val postUrl = s"$serviceUrl/capital-gains-subscription/subscribe/agent/individual"
 
     http.POST[JsValue, HttpResponse](postUrl, Json.toJson(correspondenceDetailsModel)).map {
       response => response.status match {

@@ -37,7 +37,7 @@ class CorrespondenceDetailsForm @Inject()(val messagesApi: MessagesApi) extends 
       "addressLineTwo" -> text
         .verifying(Messages("errors.required"), nonEmptyCheck),
       "townOrCity" -> text
-        .verifying(Messages("errors.required"), nonEmptyCheck),
+        .transform(textToOptional, optionalToText),
       "county" -> text
         .transform(textToOptional, optionalToText),
       "postcode" -> text

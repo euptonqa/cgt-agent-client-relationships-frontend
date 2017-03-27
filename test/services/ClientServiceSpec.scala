@@ -39,7 +39,7 @@ class ClientServiceSpec extends UnitSpec with OneAppPerSuite with MockitoSugar {
   lazy val mockAppConfig: ApplicationConfig = app.injector.instanceOf[ApplicationConfig]
   implicit val hc = new HeaderCarrier(sessionId = Some(SessionId(s"session-${UUID.randomUUID}")))
 
-  val userFactsModel = CorrespondenceDetailsModel("", "", "", "", "", None, None, "")
+  val userFactsModel = CorrespondenceDetailsModel("", "", "", "", None, None, None, "")
 
   def setupService(subscriptionResponse: Future[SubscriptionReference]): ClientService = {
 
