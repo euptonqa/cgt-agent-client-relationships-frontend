@@ -26,10 +26,10 @@ class ClientListViewSpec extends ViewSpecHelper {
 
   "The clientList view" should {
 
-    val clients: Seq[Client] = Seq(Client("John Smith", List[IdentifierForDisplay]
-      (IdentifierForDisplay("Individual", "johnsmith"))),
-      Client("Company 123", List[IdentifierForDisplay]
-        (IdentifierForDisplay("Organisation", "company123"))))
+    val clients: Seq[Client] = Seq(
+      Client("John Smith", List(IdentifierForDisplay("CGTREF", "CGT12345678"))),
+      Client("Company 123", List(IdentifierForDisplay("CGTREF", "CGT01234567"))))
+
     lazy val view = clientList(config, clients)
     lazy val doc = Jsoup.parse(view.body)
 
@@ -86,6 +86,19 @@ class ClientListViewSpec extends ViewSpecHelper {
 
           lazy val row2 = table.select("tr:nth-of-type(2)")
 
+          "has a form" which {
+
+            lazy val form = row2.select("form")
+
+            "has a POST method" in {
+              form.attr("method") shouldBe "POST"
+            }
+
+            s"has an action of '${controllers.routes.AgentController.selectClient().url}'" in {
+              form.attr("action") shouldBe controllers.routes.AgentController.selectClient().url
+            }
+          }
+
           "has a td" which {
 
             lazy val td = row2.select("td:nth-of-type(1)")
@@ -97,6 +110,32 @@ class ClientListViewSpec extends ViewSpecHelper {
             "has the text 'John Smith'" in {
               td.text shouldEqual "John Smith"
             }
+
+            "has an input 'friendlyName'" should {
+
+              lazy val friendlyName = td.select("#friendlyName")
+
+              "have class visually hidden" in {
+                friendlyName.hasClass("visuallyhidden") shouldEqual true
+              }
+
+              "have the value 'John Smith'" in {
+                friendlyName.attr("value") shouldEqual "John Smith"
+              }
+            }
+
+            "has an input 'cgtRef'" should {
+
+              lazy val cgtRef = td.select("#cgtRef")
+
+              "have class visually hidden" in {
+                cgtRef.hasClass("visuallyhidden") shouldEqual true
+              }
+
+              "have the value 'CGT12345678'" in {
+                cgtRef.attr("value") shouldEqual "CGT12345678"
+              }
+            }
           }
 
           "has a second td" which {
@@ -107,12 +146,20 @@ class ClientListViewSpec extends ViewSpecHelper {
               td.hasClass("font-small") shouldBe true
             }
 
-            s"has the text ${messages.report}" in {
-              td.text shouldEqual messages.report
-            }
+            "has a button" which {
+              lazy val button = td.select("button")
 
-            s"contains a link to ${controllers.routes.AgentController.selectClient().url}" in {
-              td.select("a").attr("href") shouldEqual controllers.routes.AgentController.selectClient().url
+              "has class 'button--link-style'" in {
+                button.hasClass("button--link-style") shouldEqual true
+              }
+
+              s"has the text ${messages.report}" in {
+                button.text shouldEqual messages.report
+              }
+
+              "is of type submit" in {
+                button.attr("type") shouldEqual "submit"
+              }
             }
           }
         }
@@ -128,18 +175,52 @@ class ClientListViewSpec extends ViewSpecHelper {
             "has the text 'Company 123'" in {
               td.text shouldEqual "Company 123"
             }
+
+            "has an input 'friendlyName'" should {
+
+              lazy val friendlyName = td.select("#friendlyName")
+
+              "have class visually hidden" in {
+                friendlyName.hasClass("visuallyhidden") shouldEqual true
+              }
+
+              "have the value 'Company 123'" in {
+                friendlyName.attr("value") shouldEqual "Company 123"
+              }
+            }
+
+            "has an input 'cgtRef'" should {
+
+              lazy val cgtRef = td.select("#cgtRef")
+
+              "have class visually hidden" in {
+                cgtRef.hasClass("visuallyhidden") shouldEqual true
+              }
+
+              "have the value 'CGT01234567'" in {
+                cgtRef.attr("value") shouldEqual "CGT01234567"
+              }
+            }
           }
 
           "has a second td" which {
 
             lazy val td = row2.select("td:nth-of-type(2)")
 
-            s"has the text ${messages.report}" in {
-              td.text shouldEqual messages.report
-            }
+            "has a button" which {
+              lazy val button = td.select("button")
 
-            s"contains a link to ${controllers.routes.AgentController.selectClient().url}" in {
-              td.select("a").attr("href") shouldEqual controllers.routes.AgentController.selectClient().url
+              "has class 'button--link-style'" in {
+                button.hasClass("button--link-style") shouldEqual true
+              }
+
+              s"has the text ${messages.report}" in {
+                button.text shouldEqual messages.report
+              }
+
+              "is of type submit" in {
+                button.attr("type") shouldEqual "submit"
+              }
             }
           }
         }
