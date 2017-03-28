@@ -20,7 +20,7 @@ import java.util.UUID
 
 import config.{ApplicationConfig, WSHttp}
 import connectors.{FailedRelationshipResponse, RelationshipConnector, SuccessfulRelationshipResponse}
-import models.SubmissionModel
+import models.{RelationshipModel, SubmissionModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfter
@@ -52,12 +52,15 @@ class RelationshipServiceSpec extends UnitSpec with OneAppPerSuite with MockitoS
   val relationshipService = new RelationshipService(RelationConnector)
 
   "Calling .createRelationship" when {
+
+    val submissionModel = SubmissionModel(RelationshipModel("ARN00000001", "CGTREF100000"), "Service_Name")
+
     "a 204 is returned" in {
       when(mockWSHttp.POST[JsValue, HttpResponse](ArgumentMatchers.any(), ArgumentMatchers.any(),
         ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = 204)))
 
-      await(RelationConnector.createClientRelationship(mock[SubmissionModel])) shouldBe SuccessfulRelationshipResponse
+      await(RelationConnector.createClientRelationship(submissionModel)) shouldBe SuccessfulRelationshipResponse
     }
 
     "a 500 is returned" in {
@@ -66,7 +69,7 @@ class RelationshipServiceSpec extends UnitSpec with OneAppPerSuite with MockitoS
         ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = 500)))
 
-      await(RelationConnector.createClientRelationship(mock[SubmissionModel])) shouldBe FailedRelationshipResponse
+      await(RelationConnector.createClientRelationship(submissionModel)) shouldBe FailedRelationshipResponse
     }
   }
 

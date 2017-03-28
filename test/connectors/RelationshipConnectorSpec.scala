@@ -17,7 +17,7 @@
 package connectors
 
 import config.{ApplicationConfig, WSHttp}
-import models.SubmissionModel
+import models.{RelationshipModel, SubmissionModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
@@ -49,7 +49,7 @@ class RelationshipConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
   }
 
   "RelationshipConnector .createRelationship" should {
-    val submissionModel = mock[SubmissionModel]
+    val submissionModel = SubmissionModel(RelationshipModel("ARN00000001", "CGTREF100000"), "Service_Name")
 
     "return a SuccessfulRelationshipResponse on success" in {
       val mockHttp = createMockHttp(successfulResponse = true)
