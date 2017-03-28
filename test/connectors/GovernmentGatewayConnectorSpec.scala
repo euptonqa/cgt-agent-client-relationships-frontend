@@ -20,7 +20,7 @@ import java.util.UUID
 
 import audit.Logging
 import config.ApplicationConfig
-import .GovernmentGateway._
+import common.Keys.GovernmentGateway._
 import models.{Client, IdentifierForDisplay}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
