@@ -225,7 +225,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(SubscriptionReference("dummyReference"))
 
-      when(relationshipService.createClientRelationship(ArgumentMatchers.any())(ArgumentMatchers.any()))
+      when(relationshipService.createClientRelationship(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(SuccessfulRelationshipResponse)
 
       "return a status of 303" in {
@@ -290,7 +290,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(SubscriptionReference("dummyReference"))
 
-        when(relationshipService.createClientRelationship(ArgumentMatchers.any())(ArgumentMatchers.any()))
+        when(relationshipService.createClientRelationship(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(FailedRelationshipResponse)
 
         lazy val ex = intercept[Exception] {

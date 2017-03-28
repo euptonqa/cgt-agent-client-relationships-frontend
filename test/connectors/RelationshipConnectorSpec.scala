@@ -17,7 +17,7 @@
 package connectors
 
 import config.{ApplicationConfig, WSHttp}
-import models.RelationshipModel
+import models.SubmissionModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
-class RelationshipConnectorSpec extends UnitSpec with MockitoSugar with OneAppPerSuite{
+class RelationshipConnectorSpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
 
   implicit val hc = HeaderCarrier()
 
@@ -49,12 +49,12 @@ class RelationshipConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
   }
 
   "RelationshipConnector .createRelationship" should {
-    val relationshipModel = mock[RelationshipModel]
+    val submissionModel = mock[SubmissionModel]
 
     "return a SuccessfulRelationshipResponse on success" in {
       val mockHttp = createMockHttp(successfulResponse = true)
       lazy val connector = new RelationshipConnector(config, mockHttp)
-      lazy val result = connector.createClientRelationship(relationshipModel)
+      lazy val result = connector.createClientRelationship(submissionModel)
 
       await(result) shouldBe SuccessfulRelationshipResponse
     }
@@ -62,7 +62,7 @@ class RelationshipConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
     "return a FailedRelationshipResponse on failure" in {
       val mockHttp = createMockHttp(successfulResponse = false)
       lazy val connector = new RelationshipConnector(config, mockHttp)
-      lazy val result = connector.createClientRelationship(relationshipModel)
+      lazy val result = connector.createClientRelationship(submissionModel)
 
       await(result) shouldBe FailedRelationshipResponse
     }
