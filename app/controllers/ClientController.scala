@@ -22,12 +22,12 @@ import audit.Logging
 import auth.AuthorisedActions
 import common.Constants.{ClientType => CTConstants}
 import common.Constants.Audit._
-import config.AppConfig
-import connectors.SuccessfulRelationshipResponse
+import config.{AppConfig, Keys}
+import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.{ClientService, RelationshipService}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.AgentAccount
@@ -44,7 +44,8 @@ class ClientController @Inject()(appConfig: AppConfig,
                                  clientTypeForm: ClientTypeForm,
                                  correspondenceDetailsForm: CorrespondenceDetailsForm,
                                  val messagesApi: MessagesApi,
-                                 auditLogger: Logging) extends FrontendController with I18nSupport {
+                                 auditLogger: Logging,
+                                 sessionService: KeystoreConnector) extends FrontendController with I18nSupport {
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
@@ -114,6 +115,10 @@ class ClientController @Inject()(appConfig: AppConfig,
   val confirmation: String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
-        Future.successful(Ok(views.html.clientConfirmation(appConfig, cgtReference)))
+        sessionService.fetchAndGetFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl).map {
+          case Some(model) => println(model)
+            Ok(views.html.clientConfirmation(appConfig, cgtReference, model.url))
+          case None => throw new Exception("No callback url found in session")
+        }
   }
 }

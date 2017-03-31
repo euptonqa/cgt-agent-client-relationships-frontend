@@ -49,3 +49,7 @@ clientConfirmation.title = Capital Gains Tax Service registration complete
 clientConfirmation.reference = Your client''s Capital Gains Tax reference:
 clientConfirmation.whatNext = What happens next?
 clientConfirmation.guidance = '{COPY TO BE CONFIRMED'}
+
+## Default Error Messages ##
+errors.badRequest = Bad request
+errors.checkAddress = Please check that you have entered the correct web address.
