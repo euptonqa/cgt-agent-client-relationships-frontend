@@ -259,5 +259,29 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         status(result) shouldBe 303
       }
     }
+
+    "with an invalid callback url" should {
+      lazy val ggConnector = mock[GovernmentGatewayConnector]
+
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
+
+      val agentService = new AgentService(ggConnector)
+
+      when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
+
+      lazy val controller = setupController(correctAuthentication = true, agentService = agentService)
+      lazy val result = controller.showClientList("http://www.google.com")(FakeRequest())
+      lazy val body = Jsoup.parse(bodyOf(result))
+
+      "return a status of 400" in {
+        status(result) shouldBe 400
+      }
+
+      "redirect to the Bad Request error page" in {
+        body.title() shouldBe MessageLookup.Common.badRequest
+       }
+    }
   }
 }
