@@ -20,10 +20,10 @@ import javax.inject.{Inject, Singleton}
 
 import audit.Logging
 import auth.AuthorisedActions
-import common.Constants.{ClientType => CTConstants}
 import common.Constants.Audit._
-import config.AppConfig
-import connectors.SuccessfulRelationshipResponse
+import common.Constants.{ClientType => CTConstants}
+import config.{AppConfig, Keys}
+import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
 import play.api.data.Form
@@ -44,7 +44,8 @@ class ClientController @Inject()(appConfig: AppConfig,
                                  clientTypeForm: ClientTypeForm,
                                  correspondenceDetailsForm: CorrespondenceDetailsForm,
                                  val messagesApi: MessagesApi,
-                                 auditLogger: Logging) extends FrontendController with I18nSupport {
+                                 auditLogger: Logging,
+                                 sessionService: KeystoreConnector) extends FrontendController with I18nSupport {
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
@@ -89,7 +90,9 @@ class ClientController @Inject()(appConfig: AppConfig,
         }
 
         def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
-          val auditMap: Map[String, String] = Map("AgentCode" -> user.authContext.principal.accounts.agent.map{_.agentCode.toString()}.getOrElse(""),
+          val auditMap: Map[String, String] = Map("AgentCode" -> user.authContext.principal.accounts.agent.map {
+            _.agentCode.toString()
+          }.getOrElse(""),
             "First Name" -> model.firstName, "Last Name" -> model.lastName, "Address Line One" -> model.addressLineOne,
             "Address Line Two" -> model.addressLineTwo, "TownOrCity" -> model.townOrCity, "County" -> model.townOrCity,
             "PostCode" -> model.postcode.getOrElse(""), "Country" -> model.country)
@@ -114,6 +117,9 @@ class ClientController @Inject()(appConfig: AppConfig,
   val confirmation: String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
-        Future.successful(Ok(views.html.clientConfirmation(appConfig, cgtReference)))
+        sessionService.fetchAndGetFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl).map {
+          case Some(model) => Ok(views.html.clientConfirmation(appConfig, cgtReference, model.url))
+          case None => throw new Exception("No callback url found in session")
+        }
   }
 }

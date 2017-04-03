@@ -98,9 +98,11 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     val authModel = mock[AuthorisationDataModel]
     when(authModel.uri).thenReturn("")
 
-    mockAuthorisationService
+    val sessionService = mock[KeystoreConnector]
 
-    new AgentController(mockActions, agentService, config, messagesApi, selectedClientForm)
+    mockAuthorisationService()
+
+    new AgentController(mockActions, agentService, config, messagesApi, selectedClientForm, sessionService)
   }
 
 
@@ -197,8 +199,9 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
           .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
 
         lazy val controller = setupController(correctAuthentication = true, agentService = agentService)
-        lazy val result = controller.showClientList(FakeRequest())
+        lazy val result = controller.showClientList("/context/test")(FakeRequest())
         lazy val doc = Jsoup.parse(bodyOf(result))
+
         "return a status of 200" in {
           status(result) shouldBe 200
         }
@@ -226,7 +229,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
           .thenReturn(Future.successful(HttpResponse(responseStatus = 500, responseJson = Some(Json.toJson(clients)))))
 
         lazy val controller = setupController(correctAuthentication = true, agentService = agentService)
-        lazy val result = controller.showClientList(FakeRequest())
+        lazy val result = controller.showClientList("/context/test")(FakeRequest())
 
         lazy val exception = intercept[Exception] {
           await(result)
@@ -250,10 +253,35 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
       val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(correctAuthentication = false, agentService = agentService)
-      lazy val result = controller.showClientList(FakeRequest())
+      lazy val result = controller.showClientList("/context/test")(FakeRequest())
+
       "return a status type of 303" in {
         status(result) shouldBe 303
       }
+    }
+
+    "with an invalid callback url" should {
+      lazy val ggConnector = mock[GovernmentGatewayConnector]
+
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
+
+      val agentService = new AgentService(ggConnector)
+
+      when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
+
+      lazy val controller = setupController(correctAuthentication = true, agentService = agentService)
+      lazy val result = controller.showClientList("http://www.google.com")(FakeRequest())
+      lazy val body = Jsoup.parse(bodyOf(result))
+
+      "return a status of 400" in {
+        status(result) shouldBe 400
+      }
+
+      "redirect to the Bad Request error page" in {
+        body.title() shouldBe MessageLookup.Common.badRequest
+       }
     }
   }
 }

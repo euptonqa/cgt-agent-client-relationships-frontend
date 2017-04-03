@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-object Keys {
+import java.net.URI
 
-  object GovernmentGateway {
-    val clientServiceNameIndividual = "HMRC-CGT-IND"
-    val clientServiceNameOrganisation = "HMRC-CGT-ORG"
-    val assignedTo = "ALL"
-  }
+import play.api.libs.json.{Json, OFormat}
 
-  object KeystoreKeys {
-    val callbackUrl = "callbackUrl"
+case class CallbackUrlModel (url: String) {
+  require(CallbackUrlModel.validateUrl(new URI(url)), "Failed to bind as a URI")
+}
+
+object CallbackUrlModel {
+  implicit val formats: OFormat[CallbackUrlModel] = Json.format[CallbackUrlModel]
+
+  val localhost: String = "localhost"
+
+  val validateUrl: URI => Boolean = { url =>
+    if (Option(url.getHost).isDefined) url.getHost.contains(localhost)
+    else true
   }
 }
