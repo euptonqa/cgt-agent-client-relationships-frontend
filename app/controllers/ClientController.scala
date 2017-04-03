@@ -20,14 +20,14 @@ import javax.inject.{Inject, Singleton}
 
 import audit.Logging
 import auth.AuthorisedActions
-import common.Constants.{ClientType => CTConstants}
 import common.Constants.Audit._
+import common.Constants.{ClientType => CTConstants}
 import config.{AppConfig, Keys}
 import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.{ClientService, RelationshipService}
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.AgentAccount
@@ -90,7 +90,9 @@ class ClientController @Inject()(appConfig: AppConfig,
         }
 
         def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
-          val auditMap: Map[String, String] = Map("AgentCode" -> user.authContext.principal.accounts.agent.map{_.agentCode.toString()}.getOrElse(""),
+          val auditMap: Map[String, String] = Map("AgentCode" -> user.authContext.principal.accounts.agent.map {
+            _.agentCode.toString()
+          }.getOrElse(""),
             "First Name" -> model.firstName, "Last Name" -> model.lastName, "Address Line One" -> model.addressLineOne,
             "Address Line Two" -> model.addressLineTwo, "TownOrCity" -> model.townOrCity, "County" -> model.townOrCity,
             "PostCode" -> model.postcode.getOrElse(""), "Country" -> model.country)
@@ -116,8 +118,7 @@ class ClientController @Inject()(appConfig: AppConfig,
     implicit user =>
       implicit request =>
         sessionService.fetchAndGetFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl).map {
-          case Some(model) => println(model)
-            Ok(views.html.clientConfirmation(appConfig, cgtReference, model.url))
+          case Some(model) => Ok(views.html.clientConfirmation(appConfig, cgtReference, model.url))
           case None => throw new Exception("No callback url found in session")
         }
   }
