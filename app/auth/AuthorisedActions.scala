@@ -25,6 +25,7 @@ import services.AuthorisationService
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.Accounts
 import uk.gov.hmrc.play.frontend.auth.{Actions, AuthContext, AuthenticationProvider, TaxRegime}
 
+
 @Singleton
 class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
                                   authorisationService: AuthorisationService,
@@ -32,7 +33,7 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
 
   override val authConnector: FrontendAuthConnector = feAuthConnector
 
-  private val composeAuthorisedAction: AuthenticatedAction => Action[AnyContent] = {
+  private def composeAuthorisedAction(url: Option[String]): AuthenticatedAction => Action[AnyContent] = {
     val postSignInRedirectUrl = applicationConfig.postSignInRedirectUrl
     val ggProvider = GovernmentGatewayProvider(postSignInRedirectUrl,
       applicationConfig.governmentGatewaySignIn)
@@ -41,7 +42,7 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
     }
 
     lazy val visibilityPredicate = new VisibilityPredicate(authorisationService)(applicationConfig.badAffinity,
-      applicationConfig.noEnrolment)
+      applicationConfig.noEnrolment + "?callbackUrl=" + url)
 
     lazy val guardedAction: AuthenticatedBy = AuthorisedFor(regime, visibilityPredicate)
 
@@ -56,7 +57,7 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
     authenticatedAction
   }
 
-  def authorisedAgentAction(action: AuthenticatedAction): Action[AnyContent] = composeAuthorisedAction(action)
+  def authorisedAgentAction(url: Option[String] = None)(action: AuthenticatedAction): Action[AnyContent] = composeAuthorisedAction(url)(action)
 
 
   trait CgtRegime extends TaxRegime {
