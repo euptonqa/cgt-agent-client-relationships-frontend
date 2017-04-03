@@ -60,6 +60,10 @@ object MessageLookup {
     val individual = "Individual"
   }
 
+  object BusinessType {
+    val error = "Select your business type."
+  }
+
   object ClientConfirmation {
     val title = "Capital Gains Tax Service registration complete"
     val reference = "Your client's Capital Gains Tax reference:"

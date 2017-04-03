@@ -34,6 +34,9 @@ clientType.error = Select your client type.
 clientType.individual = Individual
 clientType.company = Company
 
+## Business Type messages ##
+businessType.error = Select your business type.
+
 ## Error Messages ##
 errors.required = This field is required
 
