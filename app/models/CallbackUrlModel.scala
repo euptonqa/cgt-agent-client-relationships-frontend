@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object Constants {
+import java.net.URI
 
-  object AffinityGroup {
-    val agent = "Agent"
-    val individual = "Individual"
-    val organisation = "Organisation"
-  }
+import play.api.libs.json.{Json, OFormat}
 
-  object Audit {
-    val splunk: String = "SPLUNK AUDIT:\n"
-    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
-    val transactionSubmitClientDetails: String = "CGT Agent Registering Client Details"
-    val eventTypeFailure: String = "CGTFailure"
-    val eventTypeSuccess: String = "CGTSuccess"
-  }
+case class CallbackUrlModel (url: String) {
+  require(CallbackUrlModel.validateUrl(new URI(url)), "Failed to bind as a URI")
+}
 
-  object ClientType {
-    val individual = "Individual"
-    val company = "Company"
+object CallbackUrlModel {
+  implicit val formats: OFormat[CallbackUrlModel] = Json.format[CallbackUrlModel]
+
+  val localhost: String = "localhost"
+
+  val validateUrl: URI => Boolean = { url =>
+    if (Option(url.getHost).isDefined) url.getHost.contains(localhost)
+    else true
   }
 }

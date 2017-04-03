@@ -26,4 +26,8 @@ object Keys {
     val clientServiceNameOrganisation = "HMRC-CGT-ORG"
     val assignedTo = "ALL"
   }
+
+  object KeystoreKeys {
+    val callbackUrl = "callbackUrl"
+  }
 }

@@ -36,6 +36,7 @@ trait AppConfig {
   val agentRelationship: String
   val postSignInRedirectUrl: String
   val governmentGatewayContextUrl: String
+  val iFormUrl: String
 }
 
 @Singleton
@@ -58,8 +59,7 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //GG Config
   override lazy val governmentGatewayContextUrl: String = loadConfig("microservice.services.government-gateway.context")
-  override lazy val governmentGatewaySignIn: String = baseUrl("company-auth-frontend") +
-    configuration.getString("microservice.services.company-auth-frontend.context").getOrElse("")
+  override lazy val governmentGatewaySignIn: String = configuration.getString("company-auth-frontend.url").getOrElse("")
   override lazy val notAuthorisedRedirect: String = configuration.getString("not-authorised-callback.url").getOrElse("")
   override lazy val badAffinity: String = configuration.getString("agent-bad-affinity.url").getOrElse("")
   override lazy val noEnrolment: String = configuration.getString("agent-subscribe.url").getOrElse("")
@@ -70,4 +70,7 @@ class ApplicationConfig @Inject()(configuration: Configuration) extends AppConfi
 
   //AgentRelationshipBackendConfig
   override lazy val agentRelationship: String = baseUrl("agent-client-relationships") + loadConfig("microservice.services.agent-client-relationships.context")
+
+  //Iform config
+  override lazy val iFormUrl: String = configuration.getString("iform.url").getOrElse("")
 }

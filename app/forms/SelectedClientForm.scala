@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package common
+package forms
 
-object Constants {
+import play.api.data.Form
+import play.api.data.Forms._
+import models.SelectedClient
 
-  object AffinityGroup {
-    val agent = "Agent"
-    val individual = "Individual"
-    val organisation = "Organisation"
-  }
+class SelectedClientForm {
 
-  object Audit {
-    val splunk: String = "SPLUNK AUDIT:\n"
-    val transactionGetClientList: String = "CGT Government Gateway Get Client List"
-    val transactionSubmitClientDetails: String = "CGT Agent Registering Client Details"
-    val eventTypeFailure: String = "CGTFailure"
-    val eventTypeSuccess: String = "CGTSuccess"
-  }
-
-  object ClientType {
-    val individual = "Individual"
-    val company = "Company"
-  }
+  val selectedClientForm = Form(
+    mapping(
+      "friendlyName" -> nonEmptyText,
+      "cgtRef" -> nonEmptyText
+    )(SelectedClient.apply)(SelectedClient.unapply)
+  )
 }

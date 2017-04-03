@@ -25,7 +25,7 @@ class ClientConfirmationViewSpec extends ViewSpecHelper {
 
   "The cgtSubscriptionConfirmationView" should {
 
-    lazy val view = views.html.clientConfirmation(config, "Generic CGT reference")
+    lazy val view = views.html.clientConfirmation(config, "Generic CGT reference", "/context/test")
     lazy val doc = Jsoup.parse(view.body)
 
     s"display a title of ${messages.title}" in {
@@ -102,8 +102,8 @@ class ClientConfirmationViewSpec extends ViewSpecHelper {
         link.attr("class") shouldBe "button"
       }
 
-      s"has the href '${controllers.routes.AgentController.showClientList().url}'" in {
-        link.attr("href") shouldBe controllers.routes.AgentController.showClientList().url
+      s"has the href '${controllers.routes.AgentController.showClientList("/context/test").url}'" in {
+        link.attr("href") shouldBe controllers.routes.AgentController.showClientList("/context/test").url
       }
 
       "has the text 'Continue'" in {

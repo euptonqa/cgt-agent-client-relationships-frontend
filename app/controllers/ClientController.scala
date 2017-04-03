@@ -18,11 +18,14 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import audit.Logging
 import auth.AuthorisedActions
+import common.Constants.Audit._
 import common.Constants.{ClientType => CTConstants}
+import common.Keys
 import common.Keys.{GovernmentGateway => relationshipKeys}
 import config.AppConfig
-import connectors.SuccessfulRelationshipResponse
+import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
 import play.api.data.Form
@@ -42,7 +45,9 @@ class ClientController @Inject()(appConfig: AppConfig,
                                  relationshipService: RelationshipService,
                                  clientTypeForm: ClientTypeForm,
                                  correspondenceDetailsForm: CorrespondenceDetailsForm,
-                                 val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+                                 val messagesApi: MessagesApi,
+                                 auditLogger: Logging,
+                                 sessionService: KeystoreConnector) extends FrontendController with I18nSupport {
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
@@ -88,8 +93,15 @@ class ClientController @Inject()(appConfig: AppConfig,
         }
 
         def successAction(model: CorrespondenceDetailsModel): Future[Result] = {
+          val auditMap: Map[String, String] = Map("AgentCode" -> user.authContext.principal.accounts.agent.map {
+            _.agentCode.toString()
+          }.getOrElse(""),
+            "First Name" -> model.firstName, "Last Name" -> model.lastName, "Address Line One" -> model.addressLineOne,
+            "Address Line Two" -> model.addressLineTwo, "TownOrCity" -> model.townOrCity.getOrElse(""), "County" -> model.townOrCity.getOrElse(""),
+            "PostCode" -> model.postcode.getOrElse(""), "Country" -> model.country)
           lazy val arnAccount = user.authContext.principal.accounts.agent
 
+          auditLogger.audit(transactionSubmitClientDetails, auditMap, eventTypeSuccess)
           clientService.subscribeIndividualClient(model).flatMap {
             reference =>
               arnAccount match {
@@ -108,6 +120,9 @@ class ClientController @Inject()(appConfig: AppConfig,
   val confirmation: String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
-        Future.successful(Ok(views.html.clientConfirmation(appConfig, cgtReference)))
+        sessionService.fetchAndGetFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl).map {
+          case Some(model) => Ok(views.html.clientConfirmation(appConfig, cgtReference, model.url))
+          case None => throw new Exception("No callback url found in session")
+        }
   }
 }

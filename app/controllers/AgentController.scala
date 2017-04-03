@@ -19,22 +19,29 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
+import common.Keys
 import config.AppConfig
-import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, KeystoreConnector, SuccessGovernmentGatewayResponse}
+import forms.SelectedClientForm
+import models.{CallbackUrlModel, SelectedClient}
+import play.api.data.Form
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.AgentService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
 import scala.concurrent.Future
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class AgentController @Inject()(authorisedActions: AuthorisedActions,
                                 agentService: AgentService,
                                 appConfig: AppConfig,
-                                val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
+                                val messagesApi: MessagesApi,
+                                selectedClientForm: SelectedClientForm,
+                                sessionService: KeystoreConnector) extends FrontendController with I18nSupport {
 
-  val showClientList: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+  val showClientList: String => Action[AnyContent] = callbackUrl => authorisedActions.authorisedAgentAction {
     implicit user =>
       implicit request =>
         def handleGGResponse(response: GovernmentGatewayResponse): Result = {
@@ -43,13 +50,30 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
               if (clients.nonEmpty)
                 Ok(views.html.clientList(appConfig, clients))
               else Redirect(controllers.routes.AgentController.makeDeclaration())
-            case FailedGovernmentGatewayResponse =>  throw new Exception("Failed to retrieve client")
+            case FailedGovernmentGatewayResponse => throw new Exception("Failed to retrieve client")
           }
         }
-      agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
+
+        Try(CallbackUrlModel(callbackUrl)) match {
+          case Success(value) => sessionService.saveFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl, value)
+            agentService.getExistingClients(user.authContext).map { x => handleGGResponse(x) }
+          case Failure(_) => Future.successful(BadRequest(views.html.error_template(Messages("errors.badRequest"),
+            Messages("errors.badRequest"), Messages("errors.checkAddress"), appConfig)))
+        }
   }
 
-  val selectClient = TODO
+  val selectClient: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+    implicit user =>
+      implicit request =>
+
+        def errorAction(form: Form[SelectedClient]) = throw new Exception
+
+        def successAction(model: SelectedClient): Future[Result] = {
+          Future.successful(Redirect(appConfig.iFormUrl))
+        }
+
+        selectedClientForm.selectedClientForm.bindFromRequest.fold(errorAction, successAction)
+  }
 
   val makeDeclaration: Action[AnyContent] = authorisedActions.authorisedAgentAction {
     implicit user =>

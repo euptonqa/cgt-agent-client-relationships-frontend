@@ -18,12 +18,13 @@ package controllers
 
 import audit.Logging
 import auth.{CgtAgent, _}
+import common.Keys
 import config.WSHttp
-import connectors.{FailedRelationshipResponse, SuccessfulRelationshipResponse}
+import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRelationshipResponse}
 import data.MessageLookup.{ClientConfirmation => messages}
 import data.{MessageLookup, TestUsers}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
-import models.SubscriptionReference
+import models.{CallbackUrlModel, SubscriptionReference}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -39,6 +40,7 @@ import traits.ControllerSpecHelper
 import uk.gov.hmrc.domain.{AgentCode, AgentUserId}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
+import org.mockito.ArgumentMatchers._
 
 import scala.concurrent.Future
 
@@ -50,7 +52,6 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   lazy val clientService: ClientService = mock[ClientService]
   lazy val relationshipService: RelationshipService = mock[RelationshipService]
 
-
   private val testOnlyUnauthorisedLoginUri = "just-a-test"
 
   lazy val injector: Injector = app.injector
@@ -61,7 +62,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     reset(mockWSHttp)
   }
 
-  def createMockActions(valid: Boolean = true, authContext: AuthContext = TestUsers.strongUserAuthContext): AuthorisedActions = {
+  def setupController(valid: Boolean = true, authContext: AuthContext = TestUsers.strongUserAuthContext,
+                      callbackUrl: Option[CallbackUrlModel] = Some(CallbackUrlModel("context/test"))): ClientController = {
     val mockActions = mock[AuthorisedActions]
     if (valid) {
       when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
@@ -77,14 +79,20 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
         .thenReturn(Action.async(Results.Redirect(testOnlyUnauthorisedLoginUri)))
     }
-    mockActions
+
+    val sessionService = mock[KeystoreConnector]
+
+    when(sessionService.fetchAndGetFormData[CallbackUrlModel](ArgumentMatchers.eq(Keys.KeystoreKeys.callbackUrl))(any(), any()))
+      .thenReturn(Future.successful(callbackUrl))
+
+    new ClientController(config, mockActions, clientService, relationshipService, clientTypeForm,
+      correspondenceDetailsForm, messagesApi, auditLogger, sessionService)
   }
 
   "Calling .clientType" when {
 
     "an authorised user made the request" should {
-      val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController()
       lazy val result = controller.clientType(FakeRequest("GET", ""))
 
       "return a status of 200" in {
@@ -99,8 +107,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "an unauthorised user made the request" should {
-      val actions = createMockActions(valid = false)
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController(valid = false)
       lazy val result = controller.clientType(FakeRequest("GET", ""))
 
       "return a status of 303" in {
@@ -111,8 +118,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   "Calling .submitClient" when {
     "supplied with a valid form with a clientType of Individual" should {
-      val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController()
       lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "Individual")))
 
       "return a status of 303" in {
@@ -125,8 +131,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "supplied with a valid form with a clientType of Company" should {
-      val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController()
       lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("clientType", "Company")))
 
       "return a status of 501" in {
@@ -135,8 +140,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "supplied with an invalid form" should {
-      val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController()
       lazy val result = controller.submitClientType(FakeRequest("POST", "").withFormUrlEncodedBody(("notAValidField", "")))
 
       "return a status of 400" in {
@@ -148,9 +152,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   "Calling .confirmation" when {
 
     "an authorised user made the request" should {
-      val actions = createMockActions()
+      lazy val controller = setupController()
       val fakeRequest = FakeRequest("GET", "/")
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.confirmation("TestRef")(fakeRequest)
 
       "return 200" in {
@@ -164,13 +167,26 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "an unauthorised user made the request" should {
-      val actions = createMockActions(valid = false)
+      lazy val controller = setupController(valid = false)
       val fakeRequest = FakeRequest("GET", "/")
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+
       lazy val result = controller.confirmation("TestRef")(fakeRequest)
 
       "return a status of 303" in {
         status(result) shouldBe 303
+      }
+    }
+
+    "no callback url exists in keystore" should {
+      lazy val controller = setupController(callbackUrl = None)
+      val fakeRequest = FakeRequest("GET", "/")
+      lazy val result = controller.confirmation("TestRef")(fakeRequest)
+      lazy val ex = intercept[Exception] {
+        await(result)
+      }
+
+      "return an exception with message 'No callback url found in session'" in {
+        ex.getMessage shouldEqual "No callback url found in session"
       }
     }
   }
@@ -178,8 +194,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   "Calling .enterIndividualCorrespondenceDetails" when {
 
     "an authorised user made the request" should {
-      val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController()
+
       lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
 
       "return a status of 200" in {
@@ -194,8 +210,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "provided with an invalid unauthorised user" should {
-      val actions = createMockActions(valid = false)
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController(valid = false)
+
       lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
 
       "return a status of 303" in {
@@ -215,9 +231,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     "an authorised user made the request, the arn is present, and subscription completes" should {
 
-      val actions = createMockActions(authContext = authContextWithAgentAccount)
+      lazy val controller = setupController(authContext = authContextWithAgentAccount)
 
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
@@ -239,9 +254,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     "an authorised user made the request but the subscription of the individual failed" should {
 
-      val actions = createMockActions(authContext = authContextWithAgentAccount)
+      lazy val controller = setupController(authContext = authContextWithAgentAccount)
 
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
@@ -260,8 +274,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     "an authorised user made the request but no arn was present" should {
 
-      val actions = createMockActions()
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController()
+
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
@@ -279,9 +293,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     "an authorised user made the request but the create relationship for the agent and client failed" should {
 
-      val actions = createMockActions(authContext = authContextWithAgentAccount)
+      lazy val controller = setupController(authContext = authContextWithAgentAccount)
 
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
@@ -302,8 +315,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     "an unauthorised user made the request" should {
 
-      val actions = createMockActions(valid = false)
-      lazy val controller = new ClientController(config, actions, clientService, relationshipService, clientTypeForm, correspondenceDetailsForm, messagesApi)
+      lazy val controller = setupController(valid = false)
+
       lazy val result = controller.enterIndividualCorrespondenceDetails(FakeRequest())
 
       "return a status of 303" in {
