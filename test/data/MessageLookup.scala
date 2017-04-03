@@ -61,7 +61,10 @@ object MessageLookup {
   }
 
   object BusinessType {
-    val error = "Select your business type."
+    val title = "Select your client's business type"
+    val error = "Select your client's business type."
+    val nonUK = "Overseas company without a UK Unique Tax Reference"
+    val limitedCompany = "Limited company"
   }
 
   object ClientConfirmation {

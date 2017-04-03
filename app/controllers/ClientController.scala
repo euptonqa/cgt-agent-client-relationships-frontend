@@ -128,4 +128,6 @@ class ClientController @Inject()(appConfig: AppConfig,
           case None => throw new Exception("No callback url found in session")
         }
   }
+
+  val submitBusinessType: Action[AnyContent] = TODO
 }

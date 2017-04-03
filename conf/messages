@@ -35,7 +35,10 @@ clientType.individual = Individual
 clientType.company = Company
 
 ## Business Type messages ##
-businessType.error = Select your business type.
+businessType.title = Select your client''s business type
+businessType.error = Select your client''s business type.
+businessType.nonUK = Overseas company without a UK Unique Tax Reference
+businessType.limitedCompany = Limited company
 
 ## Error Messages ##
 errors.required = This field is required
