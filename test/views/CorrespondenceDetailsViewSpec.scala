@@ -16,6 +16,7 @@
 
 package views
 
+import common.FormValidation
 import data.MessageLookup.CorrespondenceDetails
 import forms.CorrespondenceDetailsForm
 import org.jsoup.Jsoup
@@ -24,8 +25,10 @@ import views.html.individual.correspondenceDetails
 
 class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
 
+  val validation = new FormValidation(messagesApi)
+
   "The correspondence details view with a form with no errors" should {
-    lazy val form = new CorrespondenceDetailsForm(messagesApi)
+    lazy val form = new CorrespondenceDetailsForm(messagesApi, validation)
     lazy val view = correspondenceDetails(config, form.correspondenceDetailsForm)
     lazy val doc = Jsoup.parse(view.body)
 
@@ -205,7 +208,7 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
   }
 
   "The correspondence details view with a form with errors" should {
-    lazy val form = new CorrespondenceDetailsForm(messagesApi)
+    lazy val form = new CorrespondenceDetailsForm(messagesApi, validation)
     lazy val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "", "addressLineTwo" -> "Light Road",
       "town" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
     lazy val view = correspondenceDetails(config, form.correspondenceDetailsForm.bind(map))
