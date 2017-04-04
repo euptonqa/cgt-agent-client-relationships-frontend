@@ -28,7 +28,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
     "provided with a valid map with no optional values" should {
       val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-                      "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States")
+                      "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "US")
       lazy val result = form.correspondenceDetailsForm.bind(map)
 
       "return a valid model" in {
@@ -36,7 +36,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
       }
 
       "return a model containing the stored data" in {
-        result.value.get shouldBe CorrespondenceDetailsModel("John", "Smith", "15", "Light Road", "Dark City", None, None, "United States")
+        result.value.get shouldBe CorrespondenceDetailsModel("John", "Smith", "15", "Light Road", "Dark City", None, None, "US")
       }
 
       "contain no errors" in {
@@ -46,7 +46,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
     "provided with a valid map with all optional values" should {
       val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
+        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "US")
       lazy val result = form.correspondenceDetailsForm.bind(map)
 
       "return a valid model" in {
@@ -55,7 +55,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
       "return a model containing the stored data" in {
         result.value.get shouldBe CorrespondenceDetailsModel("John", "Smith", "15", "Light Road", "Dark City",
-          Some("Darkshire"), Some("TF4 3NT"), "United States")
+          Some("Darkshire"), Some("TF4 3NT"), "US")
       }
 
       "contain no errors" in {
@@ -65,7 +65,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
     "provided with a invalid map with no first name" should {
       val map = Map("firstName" -> "", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
+        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "US")
       lazy val result = form.correspondenceDetailsForm.bind(map)
 
       "return a valid model" in {
@@ -83,7 +83,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
     "provided with a invalid map with no last name" should {
       val map = Map("firstName" -> "John", "lastName" -> "", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
+        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "US")
       lazy val result = form.correspondenceDetailsForm.bind(map)
 
       "return a valid model" in {
@@ -101,7 +101,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
     "provided with a invalid map with no address line one" should {
       val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
+        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "US")
       lazy val result = form.correspondenceDetailsForm.bind(map)
 
       "return a valid model" in {
@@ -119,7 +119,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
     "provided with a invalid map with no address line two" should {
       val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "",
-        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
+        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "US")
       lazy val result = form.correspondenceDetailsForm.bind(map)
 
       "return a valid model" in {
@@ -137,7 +137,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
 
     "provided with a invalid map with no townOrCity" should {
       val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
+        "townOrCity" -> "", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "US")
       lazy val result = form.correspondenceDetailsForm.bind(map)
 
       "return a valid model" in {
@@ -153,7 +153,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
       }
     }
 
-    "provided with a invalid map with no address country" should {
+    "provided with a invalid map with no valid country code" should {
       val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "")
       lazy val result = form.correspondenceDetailsForm.bind(map)
@@ -167,7 +167,7 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
       }
 
       "contain an error message for a required field" in {
-        result.errors.head.message shouldBe Errors.errorRequired
+        result.errors.head.message shouldBe Errors.country
       }
     }
   }

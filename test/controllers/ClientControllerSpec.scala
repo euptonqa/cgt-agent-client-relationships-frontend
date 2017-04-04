@@ -230,7 +230,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         correspondenceDetailsForm, messagesApi, auditLogger)
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
+        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "US"))
 
       when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(SubscriptionReference("dummyReference"))
@@ -255,7 +255,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         correspondenceDetailsForm, messagesApi, auditLogger)
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
+        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "US"))
 
       "return an exception" in {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
@@ -276,7 +276,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         correspondenceDetailsForm, messagesApi, auditLogger)
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
+        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "US"))
 
       "return an exception" in {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
@@ -297,7 +297,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         correspondenceDetailsForm, messagesApi, auditLogger)
       lazy val result = controller.submitIndividualCorrespondenceDetails(FakeRequest("POST", "").withFormUrlEncodedBody(
         "firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
-        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "United States"))
+        "townOrCity" -> "Dark City", "county" -> "", "postcode" -> "", "country" -> "US"))
 
       "return an exception" in {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
