@@ -18,32 +18,31 @@ package forms
 
 import javax.inject.Inject
 
+import common.FormValidation
 import play.api.data.Form
 import play.api.data.Forms._
-import common.FormValidation._
 import models.CorrespondenceDetailsModel
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 
-class CorrespondenceDetailsForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
+class CorrespondenceDetailsForm @Inject()(val messagesApi: MessagesApi, formValidation: FormValidation) extends I18nSupport {
 
   val correspondenceDetailsForm = Form(
     mapping(
       "firstName" -> text
-        .verifying(Messages("errors.required"), nonEmptyCheck),
+        .verifying(Messages("errors.required"), formValidation.nonEmptyCheck),
       "lastName" -> text
-        .verifying(Messages("errors.required"), nonEmptyCheck),
+        .verifying(Messages("errors.required"), formValidation.nonEmptyCheck),
       "addressLineOne" -> text
-        .verifying(Messages("errors.required"), nonEmptyCheck),
+        .verifying(Messages("errors.required"), formValidation.nonEmptyCheck),
       "addressLineTwo" -> text
-        .verifying(Messages("errors.required"), nonEmptyCheck),
+        .verifying(Messages("errors.required"), formValidation.nonEmptyCheck),
       "townOrCity" -> text
-        .verifying(Messages("errors.required"), nonEmptyCheck),
+        .verifying(Messages("errors.required"), formValidation.nonEmptyCheck),
       "county" -> text
-        .transform(textToOptional, optionalToText),
+        .transform(formValidation.textToOptional, formValidation.optionalToText),
       "postcode" -> text
-        .transform(textToOptional, optionalToText),
-      "country" -> text
-        .verifying(Messages("errors.required"), nonEmptyCheck)
+        .transform(formValidation.textToOptional, formValidation.optionalToText),
+      "country" -> formValidation.countryCodeCheck
     )(CorrespondenceDetailsModel.apply)(CorrespondenceDetailsModel.unapply)
   )
 
