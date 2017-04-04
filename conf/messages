@@ -4,6 +4,7 @@ common.back = Back
 
 ## Error Summary Messages ##
 error.summary.heading = This page has errors
+error.country = Please enter a valid country
 
 ## Confirm Permission Messages ##
 confirmPermission.title = Confirm you have permission
