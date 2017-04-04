@@ -66,17 +66,17 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
                       callbackUrl: Option[CallbackUrlModel] = Some(CallbackUrlModel("context/test"))): ClientController = {
     val mockActions = mock[AuthorisedActions]
     if (valid) {
-      when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
+      when(mockActions.authorisedAgentAction(ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenAnswer(new Answer[Action[AnyContent]] {
           override def answer(invocation: InvocationOnMock): Action[AnyContent] = {
-            val action = invocation.getArgument[AuthenticatedAction](0)
+            val action = invocation.getArgument[AuthenticatedAction](1)
             val agent = CgtAgent(authContext)
             Action.async(action(agent))
           }
         })
     }
     else {
-      when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
+      when(mockActions.authorisedAgentAction(ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(Action.async(Results.Redirect(testOnlyUnauthorisedLoginUri)))
     }
 

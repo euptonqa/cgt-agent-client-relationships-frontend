@@ -41,8 +41,9 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
       override def authenticationType: AuthenticationProvider = ggProvider
     }
 
-    lazy val visibilityPredicate = new VisibilityPredicate(authorisationService)(applicationConfig.badAffinity,
-      applicationConfig.noEnrolment + "?callbackUrl=" + url)
+    lazy val visibilityPredicate = new VisibilityPredicate(authorisationService)(
+      applicationConfig.noEnrolment + "?callbackUrl=" + url.getOrElse(""), applicationConfig.badAffinity
+    )
 
     lazy val guardedAction: AuthenticatedBy = AuthorisedFor(regime, visibilityPredicate)
 
@@ -58,7 +59,6 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
   }
 
   def authorisedAgentAction(url: Option[String] = None)(action: AuthenticatedAction): Action[AnyContent] = composeAuthorisedAction(url)(action)
-
 
   trait CgtRegime extends TaxRegime {
     override def isAuthorised(accounts: Accounts): Boolean = true

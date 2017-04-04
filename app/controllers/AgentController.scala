@@ -30,6 +30,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import services.AgentService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Try, Failure, Success}
 
