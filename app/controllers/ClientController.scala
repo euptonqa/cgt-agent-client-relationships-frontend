@@ -22,7 +22,9 @@ import audit.Logging
 import auth.AuthorisedActions
 import common.Constants.Audit._
 import common.Constants.{ClientType => CTConstants}
-import config.{AppConfig, Keys}
+import common.Keys
+import common.Keys.{GovernmentGateway => relationshipKeys}
+import config.AppConfig
 import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
 import models._
@@ -83,7 +85,8 @@ class ClientController @Inject()(appConfig: AppConfig,
       implicit request =>
 
         def createRelationship(account: AgentAccount, reference: SubscriptionReference) = {
-          relationshipService.createClientRelationship(RelationshipModel(account.agentCode.value, reference.cgtRef)).flatMap {
+          relationshipService.createClientRelationship(
+            RelationshipModel(account.agentCode.value, reference.cgtRef), relationshipKeys.clientServiceNameIndividual).flatMap {
             case SuccessfulRelationshipResponse => Future.successful(Redirect(routes.ClientController.confirmation(reference.cgtRef)))
             case _ => Future.failed(new Exception("Failed to create relationship"))
           }
@@ -94,7 +97,7 @@ class ClientController @Inject()(appConfig: AppConfig,
             _.agentCode.toString()
           }.getOrElse(""),
             "First Name" -> model.firstName, "Last Name" -> model.lastName, "Address Line One" -> model.addressLineOne,
-            "Address Line Two" -> model.addressLineTwo, "TownOrCity" -> model.townOrCity, "County" -> model.townOrCity,
+            "Address Line Two" -> model.addressLineTwo, "TownOrCity" -> model.townOrCity.getOrElse(""), "County" -> model.townOrCity.getOrElse(""),
             "PostCode" -> model.postcode.getOrElse(""), "Country" -> model.country)
           lazy val arnAccount = user.authContext.principal.accounts.agent
 

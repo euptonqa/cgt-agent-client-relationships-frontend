@@ -18,7 +18,8 @@ package controllers
 
 import audit.Logging
 import auth.{CgtAgent, _}
-import config.{Keys, WSHttp}
+import common.Keys
+import config.WSHttp
 import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRelationshipResponse}
 import data.MessageLookup.{ClientConfirmation => messages}
 import data.{MessageLookup, TestUsers}
@@ -239,7 +240,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(SubscriptionReference("dummyReference"))
 
-      when(relationshipService.createClientRelationship(ArgumentMatchers.any())(ArgumentMatchers.any()))
+      when(relationshipService.createClientRelationship(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(SuccessfulRelationshipResponse)
 
       "return a status of 303" in {
@@ -302,7 +303,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         when(clientService.subscribeIndividualClient(ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(SubscriptionReference("dummyReference"))
 
-        when(relationshipService.createClientRelationship(ArgumentMatchers.any())(ArgumentMatchers.any()))
+        when(relationshipService.createClientRelationship(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(FailedRelationshipResponse)
 
         lazy val ex = intercept[Exception] {

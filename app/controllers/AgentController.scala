@@ -19,7 +19,8 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import auth.AuthorisedActions
-import config.{AppConfig, Keys}
+import common.Keys
+import config.AppConfig
 import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, KeystoreConnector, SuccessGovernmentGatewayResponse}
 import forms.SelectedClientForm
 import models.{CallbackUrlModel, SelectedClient}
@@ -53,9 +54,9 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
           }
         }
 
-        Try (CallbackUrlModel(callbackUrl)) match {
+        Try(CallbackUrlModel(callbackUrl)) match {
           case Success(value) => sessionService.saveFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl, value)
-            agentService.getExistingClients(user.authContext).map{x => handleGGResponse(x)}
+            agentService.getExistingClients(user.authContext).map { x => handleGGResponse(x) }
           case Failure(_) => Future.successful(BadRequest(views.html.error_template(Messages("errors.badRequest"),
             Messages("errors.badRequest"), Messages("errors.checkAddress"), appConfig)))
         }

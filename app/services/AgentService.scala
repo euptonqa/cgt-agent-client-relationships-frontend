@@ -18,7 +18,7 @@ package services
 
 import javax.inject.Inject
 
-import config.Keys.GovernmentGateway._
+import common.Keys.GovernmentGateway._
 import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayConnector, GovernmentGatewayResponse, SuccessGovernmentGatewayResponse}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.http.HeaderCarrier

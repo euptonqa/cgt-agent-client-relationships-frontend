@@ -20,4 +20,14 @@ object Keys {
   object EnrolmentKeys {
     val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
   }
+
+  object GovernmentGateway {
+    val clientServiceNameIndividual = "HMRC-CGT-IND"
+    val clientServiceNameOrganisation = "HMRC-CGT-ORG"
+    val assignedTo = "ALL"
+  }
+
+  object KeystoreKeys {
+    val callbackUrl = "callbackUrl"
+  }
 }

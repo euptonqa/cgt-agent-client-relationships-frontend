@@ -54,7 +54,7 @@ class SubscriptionConnectorSpec extends UnitSpec with MockitoSugar with OneAppPe
   }
 
   "SubscriptionConnector .subscribeIndividualClient" should {
-    val model = CorrespondenceDetailsModel("", "", "", "", "", None, None, "")
+    val model = CorrespondenceDetailsModel("", "", "", "", None, None, None, "")
 
     "return a successful future with a subscription reference on a success" in {
       val json = cgtSubscriptionResponse("CGT123456789")

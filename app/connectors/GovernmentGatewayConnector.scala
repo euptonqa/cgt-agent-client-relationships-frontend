@@ -22,7 +22,7 @@ import audit.Logging
 import common.Constants.Audit._
 import config.ApplicationConfig
 import config.FrontendAuthConnector.WSHttp
-import config.Keys.GovernmentGateway._
+import common.Keys.GovernmentGateway._
 import models.Client
 import play.api.Logger
 import play.api.http.Status._
