@@ -23,10 +23,11 @@ import config.WSHttp
 import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRelationshipResponse}
 import data.MessageLookup.{ClientConfirmation => messages}
 import data.{MessageLookup, TestUsers}
-import forms.{ClientTypeForm, CorrespondenceDetailsForm}
+import forms.{BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm}
 import models.{RedirectModel, SubscriptionReference}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
@@ -40,7 +41,6 @@ import traits.ControllerSpecHelper
 import uk.gov.hmrc.domain.{AgentCode, AgentUserId}
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
-import org.mockito.ArgumentMatchers._
 
 import scala.concurrent.Future
 
@@ -49,6 +49,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   val unauthorisedLoginUrl = "some-url"
   val clientTypeForm: ClientTypeForm = app.injector.instanceOf[ClientTypeForm]
   val correspondenceDetailsForm: CorrespondenceDetailsForm = app.injector.instanceOf[CorrespondenceDetailsForm]
+  val businessTypeForm: BusinessTypeForm = app.injector.instanceOf[BusinessTypeForm]
   lazy val clientService: ClientService = mock[ClientService]
   lazy val relationshipService: RelationshipService = mock[RelationshipService]
 
@@ -87,7 +88,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       .thenReturn(Future.successful(redirect))
 
     new ClientController(config, mockActions, clientService, relationshipService, clientTypeForm,
-      correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList)
+        correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList, businessTypeForm)
+
   }
 
   "Calling .clientType" when {

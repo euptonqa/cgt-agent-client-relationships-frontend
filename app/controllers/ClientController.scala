@@ -26,7 +26,7 @@ import common.{CountryList, Keys}
 import common.Keys.{GovernmentGateway => relationshipKeys}
 import config.AppConfig
 import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
-import forms.{ClientTypeForm, CorrespondenceDetailsForm}
+import forms.{BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm}
 import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -48,7 +48,8 @@ class ClientController @Inject()(appConfig: AppConfig,
                                  val messagesApi: MessagesApi,
                                  auditLogger: Logging,
                                  sessionService: KeystoreConnector,
-                                 countryList: CountryList) extends FrontendController with I18nSupport {
+                                 countryList: CountryList,
+                                 businessTypeForm: BusinessTypeForm) extends FrontendController with I18nSupport {
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
@@ -127,6 +128,11 @@ class ClientController @Inject()(appConfig: AppConfig,
           case Some(model) => Ok(views.html.clientConfirmation(appConfig, cgtReference, model.url))
           case None => throw new Exception("No callback url found in session")
         }
+  }
+
+  //TODO update with actual controller logic
+  val businessType: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(views.html.businessType(appConfig, businessTypeForm.businessTypeForm)))
   }
 
   val submitBusinessType: Action[AnyContent] = TODO

@@ -13,6 +13,7 @@ GET        /declaration                         controllers.AgentController.make
 GET        /client-type                         controllers.ClientController.clientType
 POST       /client-type                         controllers.ClientController.submitClientType
 
+GET        /business-type                       controllers.ClientController.businessType
 POST       /business-type                       controllers.ClientController.submitBusinessType
 
 GET        /individual/correspondence-details   controllers.ClientController.enterIndividualCorrespondenceDetails
