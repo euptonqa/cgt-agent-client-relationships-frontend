@@ -26,6 +26,7 @@ import data.MessageLookup
 import data.TestUsers
 import auth.{AuthenticatedAction, AuthorisedActions, CgtAgent}
 import common.Keys.{KeystoreKeys => Keys}
+import common.Keys.GovernmentGateway._
 import forms.SelectedClientForm
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
