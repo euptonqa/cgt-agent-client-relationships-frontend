@@ -26,6 +26,7 @@ import data.MessageLookup
 import data.TestUsers
 import auth.{AuthenticatedAction, AuthorisedActions, CgtAgent}
 import common.Keys.{KeystoreKeys => Keys}
+import common.Keys.GovernmentGateway._
 import forms.SelectedClientForm
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -83,18 +84,18 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     val mockActions = mock[AuthorisedActions]
 
     if (correctAuthentication) {
-      when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
+      when(mockActions.authorisedAgentAction(ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenAnswer(new Answer[Action[AnyContent]] {
 
           override def answer(invocation: InvocationOnMock): Action[AnyContent] = {
-            val action = invocation.getArgument[AuthenticatedAction](0)
+            val action = invocation.getArgument[AuthenticatedAction](1)
             val agent = CgtAgent(authContext)
             Action.async(action(agent))
           }
         })
     }
     else {
-      when(mockActions.authorisedAgentAction(ArgumentMatchers.any()))
+      when(mockActions.authorisedAgentAction(ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(Action.async(Results.Redirect(testOnlyUnauthorisedLoginUri)))
     }
 
@@ -210,14 +211,20 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   }
 
   "Calling .showClientList" when {
+
     "provided with a valid authorised user" when {
+
       "a successGovernmentGatewayResponse is obtained" should {
+
         lazy val ggConnector = mock[GovernmentGatewayConnector]
 
-        when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        when(ggConnector.getExistingClients(ArgumentMatchers.eq(clientServiceNameOrganisation), ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(SuccessGovernmentGatewayResponse(clients))
 
-        val agentService = new AgentService(ggConnector)
+        when(ggConnector.getExistingClients(ArgumentMatchers.eq(clientServiceNameIndividual), ArgumentMatchers.any())(ArgumentMatchers.any()))
+          .thenReturn(SuccessGovernmentGatewayResponse(clients))
+
+        lazy val agentService = new AgentService(ggConnector)
 
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))
@@ -247,7 +254,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
         when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
           .thenReturn(FailedGovernmentGatewayResponse)
 
-        val agentService = new AgentService(ggConnector)
+        lazy val agentService = new AgentService(ggConnector)
 
         when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future.successful(HttpResponse(responseStatus = 500, responseJson = Some(Json.toJson(clients)))))
@@ -275,7 +282,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
         .thenReturn(SuccessGovernmentGatewayResponse(clients))
 
-      val agentService = new AgentService(ggConnector)
+      lazy val agentService = new AgentService(ggConnector)
       lazy val controller = setupController(correctAuthentication = false, agentService = agentService)
       lazy val result = controller.showClientList("/context/test")(FakeRequest())
 
@@ -284,13 +291,13 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       }
     }
 
-    "with an invalid callback url" should {
+    "provided with an invalid callback url" should {
       lazy val ggConnector = mock[GovernmentGatewayConnector]
 
       when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
-        .thenReturn(SuccessGovernmentGatewayResponse(clients))
+        .thenReturn(FailedGovernmentGatewayResponse)
 
-      val agentService = new AgentService(ggConnector)
+      lazy val agentService = new AgentService(ggConnector)
 
       when(mockWSHttp.GET[HttpResponse](ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(HttpResponse(responseStatus = OK, responseJson = Some(Json.toJson(clients)))))

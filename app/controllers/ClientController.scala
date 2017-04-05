@@ -51,13 +51,13 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
-  val clientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+  val clientType: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
         Future.successful(Ok(views.html.clientType(appConfig, clientTypeForm.clientTypeForm)))
   }
 
-  val submitClientType: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+  val submitClientType: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
         def errorAction(form: Form[ClientTypeModel]) = {
@@ -74,13 +74,13 @@ class ClientController @Inject()(appConfig: AppConfig,
         form.bindFromRequest.fold(errorAction, successAction)
   }
 
-  val enterIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+  val enterIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
         Future.successful(Ok(views.html.individual.correspondenceDetails(appConfig, correspondenceDetailsForm.correspondenceDetailsForm)))
   }
 
-  val submitIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+  val submitIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
 
@@ -117,7 +117,7 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   }
 
-  val confirmation: String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction {
+  val confirmation: String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
         sessionService.fetchAndGetFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl).map {

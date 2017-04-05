@@ -30,8 +30,9 @@ import play.api.mvc.{Action, AnyContent, Result}
 import services.AgentService
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success, Try}
+import scala.util.{Try, Failure, Success}
 
 @Singleton
 class AgentController @Inject()(authorisedActions: AuthorisedActions,
@@ -41,7 +42,7 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
                                 val messagesApi: MessagesApi,
                                 selectedClientForm: SelectedClientForm) extends FrontendController with I18nSupport {
 
-  val showClientList: String => Action[AnyContent] = callbackUrl => authorisedActions.authorisedAgentAction {
+  val showClientList: String => Action[AnyContent] = callbackUrl => authorisedActions.authorisedAgentAction(Some(callbackUrl)) {
     implicit user =>
       implicit request =>
         def handleGGResponse(response: GovernmentGatewayResponse): Result = {
@@ -55,7 +56,6 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
         }
 
         Try(CallbackUrlModel(callbackUrl)) match {
-
           case Success(value) => sessionService.saveFormData[CallbackUrlModel](KeystoreKeys.callbackUrl, value)
             agentService.getExistingClients(user.authContext).map { x => handleGGResponse(x) }
           case Failure(_) => Future.successful(BadRequest(views.html.error_template(Messages("errors.badRequest"),
@@ -63,7 +63,7 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
         }
   }
 
-  val selectClient: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+  val selectClient: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
 
@@ -79,7 +79,7 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
         selectedClientForm.selectedClientForm.bindFromRequest.fold(errorAction, successAction)
   }
 
-  val makeDeclaration: Action[AnyContent] = authorisedActions.authorisedAgentAction {
+  val makeDeclaration: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
         Future.successful(Ok(views.html.confirmPermission(appConfig)))
