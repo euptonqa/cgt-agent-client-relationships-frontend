@@ -41,8 +41,10 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
       override def authenticationType: AuthenticationProvider = ggProvider
     }
 
+    val definedUrl = if(url.isDefined) "?callbackUrl=" + url.get
+
     lazy val visibilityPredicate = new VisibilityPredicate(authorisationService)(
-      applicationConfig.noEnrolment + "?callbackUrl=" + url.getOrElse(""), applicationConfig.badAffinity
+      applicationConfig.noEnrolment + definedUrl , applicationConfig.badAffinity
     )
 
     lazy val guardedAction: AuthenticatedBy = AuthorisedFor(regime, visibilityPredicate)
