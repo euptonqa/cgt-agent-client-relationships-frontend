@@ -20,6 +20,7 @@ object MessageLookup {
 
   object Common {
     val continue = "Continue"
+    val badRequest = "Bad request"
   }
 
   object ErrorSummary {

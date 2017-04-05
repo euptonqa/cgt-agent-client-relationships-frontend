@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-package services
+package connectors
 
 import javax.inject.{Inject, Singleton}
 
-import connectors.{RelationshipConnector, RelationshipConnectorResponse}
-import models.{RelationshipModel, SubmissionModel}
+import config.AgentClientSessionCache
+import play.api.libs.json.Format
+import uk.gov.hmrc.http.cache.client.CacheMap
+import uk.gov.hmrc.play.config.ServicesConfig
 import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 
 @Singleton
-class RelationshipService @Inject()(relationshipConnector: RelationshipConnector) {
+class KeystoreConnector @Inject()(sessionCache: AgentClientSessionCache) extends ServicesConfig {
 
-  def createClientRelationship(relationshipModel: RelationshipModel, relationshipKey: String)(implicit hc: HeaderCarrier)
-  : Future[RelationshipConnectorResponse] = {
-    val submissionModel = SubmissionModel(relationshipModel, relationshipKey)
-    relationshipConnector.createClientRelationship(submissionModel)
+  implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("Accept" -> "applications/vnd.hmrc.1.0+json")
+
+  def saveFormData[T](key: String, data: T)(implicit hc: HeaderCarrier, formats: Format[T]): Future[CacheMap] = {
+    sessionCache.cache(key, data)
   }
 
+  def fetchAndGetFormData[T](key: String)(implicit hc: HeaderCarrier, formats: Format[T]): Future[Option[T]] = {
+    sessionCache.fetchAndGetEntry(key)
+  }
 }

@@ -19,34 +19,36 @@ package connectors
 import javax.inject.Inject
 
 import config.{AppConfig, WSHttp}
-import models.RelationshipModel
+import models.SubmissionModel
 import play.api.Logger
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.http.{HeaderCarrier, HttpResponse}
-import play.api.http.Status._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait RelationshipConnectorResponse
+
 case object SuccessfulRelationshipResponse extends RelationshipConnectorResponse
+
 case object FailedRelationshipResponse extends RelationshipConnectorResponse
 
 class RelationshipConnector @Inject()(appConfig: AppConfig, http: WSHttp) {
 
   lazy val serviceUrl: String = appConfig.agentRelationship
-  val createRelationship: String = "/relationship"
+  val createRelationship: String = "/client"
 
-  def createClientRelationship(relationshipModel: RelationshipModel)(implicit hc: HeaderCarrier): Future[RelationshipConnectorResponse] = {
-    val postUrl = s"""$serviceUrl/$createRelationship"""
-    http.POST[JsValue, HttpResponse](postUrl, Json.toJson(relationshipModel)).map {
+  def createClientRelationship(submissionModel: SubmissionModel)(implicit hc: HeaderCarrier): Future[RelationshipConnectorResponse] = {
+    val postUrl = s"""$serviceUrl$createRelationship"""
+    http.POST[JsValue, HttpResponse](postUrl, Json.toJson(submissionModel)).map {
       response =>
         response.status match {
           case NO_CONTENT => Logger.info(s"Successful agent client relationship creation" +
-            s"with arn reference: ${relationshipModel.arn}")
+            s"with arn reference: ${submissionModel.relationshipModel.arn}")
             SuccessfulRelationshipResponse
           case _ => Logger.warn(s"Failed agent client relationship creation" +
-            s"with arn reference: ${relationshipModel.arn}")
+            s"with arn reference: ${submissionModel.relationshipModel.arn}")
             FailedRelationshipResponse
         }
     }

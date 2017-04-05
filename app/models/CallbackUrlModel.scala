@@ -16,17 +16,21 @@
 
 package models
 
+import java.net.URI
+
 import play.api.libs.json.{Json, OFormat}
 
-case class CorrespondenceDetailsModel(firstName: String,
-                                      lastName: String,
-                                      addressLineOne: String,
-                                      addressLineTwo: String,
-                                      townOrCity: Option[String],
-                                      county: Option[String],
-                                      postcode: Option[String],
-                                      country: String)
+case class CallbackUrlModel (url: String) {
+  require(CallbackUrlModel.validateUrl(new URI(url)), "Failed to bind as a URI")
+}
 
-object CorrespondenceDetailsModel {
-  implicit val formats:OFormat[CorrespondenceDetailsModel] = Json.format[CorrespondenceDetailsModel]
+object CallbackUrlModel {
+  implicit val formats: OFormat[CallbackUrlModel] = Json.format[CallbackUrlModel]
+
+  val localhost: String = "localhost"
+
+  val validateUrl: URI => Boolean = { url =>
+    if (Option(url.getHost).isDefined) url.getHost.contains(localhost)
+    else true
+  }
 }

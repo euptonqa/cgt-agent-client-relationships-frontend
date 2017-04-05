@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package config
+package models
 
-object Keys {
+import play.api.libs.json.{Json, OFormat}
 
-  object GovernmentGateway {
-    val clientServiceNameIndividual = "HMRC-CGT-IND"
-    val clientServiceNameOrganisation = "HMRC-CGT-ORG"
-    val assignedTo = "ALL"
-  }
+case class SubmissionModel(relationshipModel: RelationshipModel, serviceName: String)
+
+object SubmissionModel {
+  implicit val formats: OFormat[SubmissionModel] = Json.format[SubmissionModel]
 }

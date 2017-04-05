@@ -2,7 +2,7 @@
 
 GET        /hello-world                         controllers.HelloWorld.helloWorld
 
-GET        /client                              controllers.AgentController.showClientList
+GET        /client                              controllers.AgentController.showClientList(callbackUrl: String)
 POST       /client                              controllers.AgentController.selectClient
 
 GET        /declaration                         controllers.AgentController.makeDeclaration

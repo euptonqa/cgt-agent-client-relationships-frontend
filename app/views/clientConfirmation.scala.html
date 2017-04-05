@@ -1,6 +1,6 @@
 @import uk.gov.hmrc.play.views.html.helpers.form
 
-@(appConfig: config.AppConfig, cgtReferenceNumber: String)(implicit request: Request[_], messages: Messages)
+@(appConfig: config.AppConfig, cgtReferenceNumber: String, callbackUrl: String)(implicit request: Request[_], messages: Messages)
 
 @views.html.main_template(title = Messages("clientConfirmation.title"), bodyClasses = None, appConfig = appConfig) {
 
@@ -19,5 +19,5 @@
         <p>@Messages("clientConfirmation.guidance")</p>
     </div>
 
-    <a href=@controllers.routes.AgentController.showClientList().url class="button">@Messages("common.continue")</a>
+    <a href=@controllers.routes.AgentController.showClientList(callbackUrl).url class="button">@Messages("common.continue")</a>
 }
