@@ -19,15 +19,17 @@ package controllers
 import audit.Logging
 import config.WSHttp
 import connectors._
-import models.{AuthorisationDataModel, Client, Enrolment, IdentifierForDisplay}
+import models._
 import play.api.inject.Injector
 import services.{AgentService, AuthorisationService}
 import data.MessageLookup
 import data.TestUsers
 import auth.{AuthenticatedAction, AuthorisedActions, CgtAgent}
+import common.Keys.{KeystoreKeys => Keys}
 import forms.SelectedClientForm
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.Mockito._
 import org.mockito.stubbing.Answer
@@ -75,6 +77,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   def setupController(correctAuthentication: Boolean = true,
                       authContext: AuthContext = TestUsers.strongUserAuthContext,
+                      redirection: Option[CallbackUrlModel] = Some(CallbackUrlModel(url = "callback-url")),
                       agentService: AgentService): AgentController = {
 
     val mockActions = mock[AuthorisedActions]
@@ -100,9 +103,12 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     val sessionService = mock[KeystoreConnector]
 
+    when(sessionService.fetchAndGetFormData[CallbackUrlModel](ArgumentMatchers.eq(Keys.callbackUrl))(any(), any()))
+      .thenReturn(Future.successful(redirection))
+
     mockAuthorisationService()
 
-    new AgentController(mockActions, agentService, config, messagesApi, selectedClientForm, sessionService)
+    new AgentController(mockActions, agentService, sessionService, config, messagesApi, selectedClientForm)
   }
 
 
@@ -150,7 +156,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   "Calling .selectClient" when {
 
-    "provided with a valid authorised user and form" should {
+    "provided with a valid authorised user and form and successful loads from keystore" should {
       lazy val ggConnector = mock[GovernmentGatewayConnector]
 
       when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
@@ -165,7 +171,25 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       }
 
       "redirect to the iForm" in {
-        redirectLocation(result).get.toString shouldBe "https://www.gov.uk"
+        redirectLocation(result).get.toString shouldBe "callback-url"
+      }
+    }
+
+    "provided with a valid authorised user and form and no model is returned from keystore" should {
+      lazy val ggConnector = mock[GovernmentGatewayConnector]
+
+      when(ggConnector.getExistingClients(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any()))
+        .thenReturn(SuccessGovernmentGatewayResponse(clients))
+
+      val agentService = new AgentService(ggConnector)
+      lazy val controller = setupController(redirection = None, agentService = agentService)
+      lazy val result = controller.selectClient(FakeRequest("POST", "").withFormUrlEncodedBody("friendlyName" -> "John Smith", "cgtRef" -> "CGT12345678"))
+
+      "return an exception" in {
+        lazy val ex = intercept[Exception] {
+          await(result)
+        }
+        ex.getMessage shouldBe "No callback url has been found"
       }
     }
 
