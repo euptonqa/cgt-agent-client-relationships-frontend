@@ -88,8 +88,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       .thenReturn(Future.successful(redirect))
 
     new ClientController(config, mockActions, clientService, relationshipService, clientTypeForm,
-        correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList, businessTypeForm)
-
+      correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList, businessTypeForm)
   }
 
   "Calling .clientType" when {
