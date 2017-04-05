@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package views
+package views.company
 
+import common.Constants.BusinessType._
+import data.MessageLookup.{Common, BusinessType => messages}
 import forms.BusinessTypeForm
 import org.jsoup.Jsoup
 import traits.ViewSpecHelper
-import data.MessageLookup.{Common, BusinessType => messages}
-import common.Constants.BusinessType._
 
 class BusinessTypeViewSpec extends ViewSpecHelper {
 
@@ -28,7 +28,7 @@ class BusinessTypeViewSpec extends ViewSpecHelper {
     lazy val form = app.injector.instanceOf[BusinessTypeForm]
 
     "no errors are shown" should {
-      lazy val view = views.html.businessType(config, form.businessTypeForm)
+      lazy val view = views.html.company.businessType(config, form.businessTypeForm)
       lazy val doc = Jsoup.parse(view.body)
 
       s"have a title of '${messages.title}'" in {
@@ -143,7 +143,7 @@ class BusinessTypeViewSpec extends ViewSpecHelper {
 
     "errors are shown" should {
       val map = Map("businessType" -> "")
-      lazy val view = views.html.businessType(config, form.businessTypeForm.bind(map))
+      lazy val view = views.html.company.businessType(config, form.businessTypeForm.bind(map))
       lazy val doc = Jsoup.parse(view.body)
 
       "have an error summary" in {
