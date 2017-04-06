@@ -34,14 +34,13 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
   override val authConnector: FrontendAuthConnector = feAuthConnector
 
   private def composeAuthorisedAction(url: Option[String]): AuthenticatedAction => Action[AnyContent] = {
-    val postSignInRedirectUrl = applicationConfig.postSignInRedirectUrl
+    val definedUrl = if(url.isDefined) "?callbackUrl=" + url.get
+    val postSignInRedirectUrl = applicationConfig.postSignInRedirectUrl + definedUrl
     val ggProvider = GovernmentGatewayProvider(postSignInRedirectUrl,
       applicationConfig.governmentGatewaySignIn)
     val regime = new CgtRegime {
       override def authenticationType: AuthenticationProvider = ggProvider
     }
-
-    val definedUrl = if(url.isDefined) "?callbackUrl=" + url.get
 
     lazy val visibilityPredicate = new VisibilityPredicate(authorisationService)(
       applicationConfig.noEnrolment + definedUrl , applicationConfig.badAffinity
