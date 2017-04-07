@@ -1,0 +1,43 @@
+@import uk.gov.hmrc.play.views.html.helpers.{form, input}
+@import views.html.partials._
+@import models.BusinessDetailsModel
+
+@(appConfig: config.AppConfig, businessDetailsForm: Form[BusinessDetailsModel])(implicit request: Request[_], messages: Messages)
+
+@views.html.main_template(title = Messages("businessDetails.title"), bodyClasses = None, appConfig = appConfig) {
+
+    @errorSummary(businessDetailsForm, "business-details", "businessDetails")
+
+    @userInput(label: String, inputHint: String, identifier: String) = {
+        @input(
+            businessDetailsForm(identifier),
+            '_label -> label,
+            '_type -> "text",
+            '_inputClass -> s"form-control",
+            '_labelClass -> "form-group",
+            '_inputHint -> inputHint
+        )
+    }
+
+    <h1 class="heading-xlarge">@Messages("businessDetails.title")</h1>
+
+    <p class="lede">@Messages("businessDetails.subHeading")</p>
+
+    @form(controllers.routes.ClientController.submitBusinessDetails {
+
+            @userInput(Messages("businessDetails.registeredName"), Messages("businessDetails.registeredNameHint"), "companyName")
+
+            @userInput(Messages("businessDetails.utr"), Messages("businessDetails.utrHint"), "utr")
+
+            <div class="form-group">
+
+                <label class="form-label">@Messages("businessDetails.utr")</label>
+
+                <span id="registrationHelpLink" class="summary">@Messages("businessDetails.utrHelp")</span>
+
+                <input class="form-control" value="" type="text"/>
+
+                <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
+            </div>
+    }
+}

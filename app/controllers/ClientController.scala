@@ -136,4 +136,8 @@ class ClientController @Inject()(appConfig: AppConfig,
   }
 
   val submitBusinessType: Action[AnyContent] = TODO
+
+  val businessDetails: Action[AnyContent] = TODO
+
+  val submitBusinessDetails: Action[AnyContent] = TODO
 }

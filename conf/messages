@@ -40,6 +40,15 @@ businessType.error = Select your client''s business type.
 businessType.nonUK = Overseas company without a UK Unique Tax Reference
 businessType.limitedCompany = Limited company
 
+##Business Details messages ##
+businessDetails.title = Enter your details
+businessDetails.subHeading = We will attempt to match your details against information we currently hold
+businessDetails.registeredName = Registered company name
+businessDetails.registeredNameHint = This is the registered name on your incorporation certificate
+businessDetails.utr = Partnership Self Assessment Unique Tax Reference (UTR)
+businessDetails.utrHelp = Example 1234567890
+businessDetails.utrLink = Where to find your UTR
+
 ## Error Messages ##
 errors.required = This field is required
 
