@@ -21,14 +21,16 @@ import javax.inject.Inject
 import common.FormValidation
 import models.BusinessDetailsModel
 import play.api.data.Form
+import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 
 class BusinessDetailsForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
-  val businessDetailsForm: Form[BusinessDetailsForm] = Form(
+  val businessDetailsForm: Form[BusinessDetailsModel] = Form(
     mapping(
       "registeredName" -> text
-        .verifying(Messages("businessDetails.error"), FormValidation.nonEmptyCheck)
+        .verifying(Messages("businessDetails.error"), FormValidation.nonEmptyCheck),
       "utr" -> text
+        .verifying(Messages("businessDetails.error"), FormValidation.nonEmptyCheck)
     )(BusinessDetailsModel.apply)(BusinessDetailsModel.unapply)
   )
 }

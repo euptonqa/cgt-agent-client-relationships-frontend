@@ -16,13 +16,16 @@
 
 package views.company
 
+import forms.BusinessDetailsForm
 import traits.ViewSpecHelper
 
 class BusinessDetailsViewSpec extends ViewSpecHelper {
 
+  lazy val form = app.injector.instanceOf[BusinessDetailsForm]
+
   "The BusinessDetails view" when {
     "no errors are shown" should {
-      lazy val view = views.html.company.businessDetails(config)
+      lazy val view = views.html.company.businessDetails(config, form.businessDetailsForm)
     }
   }
 
