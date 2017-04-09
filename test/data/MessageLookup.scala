@@ -67,6 +67,16 @@ object MessageLookup {
     val limitedCompany = "Limited company"
   }
 
+  object BusinessDetails {
+    val title = "Enter your details"
+    val subHeading = "We will attempt to match your details against information we currently hold"
+    val registeredName = "Registered company name"
+    val registeredNameHint = "This is the registered name on your incorporation certificate"
+    val utr = "Partnership Self Assessment Unique Tax Reference (UTR)"
+    val utrHelp = "Example 1234567890"
+    val utrLink = "Where to find your UTR"
+  }
+
   object ClientConfirmation {
     val title = "Capital Gains Tax Service registration complete"
     val reference = "Your client's Capital Gains Tax reference:"

@@ -17,7 +17,9 @@
 package views.company
 
 import forms.BusinessDetailsForm
+import org.jsoup.Jsoup
 import traits.ViewSpecHelper
+import data.MessageLookup._
 
 class BusinessDetailsViewSpec extends ViewSpecHelper {
 
@@ -26,7 +28,12 @@ class BusinessDetailsViewSpec extends ViewSpecHelper {
   "The BusinessDetails view" when {
     "no errors are shown" should {
       lazy val view = views.html.company.businessDetails(config, form.businessDetailsForm)
+      lazy val doc = Jsoup.parse(view.body)
+
+      doc.title shouldBe BusinessDetails.title
     }
+
+
   }
 
 }

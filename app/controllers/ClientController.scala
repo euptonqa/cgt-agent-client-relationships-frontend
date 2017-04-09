@@ -26,7 +26,7 @@ import common.{CountryList, Keys}
 import common.Keys.{GovernmentGateway => relationshipKeys}
 import config.AppConfig
 import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
-import forms.{BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm}
+import forms.{BusinessDetailsForm, BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm}
 import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,7 +49,8 @@ class ClientController @Inject()(appConfig: AppConfig,
                                  auditLogger: Logging,
                                  sessionService: KeystoreConnector,
                                  countryList: CountryList,
-                                 businessTypeForm: BusinessTypeForm) extends FrontendController with I18nSupport {
+                                 businessTypeForm: BusinessTypeForm,
+                                 businessDetailsForm: BusinessDetailsForm) extends FrontendController with I18nSupport {
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
@@ -137,7 +138,8 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   val submitBusinessType: Action[AnyContent] = TODO
 
-  val businessDetails: Action[AnyContent] = TODO
+  val businessDetails: Action[AnyContent] = Action.async { implicit request =>
+  Future.successful(Ok(views.html.company.businessDetails(appConfig, businessDetailsForm.businessDetailsForm)))}
 
   val submitBusinessDetails: Action[AnyContent] = TODO
 }
