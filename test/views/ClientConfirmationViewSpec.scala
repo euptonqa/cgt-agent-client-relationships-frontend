@@ -50,25 +50,25 @@ class ClientConfirmationViewSpec extends ViewSpecHelper {
         greenBanner.hasClass("transaction-banner--complete") shouldEqual true
       }
 
-      s"has the first paragraph" which {
+      s"has the first span" which {
 
         s"has text ${messages.reference}" in {
-          greenBanner.select("p").get(0).text shouldEqual messages.reference
+          greenBanner.select("span").get(0).text shouldEqual messages.reference
         }
 
         "has the class bold-large" in {
-          greenBanner.select("p").get(0).hasClass("bold-large") shouldEqual true
+          greenBanner.select("span").get(0).hasClass("heading-large") shouldEqual true
         }
       }
 
-      "has a second paragraph" which {
+      "has a paragraph" which {
 
         "has the text 'Generic CGT reference'" in {
-          greenBanner.select("p").get(1).text shouldEqual "Generic CGT reference"
+          greenBanner.select("p").text shouldEqual "Generic CGT reference"
         }
 
         "has the class heading-medium" in {
-          greenBanner.select("p").get(1).hasClass("heading-medium") shouldEqual true
+          greenBanner.select("p").hasClass("heading-medium") shouldEqual true
         }
       }
     }
@@ -79,18 +79,18 @@ class ClientConfirmationViewSpec extends ViewSpecHelper {
       "has a heading" which {
 
         "has the class 'heading-medium'" in {
-          guidance.select("p").get(0).attr("class") shouldBe "heading-medium"
+          guidance.select("span").get(0).attr("class") shouldBe "heading-medium"
         }
 
         s"has the text '${messages.whatNext}'" in {
-          guidance.select("p").get(0).text shouldBe messages.whatNext
+          guidance.select("span").get(0).text shouldBe messages.whatNext
         }
       }
 
       "has some content" which {
 
         s"has the text '${messages.guidance}'" in {
-          guidance.select("p").get(1).text() shouldBe messages.guidance
+          guidance.select("p").text() shouldBe messages.guidance
         }
       }
     }

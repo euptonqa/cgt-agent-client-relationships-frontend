@@ -1,5 +1,8 @@
 # microservice specific routes
 
+#Assets routes
+GET        /assets/*file                                            controllers.Assets.at(path="/public", file)
+
 GET        /hello-world                         controllers.HelloWorld.helloWorld
 
 GET        /client                              controllers.AgentController.showClientList(callbackUrl: String)
