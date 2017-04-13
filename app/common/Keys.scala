@@ -28,6 +28,6 @@ object Keys {
   }
 
   object KeystoreKeys {
-    val callbackUrl = "callbackUrl"
+    val redirect = "redirect"
   }
 }

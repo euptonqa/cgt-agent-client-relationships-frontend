@@ -120,7 +120,7 @@ class ClientController @Inject()(appConfig: AppConfig,
   val confirmation: String => Action[AnyContent] = cgtReference => authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
-        sessionService.fetchAndGetFormData[CallbackUrlModel](Keys.KeystoreKeys.callbackUrl).map {
+        sessionService.fetchAndGetFormData[RedirectModel](Keys.KeystoreKeys.redirect).map {
           case Some(model) => Ok(views.html.clientConfirmation(appConfig, cgtReference, model.url))
           case None => throw new Exception("No callback url found in session")
         }

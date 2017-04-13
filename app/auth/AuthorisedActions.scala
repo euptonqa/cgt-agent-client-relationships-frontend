@@ -34,7 +34,7 @@ class AuthorisedActions @Inject()(applicationConfig: ApplicationConfig,
   override val authConnector: FrontendAuthConnector = feAuthConnector
 
   private def composeAuthorisedAction(url: Option[String]): AuthenticatedAction => Action[AnyContent] = {
-    val definedUrl = if(url.isDefined) "?callbackUrl=" + url.get
+    val definedUrl = if(url.isDefined) "?redirect=" + url.get
     val postSignInRedirectUrl = applicationConfig.postSignInRedirectUrl + definedUrl
     val ggProvider = GovernmentGatewayProvider(postSignInRedirectUrl,
       applicationConfig.governmentGatewaySignIn)

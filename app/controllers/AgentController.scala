@@ -23,7 +23,7 @@ import common.Keys.KeystoreKeys
 import config.AppConfig
 import connectors.{FailedGovernmentGatewayResponse, GovernmentGatewayResponse, KeystoreConnector, SuccessGovernmentGatewayResponse}
 import forms.SelectedClientForm
-import models.{CallbackUrlModel, SelectedClient}
+import models.{RedirectModel, SelectedClient}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
@@ -42,7 +42,7 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
                                 val messagesApi: MessagesApi,
                                 selectedClientForm: SelectedClientForm) extends FrontendController with I18nSupport {
 
-  val showClientList: String => Action[AnyContent] = callbackUrl => authorisedActions.authorisedAgentAction(Some(callbackUrl)) {
+  val showClientList: String => Action[AnyContent] = redirect => authorisedActions.authorisedAgentAction(Some(redirect)) {
     implicit user =>
       implicit request =>
         def handleGGResponse(response: GovernmentGatewayResponse): Result = {
@@ -55,8 +55,8 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
           }
         }
 
-        Try(CallbackUrlModel(callbackUrl)) match {
-          case Success(value) => sessionService.saveFormData[CallbackUrlModel](KeystoreKeys.callbackUrl, value)
+        Try(RedirectModel(redirect)) match {
+          case Success(value) => sessionService.saveFormData[RedirectModel](KeystoreKeys.redirect, value)
             agentService.getExistingClients(user.authContext).map { x => handleGGResponse(x) }
           case Failure(_) => Future.successful(BadRequest(views.html.error_template(Messages("errors.badRequest"),
             Messages("errors.badRequest"), Messages("errors.checkAddress"), appConfig)))
@@ -70,7 +70,7 @@ class AgentController @Inject()(authorisedActions: AuthorisedActions,
         def errorAction(form: Form[SelectedClient]) = throw new Exception
 
         def successAction(model: SelectedClient): Future[Result] = {
-          sessionService.fetchAndGetFormData[CallbackUrlModel](KeystoreKeys.callbackUrl).map {
+          sessionService.fetchAndGetFormData[RedirectModel](KeystoreKeys.redirect).map {
             case Some(callBackModel) => Redirect(callBackModel.url)
             case _ => throw new Exception("No callback url has been found")
           }
