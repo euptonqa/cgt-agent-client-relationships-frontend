@@ -165,20 +165,25 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
       }
     }
 
-    "have an input for country" which {
-      lazy val label = doc.select("label[for=country]")
-      lazy val input = label.select("input#country")
+    "has an input for country" which {
+      lazy val input = doc.body().select("#country_div")
+      lazy val label = input.select("label")
+      lazy val select = input.select("select")
 
       s"has the text '${CorrespondenceDetails.country}'" in {
         label.text() shouldBe CorrespondenceDetails.country
       }
 
       "has a label class of 'form-group'" in {
-        label.attr("class") should include("form-group")
+        label.attr("class") should include("form-label")
       }
 
-      "has a type of text" in {
-        input.attr("type") shouldBe "text"
+      "has a class of 'form-control'" in {
+        select.attr("class") shouldBe " form-control "
+      }
+
+      "has a name of 'country'" in {
+        select.attr("name") shouldBe "country"
       }
     }
 
