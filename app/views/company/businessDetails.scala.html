@@ -1,8 +1,22 @@
-@import uk.gov.hmrc.play.views.html.helpers.{form, input}
+@import uk.gov.hmrc.play.views.html.helpers.form
+@import uk.gov.hmrc.play.views.html.helpers.input
 @import views.html.partials._
 @import models.BusinessDetailsModel
 
 @(appConfig: config.AppConfig, businessDetailsForm: Form[BusinessDetailsModel])(implicit request: Request[_], messages: Messages)
+
+@additionalContent = {
+    <details role="group">
+        <summary role="button" aria-controls="details-content-0" tabindex="0" aria-expanded="false">
+            <span class="summary" id="registration-HelpLink">@Messages("businessDetails.utrLink")</span>
+        </summary>
+        <div class="indent" id="details-content-0" aria-hidden="true">
+            <p>@Messages("businessDetails.utrHelp.one")</p>
+            <p>@Messages("businessDetails.utrHelp.two")</p>
+            <p>@Messages("businessDetails.utrHelp.three")</p>
+        </div>
+    </details>
+}
 
 @views.html.main_template(title = Messages("businessDetails.title"), bodyClasses = None, appConfig = appConfig) {
 
@@ -10,27 +24,28 @@
 
     <h1 class="heading-xlarge">@Messages("businessDetails.title")</h1>
 
-    <p class="lede">@Messages("businessDetails.subHeading")</p>
+    <h2 class="lede form-group">@Messages("businessDetails.subHeading")</h2>
 
     @form(action = controllers.routes.ClientController.submitBusinessDetails()) {
             @input(
                 businessDetailsForm("companyName"),
                 '_label -> Messages("businessDetails.registeredName"),
                 '_type -> "text",
-                '_inputClass -> s"form-control",
+                '_inputClass -> "shim input grid-1-2",
                 '_labelClass -> "form-group",
                 '_inputHint -> Messages("businessDetails.registeredNameHint")
             )
 
-            <div class="form-group">
+            @cgtInput(
+                businessDetailsForm("utr"),
+                '_label -> Messages("businessDetails.utr"),
+                '_type -> "text",
+                '_inputClass -> "shim input grid-1-2",
+                '_labelClass -> "form-group",
+                '_inputHint -> Messages("businessDetails.utrHelp"),
+                '_additionalContent -> additionalContent
+            )
 
-                <label class="form-label">@Messages("businessDetails.utr")</label>
-
-                <span id="registrationHelpLink" class="summary">@Messages("businessDetails.utrHelp")</span>
-
-                <input class="form-control" value="utr" type="text"/>
-
-                <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
-            </div>
+        <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
     }
 }

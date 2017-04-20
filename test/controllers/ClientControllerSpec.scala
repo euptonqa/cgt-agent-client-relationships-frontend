@@ -47,10 +47,10 @@ import scala.concurrent.Future
 class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   val unauthorisedLoginUrl = "some-url"
-  val clientTypeForm: ClientTypeForm = app.injector.instanceOf[ClientTypeForm]
-  val correspondenceDetailsForm: CorrespondenceDetailsForm = app.injector.instanceOf[CorrespondenceDetailsForm]
-  val businessTypeForm: BusinessTypeForm = app.injector.instanceOf[BusinessTypeForm]
-  val businessDetailsForm: BusinessDetailsForm = app.injector.instanceOf[BusinessDetailsForm]
+  lazy val clientTypeForm: ClientTypeForm = app.injector.instanceOf[ClientTypeForm]
+  lazy val correspondenceDetailsForm: CorrespondenceDetailsForm = app.injector.instanceOf[CorrespondenceDetailsForm]
+  lazy val businessTypeForm: BusinessTypeForm = app.injector.instanceOf[BusinessTypeForm]
+  lazy val businessDetailsForm: BusinessDetailsForm = app.injector.instanceOf[BusinessDetailsForm]
   lazy val clientService: ClientService = mock[ClientService]
   lazy val relationshipService: RelationshipService = mock[RelationshipService]
 
