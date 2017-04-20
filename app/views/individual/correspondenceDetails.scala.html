@@ -1,8 +1,11 @@
-@import uk.gov.hmrc.play.views.html.helpers.{form, input}
+@import uk.gov.hmrc.play.views.html.helpers.form
+@import uk.gov.hmrc.play.views.html.helpers.input
 @import models.CorrespondenceDetailsModel
 @import views.html.partials.errorSummary
+@import views.html.partials.countryScripts
+@import views.html.partials.countryDropdown
 
-@(appConfig: config.AppConfig, correspondenceDetailsForm: Form[CorrespondenceDetailsModel])(implicit request: Request[_], messages: Messages)
+@(appConfig: config.AppConfig, correspondenceDetailsForm: Form[CorrespondenceDetailsModel], countryList: List[(String, String)])(implicit request: Request[_], messages: Messages)
 
 @userInput(label: String, identifier: String, additionalClass: String="") = {
     @input(
@@ -25,7 +28,7 @@
     )
 }
 
-@views.html.main_template(title = Messages("correspondenceDetails.title"), bodyClasses = None, appConfig = appConfig) {
+@views.html.main_template(title = Messages("correspondenceDetails.title"), bodyClasses = None, appConfig = appConfig, scriptElem = Some(countryScripts())) {
 
     @errorSummary(correspondenceDetailsForm, "correspondence-details", "correspondenceDetails")
 
@@ -51,7 +54,13 @@
 
         @userInput(Messages("correspondenceDetails.postcode"), "postcode", additionalClass="input--small")
 
-        @userInput(Messages("correspondenceDetails.country"), "country")
+        @countryDropdown(correspondenceDetailsForm("country"),
+            elementOptions = countryList,
+            displayEmptyValue = true,
+            '_id -> "country",
+            '_emptyValueText -> Messages("correspondenceDetails.country.select"),
+            '_labelClass -> "form-label",
+            '_label -> Html(Messages("correspondenceDetails.country")))
 
         <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
     }

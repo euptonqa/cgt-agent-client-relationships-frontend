@@ -22,7 +22,7 @@ import audit.Logging
 import auth.AuthorisedActions
 import common.Constants.Audit._
 import common.Constants.{ClientType => CTConstants}
-import common.Keys
+import common.{CountryList, Keys}
 import common.Keys.{GovernmentGateway => relationshipKeys}
 import config.AppConfig
 import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
@@ -47,7 +47,8 @@ class ClientController @Inject()(appConfig: AppConfig,
                                  correspondenceDetailsForm: CorrespondenceDetailsForm,
                                  val messagesApi: MessagesApi,
                                  auditLogger: Logging,
-                                 sessionService: KeystoreConnector) extends FrontendController with I18nSupport {
+                                 sessionService: KeystoreConnector,
+                                 countryList: CountryList) extends FrontendController with I18nSupport {
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
 
@@ -77,7 +78,9 @@ class ClientController @Inject()(appConfig: AppConfig,
   val enterIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
-        Future.successful(Ok(views.html.individual.correspondenceDetails(appConfig, correspondenceDetailsForm.correspondenceDetailsForm)))
+        Future.successful(Ok(views.html.individual.correspondenceDetails(appConfig,
+          correspondenceDetailsForm.correspondenceDetailsForm,
+          countryList.getListOfCountries)))
   }
 
   val submitIndividualCorrespondenceDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
@@ -112,7 +115,7 @@ class ClientController @Inject()(appConfig: AppConfig,
         }
 
         correspondenceDetailsForm.correspondenceDetailsForm.bindFromRequest.fold(errors =>
-          Future.successful(BadRequest(views.html.individual.correspondenceDetails(appConfig, errors))),
+          Future.successful(BadRequest(views.html.individual.correspondenceDetails(appConfig, errors, countryList.getListOfCountries))),
           successAction)
 
   }

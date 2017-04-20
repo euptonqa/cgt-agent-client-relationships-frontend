@@ -18,7 +18,7 @@ package controllers
 
 import audit.Logging
 import auth.{CgtAgent, _}
-import common.Keys
+import common.{CountryList, Keys}
 import config.WSHttp
 import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRelationshipResponse}
 import data.MessageLookup.{ClientConfirmation => messages}
@@ -57,6 +57,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   lazy val injector: Injector = app.injector
   lazy val auditLogger: Logging = injector.instanceOf[Logging]
   lazy val mockWSHttp: WSHttp = mock[WSHttp]
+  lazy val countryList: CountryList = injector.instanceOf[CountryList]
 
   before {
     reset(mockWSHttp)
@@ -86,7 +87,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       .thenReturn(Future.successful(callbackUrl))
 
     new ClientController(config, mockActions, clientService, relationshipService, clientTypeForm,
-      correspondenceDetailsForm, messagesApi, auditLogger, sessionService)
+      correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList)
   }
 
   "Calling .clientType" when {

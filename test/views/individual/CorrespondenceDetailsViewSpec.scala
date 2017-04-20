@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.individual
 
 import data.MessageLookup.CorrespondenceDetails
 import forms.CorrespondenceDetailsForm
@@ -26,7 +26,7 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
 
   "The correspondence details view with a form with no errors" should {
     lazy val form = new CorrespondenceDetailsForm(messagesApi)
-    lazy val view = correspondenceDetails(config, form.correspondenceDetailsForm)
+    lazy val view = correspondenceDetails(config, form.correspondenceDetailsForm, List(("test", "test")))
     lazy val doc = Jsoup.parse(view.body)
 
     "have a header" which {
@@ -165,20 +165,25 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
       }
     }
 
-    "have an input for country" which {
-      lazy val label = doc.select("label[for=country]")
-      lazy val input = label.select("input#country")
+    "has an input for country" which {
+      lazy val input = doc.body().select("#country_div")
+      lazy val label = input.select("label")
+      lazy val select = input.select("select")
 
       s"has the text '${CorrespondenceDetails.country}'" in {
         label.text() shouldBe CorrespondenceDetails.country
       }
 
       "has a label class of 'form-group'" in {
-        label.attr("class") should include("form-group")
+        label.attr("class") should include("form-label")
       }
 
-      "has a type of text" in {
-        input.attr("type") shouldBe "text"
+      "has a class of 'form-control'" in {
+        select.attr("class") shouldBe " form-control "
+      }
+
+      "has a name of 'country'" in {
+        select.attr("name") shouldBe "country"
       }
     }
 
@@ -208,7 +213,7 @@ class CorrespondenceDetailsViewSpec extends ViewSpecHelper {
     lazy val form = new CorrespondenceDetailsForm(messagesApi)
     lazy val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "", "addressLineTwo" -> "Light Road",
       "town" -> "Dark City", "county" -> "Darkshire", "postcode" -> "TF4 3NT", "country" -> "United States")
-    lazy val view = correspondenceDetails(config, form.correspondenceDetailsForm.bind(map))
+    lazy val view = correspondenceDetails(config, form.correspondenceDetailsForm.bind(map), List(("test", "test")))
     lazy val doc = Jsoup.parse(view.body).toString
 
     "display an error summary" in {
