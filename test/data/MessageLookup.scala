@@ -68,7 +68,7 @@ object MessageLookup {
   }
 
   object BusinessDetails {
-    val title = "Enter your details"
+    val title = "Enter your client's details"
     val subHeading = "We will attempt to match your details against information we currently hold"
     val registeredName = "Registered company name"
     val registeredNameHint = "This is the registered name on your incorporation certificate"
