@@ -75,4 +75,18 @@ class RouteSpec extends UnitSpec with WithFakeApplication {
       path shouldEqual "/capital-gains-tax/agent/confirmation?cgtReference=cgtRef"
     }
   }
+
+  "The URL for the ClientController .submitBusinessType action" should {
+    "be equal to /capital-gains-tax/agent/business-type" in {
+      val path = controllers.routes.ClientController.submitBusinessType().url
+      path shouldEqual "/capital-gains-tax/agent/business-type"
+    }
+  }
+
+  "The URL for the ClientController .businessType action" should {
+    "be equal to /capital-gains-tax/agent/business-type" in {
+      val path = controllers.routes.ClientController.businessType().url
+      path shouldEqual "/capital-gains-tax/agent/business-type"
+    }
+  }
 }

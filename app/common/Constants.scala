@@ -36,4 +36,9 @@ object Constants {
     val individual = "Individual"
     val company = "Company"
   }
+
+  object BusinessType {
+    val nonUK = "NUK"
+    val limitedCompany = "LTD"
+  }
 }

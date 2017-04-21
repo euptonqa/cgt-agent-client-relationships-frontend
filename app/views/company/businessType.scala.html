@@ -1,0 +1,29 @@
+@import uk.gov.hmrc.play.views.html.helpers.{form, input}
+@import views.html.partials._
+@import models.BusinessTypeModel
+
+@(appConfig: config.AppConfig, businessTypeForm: Form[BusinessTypeModel])(implicit request: Request[_], messages: Messages)
+
+@views.html.main_template(title = Messages("businessType.title"), bodyClasses = None, appConfig = appConfig) {
+
+    @errorSummary(businessTypeForm, "business-type", "businessType")
+
+    <h1 class="heading-xlarge">@Messages("businessType.title")</h1>
+
+    @form(action = controllers.routes.ClientController.submitBusinessType()) {
+
+        @inputRadioGroup(
+            businessTypeForm("businessType"),
+            Seq(
+                "NUK" -> Messages("businessType.nonUK"),
+                "LTD" -> Messages("businessType.limitedCompany")),
+            '_legend -> Messages("businessType.title"),
+            '_labelAfter -> true,
+            '_labelClass -> "block-label",
+            '_legendClass -> "visuallyhidden",
+            '_groupClass -> "form-group radio-list"
+        )
+
+        <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
+    }
+}
