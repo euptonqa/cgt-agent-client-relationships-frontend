@@ -77,16 +77,30 @@ class RouteSpec extends UnitSpec with WithFakeApplication {
   }
 
   "The URL for the ClientController .submitBusinessType action" should {
-    "be equal to /capital-gains-tax/agent/business-type" in {
+    "be equal to /capital-gains-tax/agent/company/business-type" in {
       val path = controllers.routes.ClientController.submitBusinessType().url
-      path shouldEqual "/capital-gains-tax/agent/business-type"
+      path shouldEqual "/capital-gains-tax/agent/company/business-type"
     }
   }
 
   "The URL for the ClientController .businessType action" should {
-    "be equal to /capital-gains-tax/agent/business-type" in {
+    "be equal to /capital-gains-tax/agent/company/business-type" in {
       val path = controllers.routes.ClientController.businessType().url
-      path shouldEqual "/capital-gains-tax/agent/business-type"
+      path shouldEqual "/capital-gains-tax/agent/company/business-type"
+    }
+  }
+
+  "The URL for the ClientController .submitBusinessDetails action" should {
+    "be equal to /capital-gains-tax/agent/company/business-details" in {
+      val path = controllers.routes.ClientController.submitBusinessDetails().url
+      path shouldEqual "/capital-gains-tax/agent/company/business-details"
+    }
+  }
+
+  "The URL for the ClientController .businessDetails action" should {
+    "be equal to /capital-gains-tax/agent/company/business-details" in {
+      val path = controllers.routes.ClientController.businessDetails().url
+      path shouldEqual "/capital-gains-tax/agent/company/business-details"
     }
   }
 }
