@@ -76,5 +76,6 @@ object MessageLookup {
 
   object Errors {
     val errorRequired = "This field is required"
+    val errorTelephone = "Enter a valid telephone number"
   }
 }

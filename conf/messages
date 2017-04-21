@@ -42,6 +42,7 @@ businessType.limitedCompany = Limited company
 
 ## Error Messages ##
 errors.required = This field is required
+errors.telephone = Enter a valid telephone number
 
 ## Error Summary Messages ##
 error.summary.heading = This page has errors
