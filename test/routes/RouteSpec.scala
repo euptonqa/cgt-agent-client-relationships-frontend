@@ -23,7 +23,7 @@ class RouteSpec extends UnitSpec with WithFakeApplication {
   "The URL for the AgentController .showClientList action" should {
     "be equal to /capital-gains-tax/agent/client" in {
       val path = controllers.routes.AgentController.showClientList("/context/test").url
-      path shouldEqual "/capital-gains-tax/agent/client?callbackUrl=%2Fcontext%2Ftest"
+      path shouldEqual "/capital-gains-tax/agent/client?redirect=%2Fcontext%2Ftest"
     }
   }
 

@@ -24,7 +24,7 @@ import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRela
 import data.MessageLookup.{ClientConfirmation => messages}
 import data.{MessageLookup, TestUsers}
 import forms.{ClientTypeForm, CorrespondenceDetailsForm}
-import models.{CallbackUrlModel, SubscriptionReference}
+import models.{RedirectModel, SubscriptionReference}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -64,7 +64,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   }
 
   def setupController(valid: Boolean = true, authContext: AuthContext = TestUsers.strongUserAuthContext,
-                      callbackUrl: Option[CallbackUrlModel] = Some(CallbackUrlModel("context/test"))): ClientController = {
+                      redirect: Option[RedirectModel] = Some(RedirectModel("context/test"))): ClientController = {
     val mockActions = mock[AuthorisedActions]
     if (valid) {
       when(mockActions.authorisedAgentAction(ArgumentMatchers.any())(ArgumentMatchers.any()))
@@ -83,8 +83,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     val sessionService = mock[KeystoreConnector]
 
-    when(sessionService.fetchAndGetFormData[CallbackUrlModel](ArgumentMatchers.eq(Keys.KeystoreKeys.callbackUrl))(any(), any()))
-      .thenReturn(Future.successful(callbackUrl))
+    when(sessionService.fetchAndGetFormData[RedirectModel](ArgumentMatchers.eq(Keys.KeystoreKeys.redirect))(any(), any()))
+      .thenReturn(Future.successful(redirect))
 
     new ClientController(config, mockActions, clientService, relationshipService, clientTypeForm,
       correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList)
@@ -179,7 +179,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     }
 
     "no callback url exists in keystore" should {
-      lazy val controller = setupController(callbackUrl = None)
+      lazy val controller = setupController(redirect = None)
       val fakeRequest = FakeRequest("GET", "/")
       lazy val result = controller.confirmation("TestRef")(fakeRequest)
       lazy val ex = intercept[Exception] {

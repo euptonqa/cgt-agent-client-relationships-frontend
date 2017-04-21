@@ -78,7 +78,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
   def setupController(correctAuthentication: Boolean = true,
                       authContext: AuthContext = TestUsers.strongUserAuthContext,
-                      redirection: Option[CallbackUrlModel] = Some(CallbackUrlModel(url = "callback-url")),
+                      redirection: Option[RedirectModel] = Some(RedirectModel(url = "callback-url")),
                       agentService: AgentService): AgentController = {
 
     val mockActions = mock[AuthorisedActions]
@@ -104,7 +104,7 @@ class AgentControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
     val sessionService = mock[KeystoreConnector]
 
-    when(sessionService.fetchAndGetFormData[CallbackUrlModel](ArgumentMatchers.eq(Keys.callbackUrl))(any(), any()))
+    when(sessionService.fetchAndGetFormData[RedirectModel](ArgumentMatchers.eq(Keys.redirect))(any(), any()))
       .thenReturn(Future.successful(redirection))
 
     mockAuthorisationService()
