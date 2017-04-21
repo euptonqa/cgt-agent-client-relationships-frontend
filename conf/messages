@@ -60,3 +60,9 @@ clientConfirmation.guidance = '{COPY TO BE CONFIRMED'}
 ## Default Error Messages ##
 errors.badRequest = Bad request
 errors.checkAddress = Please check that you have entered the correct web address.
+
+## Contact Details messages ##
+contactDetails.title = Your client''s Capital Gains Tax contact details
+contactDetails.text = The person responsible for Capital Gains Tax related queries.
+contactDetails.contactName = Contact name
+contactDetails.telephone = Telephone
