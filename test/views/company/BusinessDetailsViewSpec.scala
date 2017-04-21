@@ -48,7 +48,7 @@ class BusinessDetailsViewSpec extends ViewSpecHelper {
       }
 
       "has a subheading" which {
-        lazy val subHeading = doc.select("h2")
+        lazy val subHeading = doc.select("article p").first()
 
         s"has the text '${BusinessDetails.subHeading}'" in {
           subHeading.text() shouldBe BusinessDetails.subHeading
@@ -114,13 +114,97 @@ class BusinessDetailsViewSpec extends ViewSpecHelper {
       "has additional content for the utr" which {
         lazy val content = doc.select("details")
 
+        "has a role of 'group'" in {
+          content.attr("role") shouldBe "group"
+        }
+
         "contains a summary" which {
-          lazy val summary = content.select("summary span")
+          lazy val summary = content.select("summary")
 
           s"has the text '${BusinessDetails.utrLink}'" in {
             summary.text() shouldBe BusinessDetails.utrLink
           }
+
+          "has the span class 'summary'" in {
+            summary.select("span").attr("class") shouldBe "summary"
+          }
+
+          "has the role 'button'" in {
+            summary.attr("role") shouldBe "button"
+          }
+
+          "has the aria-controls 'details-content'" in {
+            summary.attr("aria-controls") shouldBe "details-content"
+          }
+
+          "has the aria-expanded 'false'" in {
+            summary.attr("aria-expanded") shouldBe "false"
+          }
         }
+
+        "contains a div" which {
+          lazy val div = content.select("div")
+
+          s"has a first paragraph of '${BusinessDetails.utrHelpOne}'" in {
+            div.select("p").get(0).text() shouldBe BusinessDetails.utrHelpOne
+          }
+
+          s"has a second paragraph of '${BusinessDetails.utrHelpTwo}'" in {
+            div.select("p").get(1).text() shouldBe BusinessDetails.utrHelpTwo
+          }
+
+          s"has a third paragraph of '${BusinessDetails.utrHelpThree}'" in {
+            div.select("p").get(2).text() shouldBe BusinessDetails.utrHelpThree
+          }
+
+          "has a class of 'indent'" in {
+            div.attr("class") shouldBe "indent"
+          }
+
+          "has an id of 'details-content'" in {
+            div.attr("id") shouldBe "details-content"
+          }
+
+          "has an aria-hidden of 'true'" in {
+            div.attr("aria-hidden") shouldBe "true"
+          }
+        }
+      }
+
+      "have a button" which {
+        lazy val button = doc.select("button")
+
+        "has the text 'Continue'" in {
+          button.text() shouldBe Common.continue
+        }
+
+        "has the class 'button'" in {
+          button.attr("class") shouldBe "button"
+        }
+
+        "has the type 'submit'" in {
+          button.attr("type") shouldBe "submit"
+        }
+
+        "has the id 'continue-button'" in {
+          button.attr("id") shouldBe "continue-button"
+        }
+      }
+
+      "have no error summary" in {
+        lazy val errorSummary = doc.select("div#error-summary-display")
+        errorSummary.size() shouldBe 0
+      }
+    }
+
+    "errors are shown" should {
+      val map = Map("companyName" -> "")
+      lazy val view = views.html.company.businessDetails(config, form.businessDetailsForm.bind(map))
+      lazy val doc = Jsoup.parse(view.body)
+
+      "have an error summary" in {
+        lazy val errorSummary = doc.select("div#error-summary-display")
+        errorSummary.size() shouldBe 1
       }
     }
   }

@@ -69,12 +69,15 @@ object MessageLookup {
 
   object BusinessDetails {
     val title = "Enter your details"
-    val subHeading = "We will attempt to match your details against information we currently hold "
+    val subHeading = "We will attempt to match your details against information we currently hold"
     val registeredName = "Registered company name"
     val registeredNameHint = "This is the registered name on your incorporation certificate"
     val utr = "Corporation Tax Unique Tax Reference (UTR)"
     val utrHelp = "Example 1234567890"
     val utrLink = "Where to find your UTR"
+    val utrHelpOne = "A UTR is issued by HM Revenue & Customs (HMRC) when you have registered as a business."
+    val utrHelpTwo = "It is 10 numbers, for example 12345 67890, and can be found on documentation issued by HMRC. It may be printed next to the headings 'Tax Reference', 'UTR' or 'Official Use'."
+    val utrHelpThree = "You can find your UTR reference in the header of any of the letter that you received from HMRC."
   }
 
   object ClientConfirmation {
