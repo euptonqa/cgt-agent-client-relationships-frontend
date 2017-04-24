@@ -27,7 +27,7 @@ class BusinessTypeFormSpec extends ViewSpecHelper {
 
     "passing in a valid type of 'NUK'" should {
       val businessType = "NUK"
-      val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
+      lazy val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
 
       "have no errors" in {
         result.errors.size shouldBe 0
@@ -40,7 +40,7 @@ class BusinessTypeFormSpec extends ViewSpecHelper {
 
     "passing in a valid type of 'Company'" should {
       val businessType = "LTD"
-      val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
+      lazy val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
 
       "have no errors" in {
         result.errors.size shouldBe 0
@@ -53,7 +53,7 @@ class BusinessTypeFormSpec extends ViewSpecHelper {
 
     "passing in an invalid type of 'Agent'" should {
       val businessType = "LLP"
-      val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
+      lazy val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
 
       "have one error" in {
         result.errors.size shouldBe 1
@@ -70,7 +70,7 @@ class BusinessTypeFormSpec extends ViewSpecHelper {
 
     "passing in an invalid blank type" should {
       val businessType = ""
-      val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
+      lazy val result = form.businessTypeForm.bind(Map("businessType" -> businessType))
 
       "have one error" in {
         result.errors.size shouldBe 1
