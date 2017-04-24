@@ -18,7 +18,7 @@
 @views.html.main_template(title = Messages("correspondenceDetails.title"), bodyClasses=None, appConfig = appConfig) {
         <h1 class="heading-xlarge">@Messages("correspondenceDetails.title")</h1>
 
-        @form(action = TODO) {
+        @form(action = controllers.routes.CompanyController.submitCorrespondenceAddress) {
             @userInput(Messages("correspondenceDetails.addressLineOne"), "addressLineOne"))
             @userInput(Messages("correspondenceDetails.addressLineTwo"), "addressLineTwo"))
             @userInput(Messages("correspondenceDetails.addressLineOne"), "addressLineOne"))

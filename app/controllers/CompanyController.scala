@@ -18,12 +18,46 @@ package controllers
 
 import javax.inject.Inject
 
+import auth.AuthorisedActions
+import common.CountryList
 import config.AppConfig
+import connectors.KeystoreConnector
+import forms.CorrespondenceAddressForm
+import models.AddressModel
+import play.api.data.Form
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
-class CompanyController @Inject()(appConfig: AppConfig) extends FrontendController {
+import scala.concurrent.Future
 
-  val enterCorrespondenceAddress = TODO
-  val submitCorrespondenceAddress = TODO
+class CompanyController @Inject()(appConfig: AppConfig,
+                                  authorisedActions: AuthorisedActions,
+                                  correspondenceAddressForm: CorrespondenceAddressForm,
+                                  countryList: CountryList,
+                                  sessionService: KeystoreConnector) extends FrontendController {
+
+  val enterCorrespondenceAddress: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
+    implicit user =>
+      implicit request =>
+      Future.successful(Ok(views.html.company.correspondenceAddress(appConfig,
+        correspondenceAddressForm.correspondenceAddressForm, countryList.getListOfCountries)))
+  }
+  val submitCorrespondenceAddress: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
+    implicit user =>
+      implicit request =>
+
+      def errorAction(form: Form[AddressModel]) = {
+        Future.successful(BadRequest(views.html.company.correspondenceAddress(appConfig,
+          form, countryList.getListOfCountries)))
+      }
+
+      def successAction(model: AddressModel): Future[Result] = {
+        sessionService.saveFormData("", model)
+        Future.successful(Ok("google.com"))
+        //stubbed until page implemented
+      }
+
+      correspondenceAddressForm.correspondenceAddressForm.bindFromRequest.fold(errorAction, successAction)
+  }
 
 }
