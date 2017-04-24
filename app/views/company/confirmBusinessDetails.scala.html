@@ -1,0 +1,84 @@
+@import models._
+@import uk.gov.hmrc.play.views.html.helpers.form
+
+@(appConfig: config.AppConfig, businessDetails: BusinessDetailsModel, correspondenceAddress: AddressModel,
+  contactDetails: ContactDetailsModel)(implicit request: Request [_], messages: Messages)
+
+@insertAddress(addressTypeName: String, addressModel: AddressModel, changeLink: Option[String]) = {
+
+<tr>
+    <th style="vertical-align: top">@addressTypeName</th>
+    <td>
+        <ul>
+            <li>@addressModel.addressLineOne</li>
+            <li>@addressModel.addressLineTwo</li>
+            @if(addressModel.addressLineThree.isDefined){
+                <li>@addressModel.addressLineThree.get</li>
+            }
+            @if(addressModel.addressLineFour.isDefined){
+                <li>@addressModel.addressLineFour.get</li>
+            }
+            @if(addressModel.postcode.isDefined){
+                <li>@addressModel.postcode.get</li>
+            }
+            <li>@addressModel.country</li>
+        </ul>
+    </td>
+    <td style="vertical-align: top">
+        @if(changeLink.isDefined){
+            <a href='@changeLink.get'>@Messages("confirmBusinessDetails.change")</a>
+        }
+    </td>
+</tr>
+}
+
+@views.html.main_template(title = Messages("confirmBusinessDetails.title"), bodyClasses = None, appConfig = appConfig) {
+
+    <div class="grid-row">
+        <div class="colum-two-thirds">
+            <h1 class="heading-xlarge">@Messages("confirmBusinessDetails.title")</h1>
+
+            <h2 class="heading" style="font-weight:normal">@Messages("confirmBusinessDetails.subtitle")</h2>
+
+            <div class="form-group">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th style="width:60%">@Messages("confirmBusinessDetails.name")</th>
+                            <td>
+                                <ul>
+                                    <li>
+                                        @businessDetails.businessName
+                                    </li>
+                                </ul>
+                            </td>
+                            <td></td>
+                        </tr>
+
+                        @insertAddress(Messages("confirmBusinessDetails.registeredAddress"), businessDetails.addressModel, None)
+                        @insertAddress(Messages("confirmBusinessDetails.correspondenceAddress"),
+                        correspondenceAddress, Some(controllers.routes.CompanyController.enterCorrespondenceAddress.url))
+
+                        <tr>
+                            <th style="vertical-align: top">@Messages("confirmBusinessDetails.contactDetails")</th>
+                            <td>
+                                <ul>
+                                    <li>@contactDetails.contactName</li>
+                                    <li>@contactDetails.telephone</li>
+                                </ul>
+                            </td>
+                            <td style="vertical-align: top">
+                                <a href="@controllers.routes.ClientController.contactDetails.url">@Messages("confirmBusinessDetails.change")</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            @form(action = controllers.routes.CompanyController.submitConfirmationOfBusinessDetails) {
+                <button class="button" type="submit" id="register-confirm">@Messages("confirmBusinessDetails.register")</button>
+            }
+
+        </div>
+    </div>
+}

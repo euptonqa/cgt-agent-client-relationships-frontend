@@ -99,4 +99,15 @@ object MessageLookup {
     val contactName = "Contact name"
     val telephone = "Telephone"
   }
+
+  object ConfirmBusinessDetails {
+    val title = "Review your client's business details"
+    val subtitle = "The Capital Gains Tax account will be created with these details."
+    val name = "Name"
+    val registeredAddress = "Registered address"
+    val correspondenceAddress = "Correspondence address"
+    val contactDetails = "Capital Gains Tax contact details"
+    val change = "Change"
+    val register = "Register and confirm"
+  }
 }

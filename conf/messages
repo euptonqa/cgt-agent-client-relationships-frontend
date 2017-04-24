@@ -76,3 +76,13 @@ contactDetails.title = Your client''s Capital Gains Tax contact details
 contactDetails.text = The person responsible for Capital Gains Tax related queries.
 contactDetails.contactName = Contact name
 contactDetails.telephone = Telephone
+
+## Confirm Business Details messages ##
+confirmBusinessDetails.title = Review your client''s business details
+confirmBusinessDetails.subtitle = The Capital Gains Tax account will be created with these details.
+confirmBusinessDetails.name = Name
+confirmBusinessDetails.registeredAddress = Registered address
+confirmBusinessDetails.correspondenceAddress = Correspondence address
+confirmBusinessDetails.contactDetails = Capital Gains Tax contact details
+confirmBusinessDetails.change = Change
+confirmBusinessDetails.register = Register and confirm

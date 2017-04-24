@@ -16,17 +16,6 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
+class CompanyControllerSpec {
 
-import config.AppConfig
-import play.api.i18n.{I18nSupport, MessagesApi}
-import uk.gov.hmrc.play.frontend.controller.FrontendController
-
-@Singleton
-class ConfirmBusinessDetailsController @Inject()(appConfig: AppConfig,
-                                                 val messagesApi: MessagesApi) extends FrontendController with I18nSupport {
-
-  val confirmBusinessDetails = TODO
-
-  val submitConfirmationOfBusinessDetails = TODO
 }
