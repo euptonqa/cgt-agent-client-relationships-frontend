@@ -22,6 +22,9 @@ POST       /company/contact-details             controllers.ClientController.sub
 GET        /company/business-details            controllers.ClientController.businessDetails
 POST       /company/business-details            controllers.ClientController.submitBusinessDetails
 
+GET         /company/enter-correspondence-address     controllers.ClientController.companyCorrespondenceAddress
+POST        /company/enter-correspondence-address     controllers.ClientController.companyCorrespondenceAddress
+
 GET        /individual/correspondence-details   controllers.ClientController.enterIndividualCorrespondenceDetails
 POST       /individual/correspondence-details   controllers.ClientController.submitIndividualCorrespondenceDetails
 
