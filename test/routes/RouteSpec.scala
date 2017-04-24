@@ -117,4 +117,18 @@ class RouteSpec extends UnitSpec with WithFakeApplication {
       path shouldEqual "/capital-gains-tax/agent/company/business-details"
     }
   }
+
+  "The URL for the ConfirmBusinessDetailsController .confirmBusinessDetails action" should {
+    "be equal to /capital-gains-tax/agent/company/confirm-business-details" in {
+      val path = controllers.routes.ConfirmBusinessDetailsController.confirmBusinessDetails().url
+      path shouldEqual "/capital-gains-tax/agent/company/confirm-business-details"
+    }
+  }
+
+  "The URL for the ConfirmBusinessDetailsController .submitConfirmationOfBusinessDetails action" should {
+    "be equal to /capital-gains-tax/agent/company/confirm-business-details" in {
+      val path = controllers.routes.ConfirmBusinessDetailsController.submitConfirmationOfBusinessDetails().url
+      path shouldEqual "/capital-gains-tax/agent/company/confirm-business-details"
+    }
+  }
 }
