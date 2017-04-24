@@ -21,12 +21,12 @@ import javax.inject.{Inject, Singleton}
 import audit.Logging
 import auth.AuthorisedActions
 import common.Constants.Audit._
-import common.Constants.{ClientType => CTConstants}
+import common.Constants.{BusinessType, ClientType => CTConstants}
+import common.Keys.{KeystoreKeys, GovernmentGateway => relationshipKeys}
 import common.{CountryList, Keys}
-import common.Keys.{GovernmentGateway => relationshipKeys}
 import config.AppConfig
 import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
-import forms.{BusinessTypeForm, ClientTypeForm, ContactDetailsForm, CorrespondenceDetailsForm, BusinessUtrDetailsForm}
+import forms._
 import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -147,7 +147,46 @@ class ClientController @Inject()(appConfig: AppConfig,
   val submitContactDetails: Action[AnyContent] = TODO
 
   val businessDetails: Action[AnyContent] = Action.async { implicit request =>
-  Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))}
+    Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))
+  }
 
   val submitBusinessDetails: Action[AnyContent] = TODO
+
+  //TODO replace actual action with this one when created
+  val submitConfirmationDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
+    implicit user =>
+      implicit request =>
+        //TODO update with actual key when determined
+        val getBusinessType = sessionService.fetchAndGetFormData[BusinessTypeModel]("businessType")
+        //TODO update with actual model and key when created
+        val getExistingDetails = sessionService.fetchAndGetFormData[String]("existingBusinessDetails")
+        //TODO update with actual model and key when created
+        val getNewBusinessDetails = sessionService.fetchAndGetFormData[AddressModel]("newBusinessDetails")
+
+        //TODO update with correspondence address reverse route
+        val successfulRedirect = Future {
+          Redirect("/confirm-correspondence-address-url")
+        }
+
+        def submitDetails(businessType: BusinessTypeModel,
+                          existingDetails: Option[String],
+                          newDetails: Option[AddressModel]): Future[String] = {
+          //TODO replace with actual call to business customer when connector/service is created
+          if (businessType.businessType == BusinessType.nonUK) Future.successful("StubbedId")
+          else Future.successful(existingDetails.get)
+        }
+
+        def saveId(id: String): Future[Unit] = {
+          sessionService.saveFormData[String](KeystoreKeys.safeId, id).map(_ => {})
+        }
+
+        for {
+          businessType <- getBusinessType
+          existingDetails <- getExistingDetails
+          newBusinessDetails <- getNewBusinessDetails
+          result <- submitDetails(businessType.get, existingDetails, newBusinessDetails)
+          _ <- saveId(result)
+          redirect <- successfulRedirect
+        } yield redirect
+  }
 }

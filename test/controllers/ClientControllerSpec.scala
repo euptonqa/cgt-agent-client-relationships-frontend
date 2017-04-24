@@ -23,8 +23,8 @@ import config.WSHttp
 import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRelationshipResponse}
 import data.MessageLookup.{ClientConfirmation => messages}
 import data.{MessageLookup, TestUsers}
-import forms.{BusinessUtrDetailsForm, BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm, ContactDetailsForm}
-import models.{RedirectModel, SubscriptionReference}
+import forms._
+import models.{AddressModel, BusinessTypeModel, RedirectModel, SubscriptionReference}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
@@ -39,6 +39,7 @@ import play.api.test.Helpers._
 import services.{ClientService, RelationshipService}
 import traits.ControllerSpecHelper
 import uk.gov.hmrc.domain.{AgentCode, AgentUserId}
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.AuthContext
 import uk.gov.hmrc.play.frontend.auth.connectors.domain._
 
@@ -68,7 +69,10 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   }
 
   def setupController(valid: Boolean = true, authContext: AuthContext = TestUsers.strongUserAuthContext,
-                      redirect: Option[RedirectModel] = Some(RedirectModel("context/test"))): ClientController = {
+                      redirect: Option[RedirectModel] = Some(RedirectModel("context/test")),
+                      businessType: Option[BusinessTypeModel] = None,
+                      existingBusinessDetails: Option[String] = None,
+                      newBusinessDetails: Option[AddressModel] = None): ClientController = {
     val mockActions = mock[AuthorisedActions]
     if (valid) {
       when(mockActions.authorisedAgentAction(ArgumentMatchers.any())(ArgumentMatchers.any()))
@@ -90,8 +94,20 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
     when(sessionService.fetchAndGetFormData[RedirectModel](ArgumentMatchers.eq(Keys.KeystoreKeys.redirect))(any(), any()))
       .thenReturn(Future.successful(redirect))
 
+    when(sessionService.fetchAndGetFormData[BusinessTypeModel](ArgumentMatchers.eq("businessType"))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(businessType))
+
+    when(sessionService.fetchAndGetFormData[String](ArgumentMatchers.eq("existingBusinessDetails"))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(existingBusinessDetails))
+
+    when(sessionService.fetchAndGetFormData[AddressModel](ArgumentMatchers.eq("newBusinessDetails"))(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(newBusinessDetails))
+
+    when(sessionService.saveFormData(ArgumentMatchers.any(), ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+      .thenReturn(Future.successful(mock[CacheMap]))
+
     new ClientController(config, mockActions, clientService, relationshipService, clientTypeForm,
-        correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList, businessTypeForm, businessDetailsForm, contactDetailsForm)
+      correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList, businessTypeForm, businessDetailsForm, contactDetailsForm)
   }
 
   "Calling .clientType" when {
@@ -330,6 +346,44 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
 
       "redirect to the test-url" in {
         redirectLocation(result).get should include("just-a-test")
+      }
+    }
+  }
+
+  "Calling .submitBusinessDetails" when {
+
+    "a non-matched business is submitted" should {
+      lazy val controller = setupController(businessType = Some(BusinessTypeModel("NUK")),
+        newBusinessDetails = Some(AddressModel("", "", None, None, None, "DE")))
+      lazy val result = controller.submitConfirmationDetails(FakeRequest("POST", ""))
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+
+      "redirect to the confirm correspondence address page" in {
+        redirectLocation(result) shouldBe Some("/confirm-correspondence-address-url")
+      }
+    }
+
+    "an error occurs during submission of a non-matched business" should {
+
+      "return the correct error message" in {
+
+      }
+    }
+
+    "a matched business is submitted" should {
+      lazy val controller = setupController(businessType = Some(BusinessTypeModel("LTD")),
+        existingBusinessDetails = Some("id"))
+      lazy val result = controller.submitConfirmationDetails(FakeRequest("POST", ""))
+
+      "return a status of 303" in {
+        status(result) shouldBe 303
+      }
+
+      "redirect to the confirm correspondence address page" in {
+        redirectLocation(result) shouldBe Some("/confirm-correspondence-address-url")
       }
     }
   }
