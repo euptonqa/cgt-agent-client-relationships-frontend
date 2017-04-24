@@ -99,4 +99,14 @@ object MessageLookup {
     val contactName = "Contact name"
     val telephone = "Telephone"
   }
+
+  object NonUKBusinessDetails {
+    val title = "Enter your client's non-UK business details"
+    val businessName = "Business Name"
+    val address = "Address"
+    val country = "Country"
+    val overseasTaxReferenceQuestion = "Does your client have an overseas Tax Reference?"
+    val overseasTaxReferenceDefinitionQuestion = "What is an overseas Tax Reference?"
+
+  }
 }
