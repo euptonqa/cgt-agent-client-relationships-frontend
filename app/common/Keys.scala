@@ -29,5 +29,11 @@ object Keys {
 
   object KeystoreKeys {
     val redirect = "redirect"
+    val businessType = "businessType"
+  }
+
+  object CompanyTypes {
+    val nonUKCompany = "NUK"
+    val limitedCompany = "LTD"
   }
 }

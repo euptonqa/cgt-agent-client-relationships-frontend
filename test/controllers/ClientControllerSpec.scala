@@ -333,4 +333,58 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       }
     }
   }
+
+  "Calling the .submitBusinessType" when {
+
+    "the user is not authorised" should {
+
+      "have the status 303" in {
+
+      }
+
+      "redirect to ..." in {
+
+      }
+    }
+
+    "the user is authorised" should {
+
+      "if an incorrect company type is supplied" should {
+
+        "return to the page" in {
+
+        }
+
+        "display the error summary" in {
+
+        }
+
+        "display a single error" in {
+
+        }
+      }
+
+      "if a nonUkCompany is selected" should {
+
+        "have the status 303" in {
+
+        }
+
+        "redirect to ..." in {
+
+        }
+      }
+
+      "if a limitedCompany is selected" should {
+
+        "have the status 303" in {
+
+        }
+
+        "redirect to ..." in {
+
+        }
+      }
+    }
+  }
 }

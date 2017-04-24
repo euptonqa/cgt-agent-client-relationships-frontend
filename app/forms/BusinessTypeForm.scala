@@ -18,7 +18,7 @@ package forms
 
 import javax.inject.Inject
 
-import common.Constants.BusinessType._
+import common.Keys.CompanyTypes._
 import models.BusinessTypeModel
 import play.api.data.Form
 import play.api.data.Forms._
@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 class BusinessTypeForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
 
   private val validateForm: String => Boolean = {
-    value => value == limitedCompany || value == nonUK
+    value => value == limitedCompany || value == nonUKCompany
   }
 
   val businessTypeForm: Form[BusinessTypeModel] = Form(

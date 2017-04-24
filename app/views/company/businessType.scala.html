@@ -1,6 +1,7 @@
 @import uk.gov.hmrc.play.views.html.helpers.{form, input}
 @import views.html.partials._
 @import models.BusinessTypeModel
+@import common.Keys
 
 @(appConfig: config.AppConfig, businessTypeForm: Form[BusinessTypeModel])(implicit request: Request[_], messages: Messages)
 
@@ -15,8 +16,8 @@
         @inputRadioGroup(
             businessTypeForm("businessType"),
             Seq(
-                "NUK" -> Messages("businessType.nonUK"),
-                "LTD" -> Messages("businessType.limitedCompany")),
+                Keys.CompanyTypes.nonUKCompany -> Messages("businessType.nonUK"),
+                Keys.CompanyTypes.limitedCompany -> Messages("businessType.limitedCompany")),
             '_legend -> Messages("businessType.title"),
             '_labelAfter -> true,
             '_labelClass -> "block-label",

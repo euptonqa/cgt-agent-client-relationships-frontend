@@ -137,7 +137,23 @@ class ClientController @Inject()(appConfig: AppConfig,
     Future.successful(Ok(views.html.company.businessType(appConfig, businessTypeForm.businessTypeForm)))
   }
 
-  val submitBusinessType: Action[AnyContent] = TODO
+  //TODO update with the correct authorised action
+  val submitBusinessType: Action[AnyContent] = Action.async { implicit request =>
+
+    def successAction(businessTypeModel: BusinessTypeModel): Future[Result] = {
+      sessionService.saveFormData[BusinessTypeModel](Keys.KeystoreKeys.businessType, businessTypeModel)
+      businessTypeModel.businessType match {
+        //TODO update this with Tom's Action for the NR company details
+        case Keys.CompanyTypes.nonUKCompany => Future.successful(Redirect(routes.ClientController.contactDetails()))
+        case Keys.CompanyTypes.limitedCompany => Future.successful(Redirect(routes.ClientController.businessDetails()))
+      }
+    }
+
+    businessTypeForm.businessTypeForm.bindFromRequest fold (
+      errors => Future.successful(Ok(views.html.company.businessType(appConfig, errors))),
+      success => successAction(success)
+    )
+  }
 
   //TODO update with actual controller logic
   val contactDetails: Action[AnyContent] = Action.async { implicit request =>
