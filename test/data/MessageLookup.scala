@@ -97,5 +97,13 @@ object MessageLookup {
 
   object Errors {
     val errorRequired = "This field is required"
+    val errorTelephone = "Enter a valid telephone number"
+  }
+
+  object ContactDetails {
+    val title = "Your client's Capital Gains Tax contact details"
+    val text = "The person responsible for Capital Gains Tax related queries."
+    val contactName = "Contact name"
+    val telephone = "Telephone"
   }
 }

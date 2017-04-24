@@ -54,6 +54,7 @@ businessDetails.utrHelp.three = You can find your UTR reference in the header of
 
 ## Error Messages ##
 errors.required = This field is required
+errors.telephone = Enter a valid telephone number
 
 ## Error Summary Messages ##
 error.summary.heading = This page has errors
@@ -78,3 +79,10 @@ reviewBusinessDetails.registeredAddress = Registered address
 reviewBusinessDetails.correspondenceAddress = Correspondence address
 reviewBusinessDetails.notTheRightBusinessLink = Not the right business?
 reviewBusinessDetails.confirmContinue = Confirm and continue
+
+## Contact Details messages ##
+contactDetails.title = Your client''s Capital Gains Tax contact details
+contactDetails.text = The person responsible for Capital Gains Tax related queries.
+contactDetails.contactName = Contact name
+contactDetails.telephone = Telephone
+
