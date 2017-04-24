@@ -132,6 +132,10 @@ class ClientController @Inject()(appConfig: AppConfig,
         }
   }
 
+  val companyCorrespondenceAddress: Action[AnyContent] = TODO
+
+  val submitCorrespondenceAddress: Action[AnyContent] = TODO
+
   //TODO update with actual controller logic
   val businessType: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(views.html.company.businessType(appConfig, businessTypeForm.businessTypeForm)))
@@ -143,6 +147,8 @@ class ClientController @Inject()(appConfig: AppConfig,
   val contactDetails: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(views.html.company.contactDetails(appConfig, contactDetailsForm.contactDetailsForm)))
   }
+
+
 
   val submitContactDetails: Action[AnyContent] = TODO
 

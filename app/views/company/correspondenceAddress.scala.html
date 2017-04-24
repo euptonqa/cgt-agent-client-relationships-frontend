@@ -1,1 +1,38 @@
-@(appConfig: config.AppConfig)
+@import models.AddressModel
+@import uk.gov.hmrc.play.views.html.helpers.{form, input}
+@import views.html.partials.countryScripts
+@import views.html.partials.countryDropdown
+
+@(appConfig: config.AppConfig, correspondenceDetailsForm: Form[AddressModel], countryList: List[(String, String)])(implicit request: Request[_], messages: Messages)
+
+@userInput(label: String, identifier: String) = {
+    @input(
+        correspondenceDetailsForm(identifier),
+        '_label -> label,
+        '_type -> "text",
+        '_inputClass -> s"shim input grid-1-2",
+        '_labelClass -> "form-group"
+    )
+}
+
+@views.html.main_template(title = Messages("correspondenceDetails.title"), bodyClasses=None, appConfig = appConfig) {
+        <h1 class="heading-xlarge">@Messages("correspondenceDetails.title")</h1>
+
+        @form(action = TODO) {
+            @userInput(Messages("correspondenceDetails.addressLineOne"), "addressLineOne"))
+            @userInput(Messages("correspondenceDetails.addressLineTwo"), "addressLineTwo"))
+            @userInput(Messages("correspondenceDetails.addressLineOne"), "addressLineOne"))
+            @userInput(Messages("correspondenceDetails.addressLineThree"), "addressLineThree"))
+            @userInput(Messages("correspondenceDetails.addressLineFour"), "addressLineFour")
+            @countryDropdown(correspondenceDetailsForm("country"),
+                elementOptions = countryList,
+                displayEmptyValue = true,
+                '_id -> "country",
+                '_emptyValueText -> Messages("correspondenceDetails.country.select"),
+                '_labelClass -> "form-label",
+                '_label -> Html(Messages("correspondenceDetails.country"))
+            @userInput(Messages("correspondenceDetails.postcode"), "postcode"))
+
+        <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
+    }
+}

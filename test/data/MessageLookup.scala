@@ -41,6 +41,8 @@ object MessageLookup {
     val building = "Building"
     val street = "street"
     val town = "Town or city"
+    val addressLine3 = "Address line 3 (optional)"
+    val addressLine4 = "Address line 4 (optional)"
     val county = "County"
     val country = "Country"
     val postcode = "Postcode"
