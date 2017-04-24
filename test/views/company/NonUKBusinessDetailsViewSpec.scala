@@ -17,17 +17,25 @@
 package views.company
 
 import data.MessageLookup._
+import org.jsoup.Jsoup
 import traits.ViewSpecHelper
+import forms.NonUKBusinessDetailsForm
+import views.html.company.nonUKBusinessDetails
 
 class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
 
-//  lazy val form: NonUKBusinessDetailsForm = app.injector.instanceOf[NonUKBusinessDetailsForm]
+  lazy val form: NonUKBusinessDetailsForm = app.injector.instanceOf[NonUKBusinessDetailsForm]
 
   "The NonUKBusinessDetailsView" when {
 
     "no errors are displayed" should {
 
-      s"Have a title of ${B}"
+      lazy val view = nonUKBusinessDetails(config, form.nonUKBusinessDetailsForm)
+      lazy val doc = Jsoup.parse(view.body)
+
+      s"Have a title of ${NonUKBusinessDetails.title}" in {
+
+      }
 
     }
 

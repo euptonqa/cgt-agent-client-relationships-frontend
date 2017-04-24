@@ -16,6 +16,8 @@
 
 package common
 
+import models.OverseasTaxModel
+
 object FormValidation {
 
   val nonEmptyCheck: String => Boolean = input => !input.isEmpty
@@ -27,6 +29,21 @@ object FormValidation {
   val optionalToText: Option[String] => String = {
     case Some(data) => data
     case _ => ""
+  }
+
+  val optionalToModel: Option[OverseasTaxModel] => OverseasTaxModel = {
+    case Some(data) => data
+    case _ => OverseasTaxModel("", "", "")
+  }
+
+  val modelToOptional: OverseasTaxModel => Option[OverseasTaxModel] = input =>
+    Some(input)
+
+  val yesNoCheck: String => Boolean = {
+    case "Yes" => true
+    case "No" => true
+    case "" => true
+    case _ => false
   }
 
   def postcodeCheck(postcode: Option[String], countryCode: String): Boolean = {

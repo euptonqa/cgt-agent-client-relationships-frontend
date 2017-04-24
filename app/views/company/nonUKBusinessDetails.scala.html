@@ -1,0 +1,61 @@
+@import uk.gov.hmrc.play.views.html.helpers.form
+@import uk.gov.hmrc.play.views.html.helpers.input
+@import views.html.partials._
+@import models.BusinessDetailsModel
+@import forms.NonUKBusinessDetailsForm
+
+@(appConfig: config.AppConfig, nonUKBusinessDetailsForm: Form[BusinessDetailsModel])(implicit request: Request[_], messages: Messages)
+
+@userInput(label: String, identifier: String, additionalClass: String="") = {
+    @input(
+        nonUKBusinessDetailsForm(identifier),
+        '_label -> label,
+        '_type -> "text",
+        '_inputClass -> s"shim $additionalClass",
+        '_labelClass -> "form-group"
+    )
+}
+
+@hiddenLabelInput(label: String, identifier: String, additionalClass: String="") = {
+    @input(
+        nonUKBusinessDetailsForm(identifier),
+        '_label -> label,
+        '_labelTextClass -> "visuallyhidden",
+        '_type -> "text",
+        '_inputClass -> s"shim $additionalClass",
+        '_labelClass -> "form-group"
+    )
+}
+
+@additionalContent = {
+    @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
+    @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
+    @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
+}
+
+@views.html.main_template(title = Messages("nonUKBusinessDetails.title"), bodyClasses = None, appConfig = appConfig) {
+
+    @errorSummary(nonUKBusinessDetailsForm, "non-uk-business-details", "nonUKBusinessDetails")
+
+    <h1 class="heading-xlarge">@Messages("nonUKBusinessDetails.title")</h1>
+
+    @form(action = controllers.routes.ClientController.submitBusinessDetails()) {
+            @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
+            @userInput(Messages("nonUKBusinessDetails.address"), "addressLineOne")
+            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressTwo"), "addressLineTwo")
+            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressThree"), "addressLineThree")
+            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressFour"), "addressLineFour")
+            @userInput(Messages("nonUKBusinessDetails.country"), "country")
+
+            @*<p></p>*@
+
+            @*@hiddenYesNoRadioNoError(*@
+                @*nonUKBusinessDetailsForm,*@
+                @*"hasOverseasTaxReference",*@
+                @*Messages("nonUKBusinessDetails.nonUKBusinessDetails.overseasTaxReferenceQuestion"),*@
+                @*additionalContent*@
+            @*)*@
+
+        <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
+    }
+}

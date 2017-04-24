@@ -23,7 +23,7 @@ import config.WSHttp
 import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRelationshipResponse}
 import data.MessageLookup.{ClientConfirmation => messages}
 import data.{MessageLookup, TestUsers}
-import forms.{BusinessUtrDetailsForm, BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm, ContactDetailsForm}
+import forms._
 import models.{RedirectModel, SubscriptionReference}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -52,6 +52,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   lazy val businessTypeForm: BusinessTypeForm = app.injector.instanceOf[BusinessTypeForm]
   lazy val businessDetailsForm: BusinessUtrDetailsForm = app.injector.instanceOf[BusinessUtrDetailsForm]
   lazy val contactDetailsForm: ContactDetailsForm = app.injector.instanceOf[ContactDetailsForm]
+  lazy val nonUKBusinessDetailsForm: NonUKBusinessDetailsForm = app.injector.instanceOf[NonUKBusinessDetailsForm]
 
   lazy val clientService: ClientService = mock[ClientService]
   lazy val relationshipService: RelationshipService = mock[RelationshipService]
@@ -91,7 +92,8 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       .thenReturn(Future.successful(redirect))
 
     new ClientController(config, mockActions, clientService, relationshipService, clientTypeForm,
-        correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList, businessTypeForm, businessDetailsForm, contactDetailsForm)
+        correspondenceDetailsForm, messagesApi, auditLogger, sessionService, countryList, businessTypeForm,
+        businessDetailsForm, nonUKBusinessDetailsForm, contactDetailsForm)
   }
 
   "Calling .clientType" when {

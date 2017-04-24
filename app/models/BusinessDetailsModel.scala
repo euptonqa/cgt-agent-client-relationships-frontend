@@ -20,6 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 case class BusinessDetailsModel(businessName: String,
                                 addressModel: AddressModel,
+                                overseasTaxReference: String,
                                 overseasTaxModel: Option[OverseasTaxModel])
 
 object BusinessDetailsModel {

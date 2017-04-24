@@ -107,6 +107,12 @@ object MessageLookup {
     val country = "Country"
     val overseasTaxReferenceQuestion = "Does your client have an overseas Tax Reference?"
     val overseasTaxReferenceDefinitionQuestion = "What is an overseas Tax Reference?"
+    val overseasTaxReferenceDefinition: String = "Enter any overseas reference related to the property" +
+      "(for example the company registration number or tax reference from an overseas country)."
+    val taxReference = "Tax Reference"
+    val countryOfIssue = "Country of issue"
+    val institutionOfIssue = "Institution of issue"
+    val institutionOfIssueHelpText = "For example, an overseas tax department"
 
   }
 }

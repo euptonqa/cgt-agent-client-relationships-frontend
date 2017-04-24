@@ -1,6 +1,8 @@
 ## Common Messages ##
 common.continue = Continue
 common.back = Back
+common.yes = Yes
+common.no = No
 
 ## Error Summary Messages ##
 error.summary.heading = This page has errors
@@ -76,3 +78,16 @@ contactDetails.title = Your client''s Capital Gains Tax contact details
 contactDetails.text = The person responsible for Capital Gains Tax related queries.
 contactDetails.contactName = Contact name
 contactDetails.telephone = Telephone
+
+##Non UK Business Details messages ##
+nonUKBusinessDetails.title = Enter your client''s non-UK business details
+nonUKBusinessDetails.businessName = Business Name
+nonUKBusinessDetails.address = Address
+nonUKBusinessDetails.country = Country
+nonUKBusinessDetails.overseasTaxReferenceQuestion = Does your client have an overseas Tax Reference?
+nonUKBusinessDetails.overseasTaxReferenceDefinitionQuestion = What is an overseas Tax Reference?
+nonUKBusinessDetails.overseasTaxReferenceDefinition = Enter any overseas reference related to the property for example the company registration number or tax reference from an overseas country).
+nonUKBusinessDetails.taxReference = Tax Reference
+nonUKBusinessDetails.countryOfIssue = Country of issue
+nonUKBusinessDetails.institutionOfIssue = Institution of issue
+nonUKBusinessDetails.institutionOfIssueHelpText = For example, an overseas tax department
