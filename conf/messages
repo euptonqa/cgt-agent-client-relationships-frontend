@@ -55,9 +55,7 @@ businessDetails.utrHelp.three = You can find your UTR reference in the header of
 ## Error Messages ##
 errors.required = This field is required
 errors.telephone = Enter a valid telephone number
-
-## Error Summary Messages ##
-error.summary.heading = This page has errors
+errors.postcode = Enter a postcode for a UK address
 
 ## Feedback ##
 feedback.send = Send your feedback

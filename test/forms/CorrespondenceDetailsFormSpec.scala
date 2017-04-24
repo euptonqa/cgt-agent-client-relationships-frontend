@@ -152,5 +152,23 @@ class CorrespondenceDetailsFormSpec extends UnitSpec with OneAppPerSuite{
         result.errors.head.message shouldBe Errors.errorRequired
       }
     }
+
+    "provided with an invalid map with no postcode for a UK country" should {
+      val map = Map("firstName" -> "John", "lastName" -> "Smith", "addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
+        "townOrCity" -> "Dark City", "county" -> "Darkshire", "postcode" -> "", "country" -> "GB")
+      lazy val result = form.correspondenceDetailsForm.bind(map)
+
+      "return a valid model" in {
+        result.value.isDefined shouldBe false
+      }
+
+      "contain one error" in {
+        result.errors.size shouldBe 1
+      }
+
+      "contain an error message for a required field" in {
+        result.errors.head.message shouldBe Errors.errorPostcode
+      }
+    }
   }
 }

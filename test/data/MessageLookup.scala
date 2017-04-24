@@ -90,6 +90,7 @@ object MessageLookup {
   object Errors {
     val errorRequired = "This field is required"
     val errorTelephone = "Enter a valid telephone number"
+    val errorPostcode = "Enter a postcode for a UK address"
   }
 
   object ContactDetails {
