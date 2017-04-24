@@ -333,4 +333,48 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
       }
     }
   }
+
+  "Calling .businessDetails" when {
+
+    "an authorised user makes the request" should {
+
+      "render the BusinessDetails view" in {
+
+      }
+
+    }
+
+    "an unauthorised user makes the request" should {
+
+      "have a status of 303" in {
+
+      }
+
+      "redirect to ..." in {
+
+      }
+    }
+  }
+
+  "Calling .submitBusinessDetails" when {
+
+    "an authorised user makes the request" should {
+
+      "if a valid Business" in {
+
+      }
+
+    }
+
+    "an unauthorised user makes the request" should {
+
+      "have a status of 303" in {
+
+      }
+
+      "redirect to ..." in {
+
+      }
+    }
+  }
 }

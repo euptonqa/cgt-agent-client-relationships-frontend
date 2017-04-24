@@ -1,32 +1,37 @@
 # microservice specific routes
 
 #Assets routes
-GET        /assets/*file                        controllers.Assets.at(path="/public", file)
+GET        /assets/*file                                controllers.Assets.at(path="/public", file)
 
-GET        /hello-world                         controllers.HelloWorld.helloWorld
+GET        /hello-world                                 controllers.HelloWorld.helloWorld
 
-GET        /client                              controllers.AgentController.showClientList(redirect: String)
-POST       /client                              controllers.AgentController.selectClient
+GET        /client                                      controllers.AgentController.showClientList(redirect: String)
+POST       /client                                      controllers.AgentController.selectClient
 
-GET        /declaration                         controllers.AgentController.makeDeclaration
+GET        /declaration                                 controllers.AgentController.makeDeclaration
 
-GET        /client-type                         controllers.ClientController.clientType
-POST       /client-type                         controllers.ClientController.submitClientType
+GET        /client-type                                 controllers.ClientController.clientType
+POST       /client-type                                 controllers.ClientController.submitClientType
 
-GET        /company/business-type               controllers.ClientController.businessType
-POST       /company/business-type               controllers.ClientController.submitBusinessType
+GET        /company/business-type                       controllers.ClientController.businessType
+POST       /company/business-type                       controllers.ClientController.submitBusinessType
 
-GET        /company/contact-details             controllers.ClientController.contactDetails
-POST       /company/contact-details             controllers.ClientController.submitContactDetails
+GET        /company/contact-details                     controllers.ClientController.contactDetails
+POST       /company/contact-details                     controllers.ClientController.submitContactDetails
 
-GET        /company/business-details            controllers.ClientController.businessDetails
-POST       /company/business-details            controllers.ClientController.submitBusinessDetails
+GET        /company/business-details                    controllers.ClientController.businessDetails
+POST       /company/business-details                    controllers.ClientController.submitBusinessDetails
 
-GET        /individual/correspondence-details   controllers.ClientController.enterIndividualCorrespondenceDetails
-POST       /individual/correspondence-details   controllers.ClientController.submitIndividualCorrespondenceDetails
+POST       /company/non-uk-business-details             controllers.ClientController.submitNonUKBusinessDetails
 
-GET        /confirmation                        controllers.ClientController.confirmation(cgtReference: String)
+GET        /company/confirm-organisation-details        controllers.ClientController.confirmOrganisationClientDetails
+POST       /company/confirm-organisation-details        controllers.ClientController.submitConfirmOrganisationClientDetails
 
-GET        /feedback                            controllers.FeedbackController.show
-POST       /feedback                            controllers.FeedbackController.submit
-GET        /thankyou                            controllers.FeedbackController.thankyou
+GET        /individual/correspondence-details           controllers.ClientController.enterIndividualCorrespondenceDetails
+POST       /individual/correspondence-details           controllers.ClientController.submitIndividualCorrespondenceDetails
+
+GET        /confirmation                                controllers.ClientController.confirmation(cgtReference: String)
+
+GET        /feedback                                    controllers.FeedbackController.show
+POST       /feedback                                    controllers.FeedbackController.submit
+GET        /thankyou                                    controllers.FeedbackController.thankyou

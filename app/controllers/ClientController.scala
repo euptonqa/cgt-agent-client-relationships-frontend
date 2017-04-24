@@ -146,8 +146,26 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   val submitContactDetails: Action[AnyContent] = TODO
 
+  //TODO update this with authorised actions and chat to Mark if we need pre-population
   val businessDetails: Action[AnyContent] = Action.async { implicit request =>
-  Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))}
+    Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))}
 
   val submitBusinessDetails: Action[AnyContent] = TODO
+
+  //TODO update this to an authorised action
+  val submitNonUKBusinessDetails: Action[AnyContent] = Action.async { implicit request =>
+
+    //TODO Update this to the correct view and form.
+    businessUtrDetailsForm.businessUtrDetailsForm.bindFromRequest fold (
+      errors => Future.successful(BadRequest(views.html.company.businessDetails(appConfig, errors))),
+      success => {
+        sessionService.saveFormData[BusinessUtrDetailsModel](Keys.KeystoreKeys.businessUTRDetails, success)
+        Future.successful(Redirect(routes.ClientController.confirmOrganisationClientDetails()))
+      }
+    )
+  }
+
+  val confirmOrganisationClientDetails: Action[AnyContent] = TODO
+
+  val submitConfirmOrganisationClientDetails: Action[AnyContent] = TODO
 }

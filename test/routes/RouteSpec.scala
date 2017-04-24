@@ -76,6 +76,13 @@ class RouteSpec extends UnitSpec with WithFakeApplication {
     }
   }
 
+  "The URL for the ClientController .businessType action" should {
+    "be equal to /capital-gains-tax/agent/company/business-type" in {
+      val path = controllers.routes.ClientController.businessType().url
+      path shouldEqual "/capital-gains-tax/agent/company/business-type"
+    }
+  }
+
   "The URL for the ClientController .submitBusinessType action" should {
     "be equal to /capital-gains-tax/agent/company/business-type" in {
       val path = controllers.routes.ClientController.submitBusinessType().url
@@ -83,10 +90,10 @@ class RouteSpec extends UnitSpec with WithFakeApplication {
     }
   }
 
-  "The URL for the ClientController .businessType action" should {
-    "be equal to /capital-gains-tax/agent/company/business-type" in {
-      val path = controllers.routes.ClientController.businessType().url
-      path shouldEqual "/capital-gains-tax/agent/company/business-type"
+  "The URL for the ClientController .submitNonUKBusinessDetails action" should {
+    "be equal to /capital-gains-tax/agent/company/non-uk-business-details" in {
+      val path = controllers.routes.ClientController.submitNonUKBusinessDetails().url
+      path shouldEqual "/capital-gains-tax/agent/company/non-uk-business-details"
     }
   }
 
@@ -101,6 +108,20 @@ class RouteSpec extends UnitSpec with WithFakeApplication {
     "be equal to /capital-gains-tax/agent/company/contact-details" in {
       val path = controllers.routes.ClientController.submitContactDetails().url
       path shouldEqual "/capital-gains-tax/agent/company/contact-details"
+    }
+  }
+
+  "The URL for the ClientController .confirmOrganisationClientDetails action" should {
+    "be equal to /capital-gains-tax/agent/company/confirm-organisation-details" in {
+      val path = controllers.routes.ClientController.confirmOrganisationClientDetails().url
+      path shouldEqual "/capital-gains-tax/agent/company/confirm-organisation-details"
+    }
+  }
+
+  "The URL for the ClientController .submitConfirmOrganisationClientDetails action" should {
+    "be equal to /capital-gains-tax/agent/company/confirm-organisation-details" in {
+      val path = controllers.routes.ClientController.submitConfirmOrganisationClientDetails().url
+      path shouldEqual "/capital-gains-tax/agent/company/confirm-organisation-details"
     }
   }
 
