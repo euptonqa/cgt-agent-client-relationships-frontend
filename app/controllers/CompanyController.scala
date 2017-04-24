@@ -25,6 +25,7 @@ import connectors.KeystoreConnector
 import forms.CorrespondenceAddressForm
 import models.AddressModel
 import play.api.data.Form
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 
@@ -34,7 +35,8 @@ class CompanyController @Inject()(appConfig: AppConfig,
                                   authorisedActions: AuthorisedActions,
                                   correspondenceAddressForm: CorrespondenceAddressForm,
                                   countryList: CountryList,
-                                  sessionService: KeystoreConnector) extends FrontendController {
+                                  val messagesApi: MessagesApi,
+                                  sessionService: KeystoreConnector) extends FrontendController with I18nSupport {
 
   val enterCorrespondenceAddress: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>

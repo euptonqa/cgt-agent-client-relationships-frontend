@@ -19,10 +19,9 @@
         <h1 class="heading-xlarge">@Messages("correspondenceDetails.title")</h1>
 
         @form(action = controllers.routes.CompanyController.submitCorrespondenceAddress) {
-            @userInput(Messages("correspondenceDetails.addressLineOne"), "addressLineOne"))
-            @userInput(Messages("correspondenceDetails.addressLineTwo"), "addressLineTwo"))
-            @userInput(Messages("correspondenceDetails.addressLineOne"), "addressLineOne"))
-            @userInput(Messages("correspondenceDetails.addressLineThree"), "addressLineThree"))
+            @userInput(Messages("correspondenceDetails.addressLineOne"), "addressLineOne")
+            @userInput(Messages("correspondenceDetails.addressLineTwo"), "addressLineTwo")
+            @userInput(Messages("correspondenceDetails.addressLineThree"), "addressLineThree")
             @userInput(Messages("correspondenceDetails.addressLineFour"), "addressLineFour")
             @countryDropdown(correspondenceDetailsForm("country"),
                 elementOptions = countryList,
@@ -30,8 +29,8 @@
                 '_id -> "country",
                 '_emptyValueText -> Messages("correspondenceDetails.country.select"),
                 '_labelClass -> "form-label",
-                '_label -> Html(Messages("correspondenceDetails.country"))
-            @userInput(Messages("correspondenceDetails.postcode"), "postcode"))
+                '_label -> Html(Messages("correspondenceDetails.country")))
+            @userInput(Messages("correspondenceDetails.postcode"), "postcode")
 
         <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
     }
