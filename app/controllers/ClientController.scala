@@ -50,7 +50,7 @@ class ClientController @Inject()(appConfig: AppConfig,
                                  sessionService: KeystoreConnector,
                                  countryList: CountryList,
                                  businessTypeForm: BusinessTypeForm,
-                                 businessDetailsForm: BusinessUtrDetailsForm,
+                                 businessUtrDetailsForm: BusinessUtrDetailsForm,
                                  contactDetailsForm: ContactDetailsForm) extends FrontendController with I18nSupport {
 
   lazy val form: Form[ClientTypeModel] = clientTypeForm.clientTypeForm
@@ -147,7 +147,7 @@ class ClientController @Inject()(appConfig: AppConfig,
   val submitContactDetails: Action[AnyContent] = TODO
 
   val businessDetails: Action[AnyContent] = Action.async { implicit request =>
-  Future.successful(Ok(views.html.company.businessDetails(appConfig, businessDetailsForm.businessUtrDetailsForm)))}
+  Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))}
 
   val submitBusinessDetails: Action[AnyContent] = TODO
 }
