@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object Keys {
-  object EnrolmentKeys {
-    val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
-  }
+import play.api.libs.json.Json
 
-  object GovernmentGateway {
-    val clientServiceNameIndividual = "HMRC-CGT-IND"
-    val clientServiceNameOrganisation = "HMRC-CGT-ORG"
-    val assignedTo = "ALL"
-  }
+case class CompanyAddressModel(
+                                addressLine1: Option[String],
+                                addressLine2: Option[String],
+                                addressLine3: Option[String],
+                                addressLine4: Option[String],
+                                postCode: Option[String],
+                                country: Option[String]
+                              )
 
-  object KeystoreKeys {
-    val redirect = "redirect"
-    val callbackUrl = "callbackUrl"
-    val reviewClientDetailsKey = "reviewClientDetailsKey"
-  }
+object CompanyAddressModel {
+  implicit val formats = Json.format[CompanyAddressModel]
 }

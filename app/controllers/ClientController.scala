@@ -136,4 +136,59 @@ class ClientController @Inject()(appConfig: AppConfig,
   }
 
   val submitBusinessType: Action[AnyContent] = TODO
+
+
+  val reviewClientsDetails: Action[AnyContent] = TODO
+//    authorisedActions.authorisedAgentAction() { implicit user =>
+//      implicit request => {
+//
+//        for {
+//          registrationDetails <- sessionService.fetchAndGetBusinessData()
+//          existingAnswer <- sessionService.fetchAndGetFormData[YesNoModel](KeystoreKeys.reviewClientDetailsKey)
+//        } yield {
+//          (existingAnswer, registrationDetails) match {
+//
+//            case (_, None) =>
+//              Logger.warn(businessDataNotFound)
+//              throw new Exception(businessDataNotFound)
+//
+//            case (None, Some(details)) =>
+//              val emptyForm = new YesNoForm(messagesApi).yesNoForm
+//              Ok(views.html.reviewClientsDetails(appConfig, details, ReviewDetails))
+//
+//            case (Some(data), Some(details)) =>
+//              val populatedForm = new YesNoForm(messagesApi).yesNoForm.fill(data)
+//              Ok(views.html.reviewClientsDetails(appConfig, details, ""))
+//          }
+//        }
+//      }
+//    }
+
+  val submitReviewClientsDetails: Action[AnyContent] = TODO
+//    authorisedActions.authorisedAgentAction() { implicit user =>
+//      implicit request => {
+//
+//        def processRequest(address: CompanyAddressModel): Future[Result] = form.validate(
+//          errors => Future.successful(BadRequest(views.html.reviewClientsDetails(appConfig, errors, address))),
+//          success => {
+//            for {
+//              _ <- sessionService.saveFormData(KeystoreKeys.reviewClientsDetails, success)
+//              _ <- if (success.response) sessionService.saveFormData(KeystoreKeys.correspondenceAddressKey, address) else Future(false)
+//            } yield {
+//              if (success.response) Redirect(controllers.routes.ClientController.companyCorrespondenceAddress().url)
+//              else Redirect(controllers.routes.reviewClientsDetails.enterCorrespondenceAddress().url)
+//            }
+//          }
+//        )
+//
+//        sessionService.fetchAndGetBusinessData().flatMap {
+//          case None =>
+//            Logger.warn(businessDataNotFound)
+//            Future.failed(new Exception(businessDataNotFound))
+//
+//          case Some(details) => processRequest(details)
+//        }
+//      }
+//    }
+
 }

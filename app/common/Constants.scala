@@ -41,4 +41,8 @@ object Constants {
     val nonUK = "NUK"
     val limitedCompany = "LTD"
   }
+
+  object ErrorMessages {
+    val businessDataNotFound: String = "Failed to retrieve registration details from BusinessCustomer keystore"
+  }
 }

@@ -19,6 +19,9 @@ POST       /business-type                       controllers.ClientController.sub
 GET        /individual/correspondence-details   controllers.ClientController.enterIndividualCorrespondenceDetails
 POST       /individual/correspondence-details   controllers.ClientController.submitIndividualCorrespondenceDetails
 
+GET        /company/review-client-details       controllers.ClientController.reviewClientsDetails
+POST       /company/review-client-details       controllers.ClientController.submitReviewClientsDetails
+
 GET        /confirmation                        controllers.ClientController.confirmation(cgtReference: String)
 
 GET        /feedback                            controllers.FeedbackController.show

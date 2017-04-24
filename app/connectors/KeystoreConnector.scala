@@ -19,6 +19,7 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.AgentClientSessionCache
+import models.CompanyAddressModel
 import play.api.libs.json.Format
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -28,6 +29,7 @@ import scala.concurrent.Future
 
 @Singleton
 class KeystoreConnector @Inject()(sessionCache: AgentClientSessionCache) extends ServicesConfig {
+  val sourceId: String = "BC_Business_Details"
 
   implicit val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders("Accept" -> "applications/vnd.hmrc.1.0+json")
 
@@ -37,5 +39,9 @@ class KeystoreConnector @Inject()(sessionCache: AgentClientSessionCache) extends
 
   def fetchAndGetFormData[T](key: String)(implicit hc: HeaderCarrier, formats: Format[T]): Future[Option[T]] = {
     sessionCache.fetchAndGetEntry(key)
+  }
+
+  def fetchAndGetBusinessData()(implicit hc: HeaderCarrier): Future[Option[CompanyAddressModel]] = {
+    sessionCache.fetchAndGetEntry[CompanyAddressModel](sourceId)
   }
 }

@@ -74,6 +74,14 @@ object MessageLookup {
     val guidance = "{COPY TO BE CONFIRMED}"
   }
 
+  object ReviewClientsDetails {
+    val title = "Confirm your details"
+    val registeredAddress = "Registered address"
+    val correspondenceAddress = "Correspondence address"
+    val notTheRightBusinessLink = "Not the right business?"
+    val confirmContinue = "Confirm and continue"
+  }
+
   object Errors {
     val errorRequired = "This field is required"
   }

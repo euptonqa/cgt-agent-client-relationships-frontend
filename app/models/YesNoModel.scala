@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object Keys {
-  object EnrolmentKeys {
-    val agentEnrolmentKey: String = "HMRC-AGENT-AGENT"
-  }
+import play.api.libs.json.{Json, OFormat}
 
-  object GovernmentGateway {
-    val clientServiceNameIndividual = "HMRC-CGT-IND"
-    val clientServiceNameOrganisation = "HMRC-CGT-ORG"
-    val assignedTo = "ALL"
-  }
+case class YesNoModel (response: Boolean)
 
-  object KeystoreKeys {
-    val redirect = "redirect"
-    val callbackUrl = "callbackUrl"
-    val reviewClientDetailsKey = "reviewClientDetailsKey"
-  }
+object YesNoModel {
+  implicit val formats: OFormat[YesNoModel] = Json.format[YesNoModel]
 }

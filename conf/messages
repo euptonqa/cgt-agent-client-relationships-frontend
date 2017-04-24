@@ -59,3 +59,10 @@ clientConfirmation.guidance = '{COPY TO BE CONFIRMED'}
 ## Default Error Messages ##
 errors.badRequest = Bad request
 errors.checkAddress = Please check that you have entered the correct web address.
+
+##Confirm BusinessDetails Page ##
+reviewBusinessDetails.title = Confirm your details
+reviewBusinessDetails.registeredAddress = Registered address
+reviewBusinessDetails.correspondenceAddress = Correspondence address
+reviewBusinessDetails.notTheRightBusinessLink = Not the right business?
+reviewBusinessDetails.confirmContinue = Confirm and continue

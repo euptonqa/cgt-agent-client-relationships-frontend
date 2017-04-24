@@ -1,0 +1,72 @@
+@import models._
+@import uk.gov.hmrc.play.views.html.helpers.form
+
+@(appConfig: config.AppConfig, registeredAddress: CompanyAddressModel, businessName: String)(implicit request: Request [_], messages: Messages)
+
+@insertAddress(addressTypeName: String, companyAddressModel: CompanyAddressModel, redirect: Option[String]) = {
+
+<tr>
+    <th style="vertical-align: top">@addressTypeName</th>
+    <td>
+        <ul>
+            @if(companyAddressModel.addressLine1.isDefined){
+            <li>@companyAddressModel.addressLine1.get</li>
+            }
+            @if(companyAddressModel.addressLine2.isDefined){
+            <li>@companyAddressModel.addressLine2.get</li>
+            }
+            @if(companyAddressModel.addressLine3.isDefined){
+            <li>@companyAddressModel.addressLine3.get</li>
+            }
+            @if(companyAddressModel.addressLine4.isDefined){
+            <li>@companyAddressModel.addressLine4.get</li>
+            }
+            @if(companyAddressModel.postCode.isDefined){
+            <li>@companyAddressModel.postCode.get</li>
+            }
+            @if(companyAddressModel.country.isDefined){
+            <li>@companyAddressModel.country.get</li>
+            }
+        </ul>
+    </td>
+    <td style="vertical-align: top">
+        @if(redirect.isDefined){
+        <a href='@redirect.get'>@Messages("common.change")</a>
+        }
+    </td>
+</tr>
+}
+
+@views.html.main_template(title = Messages("reviewBusinessDetails.title"), bodyClasses = None, appConfig = appConfig) {
+
+<div class="grid-row">
+    <div class="colum-two-thirds">
+
+        <h1 class="heading-xlarge">@Messages("reviewBusinessDetails.title")</h1>
+
+        <div class="form-group">
+            <h2 class="bold-medium">@businessName</h2>
+
+                <li> <h2 class="heading-small">@Messages("reviewBusinessDetails.registeredAddress")</h2></li>>
+            <ul>
+            @insertAddress(Messages("reviewBusinessDetails.registeredAddress"),
+                    registeredAddress, None)
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <a href="www.bbc.co.uk">@Messages("reviewBusinessDetails.notTheRightBusinessLink")</a>
+        </div>
+
+
+                <div class="form-group">
+                    @form(action = controllers.routes.ClientController.submitReviewClientsDetails) {
+                    <button class="button" type="submit" id="confirmContinue">
+                        @Messages("reviewBusinessDetails.confirmContinue")
+                    </button>
+                    }
+                </div>
+    </div>
+</div>
+
+}
