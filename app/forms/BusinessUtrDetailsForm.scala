@@ -19,18 +19,18 @@ package forms
 import javax.inject.Inject
 
 import common.FormValidation
-import models.BusinessUTRDetailsModel
+import models.BusinessUtrDetailsModel
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 
-class BusinessDetailsForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
-  val businessDetailsForm: Form[BusinessUTRDetailsModel] = Form(
+class BusinessUtrDetailsForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
+  val businessUtrDetailsForm: Form[BusinessUtrDetailsModel] = Form(
     mapping(
       "registeredName" -> text
         .verifying(Messages("businessDetails.error"), FormValidation.nonEmptyCheck),
       "utr" -> text
         .verifying(Messages("businessDetails.error"), FormValidation.nonEmptyCheck)
-    )(BusinessUTRDetailsModel.apply)(BusinessUTRDetailsModel.unapply)
+    )(BusinessUtrDetailsModel.apply)(BusinessUtrDetailsModel.unapply)
   )
 }

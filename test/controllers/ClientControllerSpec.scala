@@ -23,7 +23,7 @@ import config.WSHttp
 import connectors.{FailedRelationshipResponse, KeystoreConnector, SuccessfulRelationshipResponse}
 import data.MessageLookup.{ClientConfirmation => messages}
 import data.{MessageLookup, TestUsers}
-import forms.{BusinessDetailsForm, BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm, ContactDetailsForm}
+import forms.{BusinessUtrDetailsForm, BusinessTypeForm, ClientTypeForm, CorrespondenceDetailsForm, ContactDetailsForm}
 import models.{RedirectModel, SubscriptionReference}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -50,7 +50,7 @@ class ClientControllerSpec extends ControllerSpecHelper with BeforeAndAfter {
   lazy val clientTypeForm: ClientTypeForm = app.injector.instanceOf[ClientTypeForm]
   lazy val correspondenceDetailsForm: CorrespondenceDetailsForm = app.injector.instanceOf[CorrespondenceDetailsForm]
   lazy val businessTypeForm: BusinessTypeForm = app.injector.instanceOf[BusinessTypeForm]
-  lazy val businessDetailsForm: BusinessDetailsForm = app.injector.instanceOf[BusinessDetailsForm]
+  lazy val businessDetailsForm: BusinessUtrDetailsForm = app.injector.instanceOf[BusinessUtrDetailsForm]
   lazy val contactDetailsForm: ContactDetailsForm = app.injector.instanceOf[ContactDetailsForm]
 
   lazy val clientService: ClientService = mock[ClientService]
