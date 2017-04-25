@@ -29,5 +29,7 @@ object Keys {
 
   object KeystoreKeys {
     val redirect = "redirect"
+    val businessMatchingDetails = "businessMatchingDetails"
+    val businessUtrDetails = "businessUtrDetails"
   }
 }

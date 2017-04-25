@@ -22,16 +22,17 @@ import audit.Logging
 import auth.AuthorisedActions
 import common.Constants.Audit._
 import common.Constants.{ClientType => CTConstants}
+import common.Keys.{KeystoreKeys, GovernmentGateway => relationshipKeys}
 import common.{CountryList, Keys}
-import common.Keys.{GovernmentGateway => relationshipKeys}
 import config.AppConfig
 import connectors.{KeystoreConnector, SuccessfulRelationshipResponse}
-import forms.{BusinessTypeForm, ClientTypeForm, ContactDetailsForm, CorrespondenceDetailsForm, BusinessUtrDetailsForm}
+import forms._
 import models._
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Result}
 import services.{ClientService, RelationshipService}
+import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.frontend.auth.connectors.domain.AgentAccount
 import uk.gov.hmrc.play.frontend.controller.FrontendController
 import views.html.{clientType => clientTypeView}
@@ -146,8 +147,17 @@ class ClientController @Inject()(appConfig: AppConfig,
 
   val submitContactDetails: Action[AnyContent] = TODO
 
-  val businessDetails: Action[AnyContent] = Action.async { implicit request =>
-  Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))}
+  val businessUTRDetails: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))
+  }
 
-  val submitBusinessDetails: Action[AnyContent] = TODO
+  val submitBusinessUTRDetails: Action[AnyContent] = authorisedActions.authorisedAgentAction() { implicit user =>
+    implicit request =>
+      def getMatchingDetails(gatewayId: String, utr: String): Future[Option[BusinessMatchingResponseModel]] = ???
+      def saveMatchingDetails(details: BusinessMatchingResponseModel): Future[CacheMap] = {
+        sessionService.saveFormData(KeystoreKeys.businessMatchingDetails, details)
+      }
+
+      ???
+  }
 }
