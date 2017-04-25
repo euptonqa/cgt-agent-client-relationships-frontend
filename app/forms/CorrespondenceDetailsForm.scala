@@ -45,6 +45,7 @@ class CorrespondenceDetailsForm @Inject()(val messagesApi: MessagesApi) extends 
       "country" -> text
         .verifying(Messages("errors.required"), nonEmptyCheck)
     )(CorrespondenceDetailsModel.apply)(CorrespondenceDetailsModel.unapply)
+    .verifying(Messages("errors.postcode"), model => postcodeCheck(model.postcode, model.country))
   )
 
 }

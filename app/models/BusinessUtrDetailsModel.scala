@@ -16,18 +16,10 @@
 
 package models
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
-case class Address(line_1: String,
-                   line_2: String,
-                   line_3: Option[String],
-                   line_4: Option[String],
-                   postcode: Option[String] = None,
-                   country: String)
+case class BusinessUtrDetailsModel(companyName: String, utr: String)
 
-object Address {
-  implicit val formats = Json.format[Address]
-  implicit val converts: Address => CompanyAddressModel = address => {
-    CompanyAddressModel(Some(address.line_1), Some(address.line_2), address.line_3, address.line_4, address.postcode, Some(address.country))
-  }
+object BusinessUtrDetailsModel {
+  implicit val formats: OFormat[BusinessUtrDetailsModel] = Json.format[BusinessUtrDetailsModel]
 }

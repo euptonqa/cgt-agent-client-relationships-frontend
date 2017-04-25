@@ -2,6 +2,15 @@
     padding-top: 1.0em
 }
 
+p.heading-medium {
+    font-family: "nta",Arial,sans-serif;
+    font-size: 24px;
+    line-height: 1.25;
+    text-transform: none;
+    font-weight: 700;
+    margin-top: 1.875em;
+    margin-bottom: .83333em;
+}
 p.lede {
     font-family: "nta",Arial,sans-serif;
     font-size: 24px;

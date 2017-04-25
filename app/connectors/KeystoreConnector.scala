@@ -19,7 +19,7 @@ package connectors
 import javax.inject.{Inject, Singleton}
 
 import config.AgentClientSessionCache
-import models.CompanyAddressModel
+import models.BusinessDetailsModel
 import play.api.libs.json.Format
 import uk.gov.hmrc.http.cache.client.CacheMap
 import uk.gov.hmrc.play.config.ServicesConfig
@@ -41,7 +41,7 @@ class KeystoreConnector @Inject()(sessionCache: AgentClientSessionCache) extends
     sessionCache.fetchAndGetEntry(key)
   }
 
-  def fetchAndGetBusinessData()(implicit hc: HeaderCarrier): Future[Option[CompanyAddressModel]] = {
-    sessionCache.fetchAndGetEntry[CompanyAddressModel](sourceId)
+  def fetchAndGetBusinessData()(implicit hc: HeaderCarrier): Future[Option[BusinessDetailsModel]] = {
+    sessionCache.fetchAndGetEntry[BusinessDetailsModel](sourceId)
   }
 }

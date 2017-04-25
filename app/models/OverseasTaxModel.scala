@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package common
+package models
 
-object FormValidation {
+import play.api.libs.json.{Json, OFormat}
 
-  val nonEmptyCheck: String => Boolean = input => !input.isEmpty
+case class OverseasTaxModel(taxReference: String,
+                            countryOfIssue: String,
+                            institutionOfIssue: String)
 
-  val textToOptional: String => Option[String] = input =>
-    if (input.isEmpty) None
-    else Some(input)
-
-  val optionalToText: Option[String] => String = {
-    case Some(data) => data
-    case _ => ""
-  }
-
-  def postcodeCheck(postcode: Option[String], countryCode: String): Boolean = {
-    if (countryCode =="GB") postcode.isDefined
-    else true
-  }
+object OverseasTaxModel {
+  implicit val formats: OFormat[OverseasTaxModel] = Json.format[OverseasTaxModel]
 }

@@ -17,18 +17,18 @@
 package views.company
 
 import data.MessageLookup._
-import forms.BusinessDetailsForm
+import forms.BusinessUtrDetailsForm
 import org.jsoup.Jsoup
 import traits.ViewSpecHelper
 
 class BusinessDetailsViewSpec extends ViewSpecHelper {
 
-  lazy val form: BusinessDetailsForm = app.injector.instanceOf[BusinessDetailsForm]
+  lazy val form: BusinessUtrDetailsForm = app.injector.instanceOf[BusinessUtrDetailsForm]
 
   "The BusinessDetails view" when {
 
     "no errors are shown" should {
-      lazy val view = views.html.company.businessDetails(config, form.businessDetailsForm)
+      lazy val view = views.html.company.businessDetails(config, form.businessUtrDetailsForm)
       lazy val doc = Jsoup.parse(view.body)
 
       s"have a title of '${BusinessDetails.title}'" in {
@@ -199,7 +199,7 @@ class BusinessDetailsViewSpec extends ViewSpecHelper {
 
     "errors are shown" should {
       val map = Map("companyName" -> "")
-      lazy val view = views.html.company.businessDetails(config, form.businessDetailsForm.bind(map))
+      lazy val view = views.html.company.businessDetails(config, form.businessUtrDetailsForm.bind(map))
       lazy val doc = Jsoup.parse(view.body)
 
       "have an error summary" in {

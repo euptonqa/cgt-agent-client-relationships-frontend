@@ -3,7 +3,7 @@
 @import views.html.partials._
 @import models.BusinessDetailsModel
 
-@(appConfig: config.AppConfig, businessDetailsForm: Form[BusinessDetailsModel])(implicit request: Request[_], messages: Messages)
+@(appConfig: config.AppConfig, businessUtrDetailsForm: Form[BusinessUtrDetailsModel])(implicit request: Request[_], messages: Messages)
 
 @additionalContent = {
     <details role="group">
@@ -20,7 +20,7 @@
 
 @views.html.main_template(title = Messages("businessDetails.title"), bodyClasses = None, appConfig = appConfig) {
 
-    @errorSummary(businessDetailsForm, "business-details", "businessDetails")
+    @errorSummary(businessUtrDetailsForm, "business-details", "businessDetails")
 
     <h1 class="heading-xlarge">@Messages("businessDetails.title")</h1>
 
@@ -28,7 +28,7 @@
 
     @form(action = controllers.routes.ClientController.submitBusinessDetails()) {
             @input(
-                businessDetailsForm("companyName"),
+                businessUtrDetailsForm("companyName"),
                 '_label -> Messages("businessDetails.registeredName"),
                 '_type -> "text",
                 '_inputClass -> "shim input grid-1-2",
@@ -37,7 +37,7 @@
             )
 
             @cgtInput(
-                businessDetailsForm("utr"),
+                businessUtrDetailsForm("utr"),
                 '_label -> Messages("businessDetails.utr"),
                 '_type -> "text",
                 '_inputClass -> "shim input grid-1-2",

@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 import views.html.reviewClientsDetails
 
 
-class reviewClientsDetailsSpec extends UnitSpec with OneAppPerSuite with FakeRequestHelper with I18nSupport {
+class ReviewClientsDetailsSpec extends UnitSpec with OneAppPerSuite with FakeRequestHelper with I18nSupport {
   lazy val injector: Injector = app.injector
   lazy val appConfig: AppConfig = injector.instanceOf[AppConfig]
   implicit lazy val messagesApi: MessagesApi = injector.instanceOf[MessagesApi]
