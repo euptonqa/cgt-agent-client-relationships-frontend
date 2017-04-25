@@ -106,7 +106,7 @@ object MessageLookup {
     val addressLineOne = "Address"
     val addressLineTwo = "Address line two"
     val addressLineThree = "Address line three"
-    val addressLineFour = "Address ine four"
+    val addressLineFour = "Address line four"
     val country = "Country"
     val overseasTaxReferenceQuestion = "Does your client have an overseas Tax Reference?"
     val overseasTaxReferenceDefinitionQuestion = "What is an overseas Tax Reference?"

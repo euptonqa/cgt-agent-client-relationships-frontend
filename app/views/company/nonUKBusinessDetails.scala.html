@@ -4,33 +4,41 @@
 @import models.BusinessDetailsModel
 @import forms.NonUKBusinessDetailsForm
 
-@(appConfig: config.AppConfig, nonUKBusinessDetailsForm: Form[BusinessDetailsModel])(implicit request: Request[_], messages: Messages)
+@(appConfig: config.AppConfig, nonUKBusinessDetailsForm: Form[BusinessDetailsModel], countryList: List[(String, String)])(implicit request: Request[_], messages: Messages)
 
-@userInput(label: String, identifier: String, additionalClass: String="") = {
+@userInput(label: String, identifier: String) = {
     @input(
         nonUKBusinessDetailsForm(identifier),
         '_label -> label,
         '_type -> "text",
-        '_inputClass -> s"shim $additionalClass",
+        '_inputClass -> s"shim  input grid-1-2",
         '_labelClass -> "form-group"
     )
 }
 
-@hiddenLabelInput(label: String, identifier: String, additionalClass: String="") = {
+@hiddenLabelInput(label: String, identifier: String) = {
     @input(
         nonUKBusinessDetailsForm(identifier),
         '_label -> label,
-        '_labelTextClass -> "visuallyhidden",
+        '_legendClass -> "visuallyhidden",
         '_type -> "text",
-        '_inputClass -> s"shim $additionalClass",
+        '_inputClass -> s"shim  input grid-1-2",
         '_labelClass -> "form-group"
     )
 }
 
 @additionalContent = {
-    @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
-    @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
-    @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
+    @userInput(Messages("nonUKBusinessDetails.taxReference"), "taxReference")
+
+    @countryDropdown(nonUKBusinessDetailsForm("countryOfIssue"),
+        elementOptions = countryList,
+        displayEmptyValue = true,
+        '_id -> "country",
+        '_emptyValueText -> Messages("nonUKBusinessDetails.country.select"),
+        '_labelClass -> "form-label",
+        '_label -> Html(Messages("nonUKBusinessDetails.country")))
+
+    @userInput(Messages("nonUKBusinessDetails.institutionOfIssue"), "institutionOfIssue")
 }
 
 @views.html.main_template(title = Messages("nonUKBusinessDetails.title"), bodyClasses = None, appConfig = appConfig) {
@@ -40,31 +48,38 @@
     <h1 class="heading-xlarge">@Messages("nonUKBusinessDetails.title")</h1>
 
     @form(action = controllers.routes.ClientController.submitBusinessDetails()) {
-            @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
-            @userInput(Messages("nonUKBusinessDetails.addressLineOne"), "addressLineOne")
-            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineTwo"), "addressLineTwo")
-            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineThree"), "addressLineThree")
-            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineFour"), "addressLineFour")
-            @userInput(Messages("nonUKBusinessDetails.country"), "country")
+        @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
+        @userInput(Messages("nonUKBusinessDetails.addressLineOne"), "addressLineOne")
+        @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineTwo"), "addressLineTwo")
+        @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineThree"), "addressLineThree")
+        @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineFour"), "addressLineFour")
 
-            <p>@Messages("nonUKBusinessDetails.overseasTaxReferenceQuestion")</p>
+        @countryDropdown(nonUKBusinessDetailsForm("country"),
+            elementOptions = countryList,
+            displayEmptyValue = true,
+            '_id -> "country",
+            '_emptyValueText -> Messages("nonUKBusinessDetails.country.select"),
+            '_labelClass -> "form-label",
+            '_label -> Html(Messages("nonUKBusinessDetails.country")))
 
-            <details role="group">
-                <summary role="button" aria-controls="details-content" aria-expanded="false">
-                    <span class="summary">@Messages("nonUKBusinessDetails.overseasTaxReferenceDefinitionQuestion")</span>
-                </summary>
-                <div class="indent" id="details-content" aria-hidden="true">
-                    <p>@Messages("nonUKBusinessDetails.overseasTaxReferenceDefinition")</p>
-                </div>
-            </details>
+        <p>@Messages("nonUKBusinessDetails.overseasTaxReferenceQuestion")</p>
+
+        <details role="group">
+            <summary role="button" aria-controls="details-content" aria-expanded="false">
+                <span class="summary">@Messages("nonUKBusinessDetails.overseasTaxReferenceDefinitionQuestion")</span>
+            </summary>
+            <div class="indent" id="details-content" aria-hidden="true">
+                <p>@Messages("nonUKBusinessDetails.overseasTaxReferenceDefinition")</p>
+            </div>
+        </details>
 
 
-            @hiddenYesNoRadioNoError(
-                nonUKBusinessDetailsForm,
-                "hasOverseasTaxReference",
-                Messages("nonUKBusinessDetails.nonUKBusinessDetails.overseasTaxReferenceQuestion"),
-                additionalContent
-            )
+        @hiddenYesNoRadioNoError(
+            nonUKBusinessDetailsForm,
+            "hasOverseasTaxReference",
+            Messages("nonUKBusinessDetails.nonUKBusinessDetails.overseasTaxReferenceQuestion"),
+            additionalContent
+        )
 
         <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
     }

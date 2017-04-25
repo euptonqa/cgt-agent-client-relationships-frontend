@@ -151,6 +151,9 @@ class ClientController @Inject()(appConfig: AppConfig,
   Future.successful(Ok(views.html.company.businessDetails(appConfig, businessUtrDetailsForm.businessUtrDetailsForm)))}
 
   val submitBusinessDetails: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(views.html.company.nonUKBusinessDetails(appConfig, nonUKBusinessDetailsForm.nonUKBusinessDetailsForm)))
+    Future.successful(Ok(views.html.company.nonUKBusinessDetails(
+      appConfig,
+      nonUKBusinessDetailsForm.nonUKBusinessDetailsForm,
+      countryList.getListOfCountries)))
   }
 }

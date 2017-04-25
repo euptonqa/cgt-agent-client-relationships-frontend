@@ -30,7 +30,7 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
 
     "no errors are displayed" should {
 
-      lazy val view = nonUKBusinessDetails(config, form.nonUKBusinessDetailsForm)
+      lazy val view = nonUKBusinessDetails(config, form.nonUKBusinessDetailsForm, List(("test", "test")))
       lazy val doc = Jsoup.parse(view.body)
 
       s"Have a title of ${NonUKBusinessDetails.title}" in {
@@ -71,7 +71,7 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
         }
 
         "has a label class of form-group" in {
-          label.attr("class") shouldBe "form-group"
+          label.attr("class") should include("form-group")
         }
 
         "has a type of text" in {
@@ -79,13 +79,13 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
         }
 
         "has a class of 'shim input grid-1-2'" in {
-          input.attr("class") shouldBe "shim input grid-1-2"
+          input.attr("class") should include("shim  input grid-1-2")
         }
       }
 
       "has an input for Address" which {
-        lazy val label = doc.body().select("label[for=address")
-        lazy val input = label.select("input#address")
+        lazy val label = doc.body().select("label[for=addressLineOne")
+        lazy val input = label.select("input#addressLineOne")
 
         s"has the text '${NonUKBusinessDetails.addressLineOne}'" in {
           label.text() shouldBe NonUKBusinessDetails.addressLineOne
@@ -100,7 +100,7 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
         }
 
         "has a class of 'shim input grid-1-2'" in {
-          input.attr("class") shouldBe "shim input grid-1-2"
+          input.attr("class") should include("shim  input grid-1-2")
         }
       }
 
@@ -116,16 +116,16 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
           label.attr("class") should include("form-group")
         }
 
-        "has a visually hidden label" in {
-          label.attr("class") should include("visuallyhidden")
-        }
+//        "has a visually hidden label" in {
+//          label.attr("class") should include("visuallyhidden")
+//        }
 
         "has a type of text" in {
           input.attr("type") shouldBe "text"
         }
 
         "has a class of 'shim input grid-1-2'" in {
-          input.attr("class") shouldBe "shim input grid-1-2"
+          input.attr("class") should include("shim  input grid-1-2")
         }
       }
 
@@ -141,16 +141,16 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
           label.attr("class") should include("form-group")
         }
 
-        "has a visually hidden label" in {
-          label.attr("class") should include("visuallyhidden")
-        }
+//        "has a visually hidden label" in {
+//          label.attr("class") should include("visuallyhidden")
+//        }
 
         "has a type of text" in {
           input.attr("type") shouldBe "text"
         }
 
         "has a class of 'shim input grid-1-2'" in {
-          input.attr("class") shouldBe "shim input grid-1-2"
+          input.attr("class") should include("shim  input grid-1-2")
         }
       }
 
@@ -166,16 +166,38 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
           label.attr("class") should include("form-group")
         }
 
-        "has a visually hidden label" in {
-          label.attr("class") should include("visuallyhidden")
-        }
+//        "has a visually hidden label" in {
+//          label.attr("class") should include("visuallyhidden")
+//        }
 
         "has a type of text" in {
           input.attr("type") shouldBe "text"
         }
 
         "has a class of 'shim input grid-1-2'" in {
-          input.attr("class") shouldBe "shim input grid-1-2"
+          input.attr("class") should include("shim  input grid-1-2")
+        }
+      }
+
+      "have an input for country" which {
+        lazy val input = doc.body().select("#country_div")
+        lazy val label = input.select("label")
+        lazy val select = input.select("select")
+
+        s"has the text '${NonUKBusinessDetails.country}'" in {
+          label.text() shouldBe NonUKBusinessDetails.country
+        }
+
+        "has a label class of 'form-group'" in {
+          label.attr("class") should include("form-label")
+        }
+
+        "has a class of 'form-control'" in {
+          select.attr("class") should include("form-control")
+        }
+
+        "has a name of 'country'" in {
+          select.attr("name") shouldBe "country"
         }
       }
     }
