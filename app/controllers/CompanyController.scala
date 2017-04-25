@@ -44,6 +44,7 @@ class CompanyController @Inject()(appConfig: AppConfig,
       Future.successful(Ok(views.html.company.correspondenceAddress(appConfig,
         correspondenceAddressForm.correspondenceAddressForm, countryList.getListOfCountries)))
   }
+
   val submitCorrespondenceAddress: Action[AnyContent] = authorisedActions.authorisedAgentAction() {
     implicit user =>
       implicit request =>
