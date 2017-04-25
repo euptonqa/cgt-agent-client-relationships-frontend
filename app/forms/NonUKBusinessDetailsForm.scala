@@ -26,7 +26,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 
 class NonUKBusinessDetailsForm @Inject()(val messagesApi: MessagesApi) extends I18nSupport {
 
-  val validation: BusinessDetailsModel => Boolean = model =>
+  val overseasTaxReferenceModelValidation: BusinessDetailsModel => Boolean = model =>
     (model.overseasTaxReference == "Yes" &&
       model.overseasTaxModel.nonEmpty && (model.overseasTaxModel.get.countryOfIssue != "" &&
       model.overseasTaxModel.get.institutionOfIssue != "" &&
@@ -63,6 +63,6 @@ class NonUKBusinessDetailsForm @Inject()(val messagesApi: MessagesApi) extends I
       )(OverseasTaxModel.apply)(OverseasTaxModel.unapply)
         .transform(modelToOptional, optionalToModel)
     )(BusinessDetailsModel.apply)(BusinessDetailsModel.unapply)
-      .verifying("please supply overseas tax details", validation)
+      .verifying("please supply overseas tax details", overseasTaxReferenceModelValidation)
   )
 }

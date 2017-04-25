@@ -82,7 +82,10 @@ contactDetails.telephone = Telephone
 ##Non UK Business Details messages ##
 nonUKBusinessDetails.title = Enter your client''s non-UK business details
 nonUKBusinessDetails.businessName = Business Name
-nonUKBusinessDetails.address = Address
+nonUKBusinessDetails.addressLineOne = Address
+nonUKBusinessDetails.addressLineTwo = Address line two
+nonUKBusinessDetails.addressLineThree = Address line three
+nonUKBusinessDetails.addressLineFour = Address line four
 nonUKBusinessDetails.country = Country
 nonUKBusinessDetails.overseasTaxReferenceQuestion = Does your client have an overseas Tax Reference?
 nonUKBusinessDetails.overseasTaxReferenceDefinitionQuestion = What is an overseas Tax Reference?

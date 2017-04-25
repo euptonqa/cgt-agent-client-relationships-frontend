@@ -34,11 +34,150 @@ class NonUKBusinessDetailsViewSpec extends ViewSpecHelper {
       lazy val doc = Jsoup.parse(view.body)
 
       s"Have a title of ${NonUKBusinessDetails.title}" in {
-
+        doc.title shouldBe NonUKBusinessDetails.title
       }
 
+      "have a heading" which {
+        lazy val heading = doc.select("h1")
+
+        s"has the text '${NonUKBusinessDetails.title}" in {
+          heading.text() shouldBe NonUKBusinessDetails.title
+        }
+
+        "has the class 'heading-xlarge" in {
+          heading.attr("class") shouldBe "heading-xlarge"
+        }
+      }
+
+      "has a form" which {
+        lazy val form = doc.select("form")
+
+        "has a method of POST" in {
+          form.attr("method") shouldBe "POST"
+        }
+
+        //TODO: Update to actually controller action
+        s"has an action of '${controllers.routes.ClientController.businessDetails().url}'" in {
+          form.attr("action") shouldBe controllers.routes.ClientController.businessDetails().url
+        }
+      }
+
+      "has an input for Business Name" which {
+        lazy val label = doc.body().select("label[for=businessName")
+        lazy val input = label.select("input#businessName")
+
+        s"has the text '${NonUKBusinessDetails.businessName}'" in {
+          label.text() shouldBe NonUKBusinessDetails.businessName
+        }
+
+        "has a label class of form-group" in {
+          label.attr("class") shouldBe "form-group"
+        }
+
+        "has a type of text" in {
+          input.attr("type") shouldBe "text"
+        }
+
+        "has a class of 'shim input grid-1-2'" in {
+          input.attr("class") shouldBe "shim input grid-1-2"
+        }
+      }
+
+      "has an input for Address" which {
+        lazy val label = doc.body().select("label[for=address")
+        lazy val input = label.select("input#address")
+
+        s"has the text '${NonUKBusinessDetails.addressLineOne}'" in {
+          label.text() shouldBe NonUKBusinessDetails.addressLineOne
+        }
+
+        "has a label class of form-group" in {
+          label.attr("class") should include("form-group")
+        }
+
+        "has a type of text" in {
+          input.attr("type") shouldBe "text"
+        }
+
+        "has a class of 'shim input grid-1-2'" in {
+          input.attr("class") shouldBe "shim input grid-1-2"
+        }
+      }
+
+      "has an input for Address Line Two" which {
+        lazy val label = doc.body().select("label[for=addressLineTwo")
+        lazy val input = label.select("input#addressLineTwo")
+
+        s"has the text '${NonUKBusinessDetails.addressLineTwo}'" in {
+          label.text() shouldBe NonUKBusinessDetails.addressLineTwo
+        }
+
+        "has a label class of form-group" in {
+          label.attr("class") should include("form-group")
+        }
+
+        "has a visually hidden label" in {
+          label.attr("class") should include("visuallyhidden")
+        }
+
+        "has a type of text" in {
+          input.attr("type") shouldBe "text"
+        }
+
+        "has a class of 'shim input grid-1-2'" in {
+          input.attr("class") shouldBe "shim input grid-1-2"
+        }
+      }
+
+      "has an input for Address Line Three" which {
+        lazy val label = doc.body().select("label[for=addressLineThree")
+        lazy val input = label.select("input#addressLineThree")
+
+        s"has the text '${NonUKBusinessDetails.addressLineThree}'" in {
+          label.text() shouldBe NonUKBusinessDetails.addressLineThree
+        }
+
+        "has a label class of form-group" in {
+          label.attr("class") should include("form-group")
+        }
+
+        "has a visually hidden label" in {
+          label.attr("class") should include("visuallyhidden")
+        }
+
+        "has a type of text" in {
+          input.attr("type") shouldBe "text"
+        }
+
+        "has a class of 'shim input grid-1-2'" in {
+          input.attr("class") shouldBe "shim input grid-1-2"
+        }
+      }
+
+      "has an input for Address Line Four" which {
+        lazy val label = doc.body().select("label[for=addressLineFour")
+        lazy val input = label.select("input#addressLineFour")
+
+        s"has the text '${NonUKBusinessDetails.addressLineFour}'" in {
+          label.text() shouldBe NonUKBusinessDetails.addressLineFour
+        }
+
+        "has a label class of form-group" in {
+          label.attr("class") should include("form-group")
+        }
+
+        "has a visually hidden label" in {
+          label.attr("class") should include("visuallyhidden")
+        }
+
+        "has a type of text" in {
+          input.attr("type") shouldBe "text"
+        }
+
+        "has a class of 'shim input grid-1-2'" in {
+          input.attr("class") shouldBe "shim input grid-1-2"
+        }
+      }
     }
-
   }
-
 }

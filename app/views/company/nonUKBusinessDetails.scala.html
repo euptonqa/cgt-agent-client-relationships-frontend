@@ -41,20 +41,30 @@
 
     @form(action = controllers.routes.ClientController.submitBusinessDetails()) {
             @userInput(Messages("nonUKBusinessDetails.businessName"), "businessName")
-            @userInput(Messages("nonUKBusinessDetails.address"), "addressLineOne")
-            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressTwo"), "addressLineTwo")
-            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressThree"), "addressLineThree")
-            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressFour"), "addressLineFour")
+            @userInput(Messages("nonUKBusinessDetails.addressLineOne"), "addressLineOne")
+            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineTwo"), "addressLineTwo")
+            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineThree"), "addressLineThree")
+            @hiddenLabelInput(Messages("nonUKBusinessDetails.addressLineFour"), "addressLineFour")
             @userInput(Messages("nonUKBusinessDetails.country"), "country")
 
-            @*<p></p>*@
+            <p>@Messages("nonUKBusinessDetails.overseasTaxReferenceQuestion")</p>
 
-            @*@hiddenYesNoRadioNoError(*@
-                @*nonUKBusinessDetailsForm,*@
-                @*"hasOverseasTaxReference",*@
-                @*Messages("nonUKBusinessDetails.nonUKBusinessDetails.overseasTaxReferenceQuestion"),*@
-                @*additionalContent*@
-            @*)*@
+            <details role="group">
+                <summary role="button" aria-controls="details-content" aria-expanded="false">
+                    <span class="summary">@Messages("nonUKBusinessDetails.overseasTaxReferenceDefinitionQuestion")</span>
+                </summary>
+                <div class="indent" id="details-content" aria-hidden="true">
+                    <p>@Messages("nonUKBusinessDetails.overseasTaxReferenceDefinition")</p>
+                </div>
+            </details>
+
+
+            @hiddenYesNoRadioNoError(
+                nonUKBusinessDetailsForm,
+                "hasOverseasTaxReference",
+                Messages("nonUKBusinessDetails.nonUKBusinessDetails.overseasTaxReferenceQuestion"),
+                additionalContent
+            )
 
         <button class="button" type="submit" id="continue-button">@Messages("common.continue")</button>
     }
