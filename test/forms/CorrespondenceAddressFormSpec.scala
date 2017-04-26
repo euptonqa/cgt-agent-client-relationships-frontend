@@ -16,6 +16,7 @@
 
 package forms
 
+import data.MessageLookup
 import models.AddressModel
 import org.scalatestplus.play.OneAppPerSuite
 import uk.gov.hmrc.play.test.UnitSpec
@@ -25,7 +26,7 @@ class CorrespondenceAddressFormSpec extends UnitSpec with OneAppPerSuite {
 
   "Creating a CorrespondenceAddressForm" when {
     val form = app.injector.instanceOf[CorrespondenceAddressForm]
-    "provided with a valid mpa with no optional values" should {
+    "provided with a valid map with no optional values" should {
       val map = Map("addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
         "townOrCity" -> "", "county" -> "", "postcode" -> "", "country" -> "United States")
 
@@ -64,6 +65,45 @@ class CorrespondenceAddressFormSpec extends UnitSpec with OneAppPerSuite {
       }
 
     }
+
+    "provided with an invalid map with no address Line 1" should {
+      val map = Map("addressLineOne" -> "", "addressLineTwo" -> "Light Road",
+        "townOrCity" -> "Telford", "county" -> "Shropshire", "postcode" -> "LA1 5AP", "country" -> "United States")
+
+      lazy val result = form.correspondenceAddressForm.bind(map)
+
+      "have no model defined" in {
+        result.value.isDefined shouldBe false
+      }
+
+      "contain one error" in {
+        result.errors.size shouldBe 1
+      }
+
+      "contain an error message for a required field" in {
+        result.errors.head.message shouldBe MessageLookup.Errors.errorRequired
+      }
+    }
+
+    "provided with an invalid map with no country" should {
+      val map = Map("addressLineOne" -> "15", "addressLineTwo" -> "Light Road",
+        "townOrCity" -> "Telford", "county" -> "Shropshire", "postcode" -> "LA1 5AP", "country" -> "")
+
+      lazy val result = form.correspondenceAddressForm.bind(map)
+
+      "have no model defined" in {
+        result.value.isDefined shouldBe false
+      }
+
+      "contain one error" in {
+        result.errors.size shouldBe 1
+      }
+
+      "contain an error message for a required field" in {
+        result.errors.head.message shouldBe MessageLookup.Errors.errorRequired
+      }
+    }
+
   }
 
 }

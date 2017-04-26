@@ -1,13 +1,12 @@
 @import models.AddressModel
 @import uk.gov.hmrc.play.views.html.helpers.{form, input}
-@import views.html.partials.countryScripts
-@import views.html.partials.countryDropdown
+@import views.html.partials.{countryDropdown, errorSummary}
 
-@(appConfig: config.AppConfig, correspondenceDetailsForm: Form[AddressModel], countryList: List[(String, String)])(implicit request: Request[_], messages: Messages)
+@(appConfig: config.AppConfig, correspondenceAddressForm: Form[AddressModel], countryList: List[(String, String)])(implicit request: Request[_], messages: Messages)
 
 @userInput(label: String, identifier: String) = {
     @input(
-        correspondenceDetailsForm(identifier),
+        correspondenceAddressForm(identifier),
         '_label -> label,
         '_type -> "text",
         '_inputClass -> s"shim input grid-1-2",
@@ -16,6 +15,9 @@
 }
 
 @views.html.main_template(title = Messages("correspondenceDetails.title"), bodyClasses=None, appConfig = appConfig) {
+
+        @errorSummary(correspondenceAddressForm, "correspondence-address")
+
         <h1 class="heading-xlarge">@Messages("correspondenceDetails.title")</h1>
 
         @form(action = controllers.routes.CompanyController.submitCorrespondenceAddress) {
@@ -23,7 +25,7 @@
             @userInput(Messages("correspondenceDetails.addressLineTwo"), "addressLineTwo")
             @userInput(Messages("correspondenceDetails.addressLineThree"), "addressLineThree")
             @userInput(Messages("correspondenceDetails.addressLineFour"), "addressLineFour")
-            @countryDropdown(correspondenceDetailsForm("country"),
+            @countryDropdown(correspondenceAddressForm("country"),
                 elementOptions = countryList,
                 displayEmptyValue = true,
                 '_id -> "country",

@@ -25,7 +25,7 @@ correspondenceDetails.addressLineOne = Address line one
 correspondenceDetails.addressLineTwo = Address line two
 correspondenceDetails.addressLineThree = Address line three (optional)
 correspondenceDetails.addressLineFour = Address line four (optional)
-correspondenceDetails.country.select = "Please select a country"
+correspondenceDetails.country.select = Please select a country
 
 ## Client List messages ##
 clientList.title = Client overview
